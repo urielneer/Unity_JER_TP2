@@ -19,29 +19,8 @@ public class MenuManager : BaseManager<CharacterManager>
                 // Singleton Operations //
                     base.Awake();
                 // Variables //
-                    I_Ctm_Memt_A1_Menus = _BaseMenuType;
-                // Botones que no estan cableados desde el Inspector //
-                    WireRuntimeButtons();
-            }
-            // El boton "Leave Game" del PauseMenu tiene el OnClick vacio en el prefab //
-            private void WireRuntimeButtons()
-            {
-                foreach (Button Btn_Element in GetComponentsInChildren<Button>(true))
-                {
-                    // Solo el de salir //
-                        if (Btn_Element.gameObject.name != "Btn_LeaveGame") continue;
-                    // Si ya lo cablearon a mano en el Inspector, no tocarlo //
-                        if (Btn_Element.onClick.GetPersistentEventCount() > 0) continue;
-                    // Conectar //
-                        Btn_Element.onClick.AddListener(() =>
-                        {
-                            if (MasterManager.Instance == null) return;
-                            if (MasterManager.Instance.NetworkManager == null) return;
-                            MasterManager.Instance.NetworkManager.LeaveGame();
-                        });
-                        Debug.Log("[Menu Manager] Boton 'Leave Game' conectado por codigo");
-                }
-            }
+                    I_Ctm_Memt_A1_Menus = _BaseMenuType;            }
+
         #endregion Unity Methods
         #region    Override Methods
             #pragma warning disable CS1998
@@ -66,6 +45,13 @@ public class MenuManager : BaseManager<CharacterManager>
                     base.OnFixedUpdate(Flt_FixedDT);
                 // Screen Resiza //
                     
+            }
+            public override void OnUpdate(float Flt_FixedDT)
+            {
+                // Resume Base //
+                    base.OnFixedUpdate(Flt_FixedDT);
+                // Screen Resiza //
+                    if (O_Ctm_Memt_Current.MenuName == "HUD") ((MenuTypeHUD) O_Ctm_Memt_Current).OnUpdate(Flt_FixedDT);
             }
         #endregion Override Methods
         #region    Custom Methods

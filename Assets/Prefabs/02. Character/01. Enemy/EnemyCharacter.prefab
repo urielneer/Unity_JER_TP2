@@ -346,6 +346,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74af7e2a5608e3a47bf41e78fbf74a1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyCharacter
+  _animator: {fileID: 2080773630502947327}
+  _movementSpeed: 0
 --- !u!1 &5577123906385935258
 GameObject:
   m_ObjectHideFlags: 0

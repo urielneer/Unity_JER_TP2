@@ -168,11 +168,11 @@ public class MenuTypeWaitingRoom : BaseMenuType
                 [PunRPC]
                 private void RPC_ForceUpdateVigilantNumber(int Int_Input)
                 {
-                    Int_VigilantNumber = Int_Input;
-                    if (PhotonNetwork.LocalPlayer.ActorNumber != Int_Input)
-                        MasterManager.Instance.CharacterManager.Changetype(PlayerType.Chaser);
-                    else
-                        MasterManager.Instance.CharacterManager.Changetype(PlayerType.Vigilant);
+//                    Int_VigilantNumber = Int_Input;
+//                    if (PhotonNetwork.LocalPlayer.ActorNumber != Int_Input)
+//                        MasterManager.Instance.CharacterManager.Changetype(PlayerType.Chaser);
+//                    else
+//                        MasterManager.Instance.CharacterManager.Changetype(PlayerType.Vigilant);
                 }
             #endregion RPC
         #endregion PUN

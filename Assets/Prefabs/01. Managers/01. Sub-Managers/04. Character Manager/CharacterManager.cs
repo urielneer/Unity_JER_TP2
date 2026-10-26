@@ -9,27 +9,22 @@ using static CustomExtension.ArrayExtensions;
     using Hashtable = ExitGames.Client.Photon.Hashtable;
 #endregion "using" Script Clarification
 #region    Enums
-    public enum PlayerType { Vigilant, Chaser };
 #endregion Enums
 public class CharacterManager : BaseManager<CharacterManager>
 {
     #region    Variables
-            PlayerType IO_E_PT_ClientType;
-            public PlayerType ClientType => IO_E_PT_ClientType;
         [Header(" All Character Settings")]
             [SerializeField] float _maxHealth;
             float IO_Flt_MaxHealth;
             public float MaxHealth => IO_Flt_MaxHealth;
         [Header(" Manager Settings")]
-            [SerializeField] private Transform _mapContainer;
-            private Transform I_Trfm_MapContainer;
             [SerializeField] private float _shootCooldown;
             float IO_Flt_ShootCooldown;
             public float ShootCooldown => IO_Flt_ShootCooldown;
+            [SerializeField] BasePlayer _ownPlayer;
             BasePlayer O_Ctm_BP_OwnPlayer;
             public BasePlayer OwnPlayer => O_Ctm_BP_OwnPlayer; 
             BasePlayer[] O_Ctm_BP_A1_PlayerList;
-            public BasePlayer[] PlayerList => O_Ctm_BP_A1_PlayerList;
         #region    Hashtables (Communication among instances)
             private const string PlayerName_KEY = "PlayerName";
             private const string PlayerMatIndex_KEY = "PlayerrMatIndex";
@@ -45,9 +40,10 @@ public class CharacterManager : BaseManager<CharacterManager>
                 // Singleton Operations //
                     base.Awake();
                 // Variables //
-                    I_Trfm_MapContainer = _mapContainer;
                     IO_Flt_MaxHealth = _maxHealth;
                     IO_Flt_ShootCooldown = _shootCooldown;
+
+                    O_Ctm_BP_OwnPlayer = _ownPlayer;
             }
         #endregion Unity Methods
         #region    Override Methods
@@ -66,28 +62,6 @@ public class CharacterManager : BaseManager<CharacterManager>
                         break;
                         case 1: // Level //
                             // Variables //
-                                Vector3 Vec3_Pos = Vector3.zero;
-                                Quaternion Quat_Rot = Quaternion.identity;
-                            // Spawn Player //
-                                O_Ctm_BP_OwnPlayer = (PhotonNetwork.Instantiate("02. Player/Player_Master", Vec3_Pos, Quat_Rot)).GetComponent<BasePlayer>();
-//-//                                O_Ctm_BP_OwnPlayer.SetData(PhotonNetwork.LocalPlayer.NickName, O_Ctm_BP_OwnPlayer.GetComponent<PhotonView>().ViewID, IO_Flt_MaxHealth, IO_E_PT_ClientType);
-//-//                                O_Ctm_BP_OwnPlayer.OnStartUp();
-                                ChangePlayerMaterial(null);
-                            // Spawn //
-//-//                                O_Ctm_BP_OwnPlayer.ExecuteSpawn();
-                            // MapManager - Container //
-//-//                                I_Trfm_MapContainer = (Object.FindFirstObjectByType<MapContainer>()).gameObject.transform;
-                                O_Ctm_BP_OwnPlayer.gameObject.transform.SetParent(I_Trfm_MapContainer, true);
-                                #region    Synchronize
-                                    Hashtable Hsh_MapKeys = new Hashtable
-                                    {
-                                        { PlayerID_KEY, O_Ctm_BP_OwnPlayer.GetComponent<PhotonView>().ViewID },
-                                        { PlayerName_KEY, PhotonNetwork.LocalPlayer.NickName },
-                                        { PlayerType_KEY, (PlayerType) IO_E_PT_ClientType }
-                                    }; 
-                                #endregion Synchronize
-                            // Update Everywhere //
-                                UpdateAllCharacterManagers(Hsh_MapKeys);
                         break;
                     }
             }
@@ -125,10 +99,6 @@ public class CharacterManager : BaseManager<CharacterManager>
             }
         #endregion Override Methods
         #region    Custom Methods
-            public void Changetype(PlayerType E_PT_New)
-            {
-                IO_E_PT_ClientType = E_PT_New;
-            }
             private MenuTypeHUD GetHUD()
             {
                 BaseMenuType Ctm_BMT_HUD = MasterManager.Instance.MenuManager.GetMenuReference("HUD");
@@ -148,9 +118,7 @@ public class CharacterManager : BaseManager<CharacterManager>
                     }
                     if (Ctm_MTH_HUD == null) yield break;
                 // Mostrar //
-                    Ctm_MTH_HUD.ShowRole(IO_E_PT_ClientType);
                     yield return new WaitForSeconds(2f);
-                    Ctm_MTH_HUD.ClearRole();
             }
             public Hashtable AddToPlayerList(BasePlayer Ctm_BP_Client)
             {

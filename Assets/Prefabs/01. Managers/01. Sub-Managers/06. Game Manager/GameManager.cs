@@ -163,45 +163,45 @@ public class GameManager : BaseManager<GameManager>
                     private System.Collections.IEnumerator StartShootout()
                     {
                         yield return new WaitForSeconds(1f);
-                            CompareTimeframes();
-                        yield return new WaitForSeconds(1f);
-                            _image.color = Color.yellow;     
+//                            CompareTimeframes();
+//                        yield return new WaitForSeconds(1f);
+//                            _image.color = Color.yellow;     
                     }
                 #endregion Regular
                 #region    RPC
                     [PunRPC]
                     private void RPC_AlertShootToMaster(Hashtable Hsh_Input)
                     {
-                        int Int_ID = (int) Hsh_Input[UserID_KEY];
-                        if (Int_ID == PhotonNetwork.LocalPlayer.ActorNumber) // MASTER //
-                        { if (Shots[0].Count == 0) Shots[0] = Hsh_Input; }
-                        else                                                 // CLIENT //
-                        { if (Shots[1].Count == 0) Shots[1] = Hsh_Input; }                            
+//                        int Int_ID = (int) Hsh_Input[UserID_KEY];
+//                        if (Int_ID == PhotonNetwork.LocalPlayer.ActorNumber) // MASTER //
+//                        { if (Shots[0].Count == 0) Shots[0] = Hsh_Input; }
+//                        else                                                 // CLIENT //
+//                        { if (Shots[1].Count == 0) Shots[1] = Hsh_Input; }                            
                     }
                     [PunRPC]
                     private void RPC_AlertWinnerToAll(int Int_ID)
                     {
-                        O_Bool_CanShoot = false;
-                        if (PhotonNetwork.IsMasterClient)
-                            Shots = new Hashtable[]{new Hashtable(), new Hashtable()};
-                        switch (Int_ID)
-                        {
-                            case 0:
-                                _image.color = Color.white;  
-                            return;
-                            case 1:
-                                if (PhotonNetwork.IsMasterClient)
-                                    _image.color = Color.green;      
-                                else
-                                    _image.color = Color.red;      
-                            return;
-                            case 2:
-                                if (!PhotonNetwork.IsMasterClient)
-                                    _image.color = Color.green;      
-                                else
-                                    _image.color = Color.red; 
-                            return;
-                        }
+//                        O_Bool_CanShoot = false;
+//                        if (PhotonNetwork.IsMasterClient)
+//                            Shots = new Hashtable[]{new Hashtable(), new Hashtable()};
+//                        switch (Int_ID)
+//                        {
+//                            case 0:
+//                                _image.color = Color.white;  
+//                            return;
+//                            case 1:
+//                                if (PhotonNetwork.IsMasterClient)
+//                                    _image.color = Color.green;      
+//                                else
+//                                    _image.color = Color.red;      
+//                            return;
+//                            case 2:
+//                                if (!PhotonNetwork.IsMasterClient)
+//                                    _image.color = Color.green;      
+//                                else
+//                                    _image.color = Color.red; 
+//                            return;
+//                        }
                     }
                 #endregion RPC
             #endregion Dummy
@@ -261,7 +261,8 @@ public class GameManager : BaseManager<GameManager>
                 public void HideCursor()
                 {
                     Cursor.visible = false;
-                    Cursor.lockState = CursorLockMode.Locked;
+                    Cursor.lockState = CursorLockMode.None;
+                    //Cursor.lockState = CursorLockMode.Locked;
                 }
             #endregion Networking
             #region    PowerUp

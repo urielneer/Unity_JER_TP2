@@ -441,7 +441,7 @@ public class MapManager : BaseManager<MapManager>
                             {
                                 if (PhotonNetwork.IsMasterClient)
                                 {
-                                        MasterManager.Instance.MapManager.ReduceCountdown();     
+                                     MasterManager.Instance.MapManager.ReduceCountdown();     
                                 }
                             }
                             [PunRPC]
@@ -449,7 +449,7 @@ public class MapManager : BaseManager<MapManager>
                             {
                                 if (!PhotonNetwork.IsMasterClient)
                                 {
-                                        MasterManager.Instance.MapManager.MatserStartUpCompleted();     
+                                      MasterManager.Instance.MapManager.MatserStartUpCompleted();     
                                 }
                             }
                     #endregion Await 

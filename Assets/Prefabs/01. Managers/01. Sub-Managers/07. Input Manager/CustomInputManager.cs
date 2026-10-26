@@ -58,46 +58,22 @@ public class CustomInputManager : BaseManager<CharacterManager>
                             PlayerInputActions.ChatActions IAA_Chat = O_IAct_PIA_Controller.Chat;
                         // Player //
                             // Move //
-                                IAA_Player.Move.performed -= OnMoveKeyPressed;
-                                IAA_Player.Move.performed += OnMoveKeyPressed;
-                                IAA_Player.Move.canceled -= OnMoveKeyCancelled;
-                                IAA_Player.Move.canceled += OnMoveKeyCancelled;
-                            // Move //
-                                IAA_Player.MouseMove.performed -= OnMouseMoveKeyPressed;
-                                IAA_Player.MouseMove.performed += OnMouseMoveKeyPressed;
-                                IAA_Player.MouseMove.canceled -= OnMouseMoveKeyCancelled;
-                                IAA_Player.MouseMove.canceled += OnMouseMoveKeyCancelled;
-                            // Rotate //
-                                IAA_Player.Rotate.performed -= OnRotateKeyPressed;
-                                IAA_Player.Rotate.performed += OnRotateKeyPressed;
-                                IAA_Player.Rotate.canceled -= OnRotateKeyCancelled;
-                                IAA_Player.Rotate.canceled += OnRotateKeyCancelled;
-                            // Jump //
-                                IAA_Player.Jump.performed -= OnJumpKeyPressed;
-                                IAA_Player.Jump.performed += OnJumpKeyPressed;
-                                IAA_Player.Jump.canceled -= OnJumpKeyCancelled;
-                                IAA_Player.Jump.canceled += OnJumpKeyCancelled;
+                                // Regular //
+                                    IAA_Player.MoveRegular.performed -= OnMoveKeyPressed;
+                                    IAA_Player.MoveRegular.performed += OnMoveKeyPressed;
+                                    IAA_Player.MoveRegular.canceled -= OnMoveKeyCancelled;
+                                    IAA_Player.MoveRegular.canceled += OnMoveKeyCancelled;
+                                // Diagonal //
+                                    IAA_Player.MoveDiagonal.performed -= OnMoveKeyPressed;
+                                    IAA_Player.MoveDiagonal.performed += OnMoveKeyPressed;
+                                    IAA_Player.MoveDiagonal.canceled -= OnMoveKeyCancelled;
+                                    IAA_Player.MoveDiagonal.canceled += OnMoveKeyCancelled;
                             // Shoot //
-                                // Straight //
-                                    IAA_Player.StraightShoot.performed -= OnShootKeyPressed;
-                                    IAA_Player.StraightShoot.performed += OnShootKeyPressed;
-                                // Curved //
-                                    IAA_Player.CurvedShoot.performed -= OnCurvedShootKeyPressed;
-                                    IAA_Player.CurvedShoot.performed += OnCurvedShootKeyPressed;
-                            // Item //
-                                IAA_Player.DestroyItem.performed -= OnDestroyItemKeyPressed;
-                                IAA_Player.DestroyItem.performed += OnDestroyItemKeyPressed;
-                            // Skill //
-                                IAA_Player.ToggleSkill.performed -= OnToggleSkillKeyPressed;
-                                IAA_Player.ToggleSkill.performed += OnToggleSkillKeyPressed;
+                                IAA_Player.Shoot.performed -= OnShootKeyPressed;
+                                IAA_Player.Shoot.performed += OnShootKeyPressed;
                             // Pause //
                                 IAA_Player.Pause.performed -= OnPauseKeyPressed;
                                 IAA_Player.Pause.performed += OnPauseKeyPressed;
-                            // ScoreBoard //
-                                //IAA_Player.Shoot.performed -= OnScoreBoardKeyPressed;
-                                //IAA_Player.Shoot.performed += OnScoreBoardKeyPressed;
-                                //IAA_Player.Shoot.canceled -= OnScoreBoardKeyCancelled;
-                                //IAA_Player.Shoot.canceled += OnScoreBoardKeyCancelled;
                             // Chat //
                                 IAA_Player.Chat.performed -= OnChatKeyPressed;
                                 IAA_Player.Chat.performed += OnChatKeyPressed;
@@ -122,7 +98,32 @@ public class CustomInputManager : BaseManager<CharacterManager>
                             // Is In Proper Scene? //
                                 if (SceneManager.GetActiveScene().buildIndex != 1) return;
                             // Action //
-//-//                                MasterManager.Instance.CharacterManager.OwnPlayer.OnStartedMoving(IACbC_Context.ReadValue<Vector2>());
+                                Vector2 Vec2_Input = IACbC_Context.ReadValue<Vector2>();
+                                switch (IACbC_Context.action.name)
+                                {
+                                    case "MoveRegular":
+                                        Vec2_Input = (Vec2_Input.x, Vec2_Input.y) switch 
+                                                     {
+                                                        (-1.00f, +0.00f) => new Vector2(-1.00f, +0.00f),   // Bottom Left Corner  //
+                                                        (-0.71f, +0.71f) => new Vector2(-1.00f, +0.00f),   // Bottom Left Corner  //
+                                                        (+0.00f, +1.00f) => new Vector2(+0.00f, +1.00f),   // Top Middle Corner   //
+                                                        (+0.71f, +0.71f) => new Vector2(+1.00f, +0.00f),   // Bottom Right Corner //
+                                                        (+1.00f, +0.00f) => new Vector2(+1.00f, +0.00f),   // Bottom Right Corner //
+                                                        _                => new Vector2(+0.00f, -1.00f),   // Default             //
+                                                     };
+                                    break;
+                                    case "MoveDiagonal":
+                                        Vec2_Input = (Vec2_Input.x, Vec2_Input.y) switch 
+                                                     {
+                                                        (-1.00f, +0.00f) => new Vector2(-0.71f, +0.71f),   // Top Left Corner     //
+                                                        (+1.00f, +0.00f) => new Vector2(+0.71f, +0.71f),   // Bottom Right Corner //
+                                                        _                => new Vector2(+0.00f, -1.00f),   // Default             //
+                                                     };
+                                    break;
+                                }
+                                Debug.Log(Vec2_Input);
+                                ((EnemyCharacter) MasterManager.Instance.CharacterManager.OwnPlayer).OnStartedMoving(Vec2_Input);
+                                //((PlayerPerspective) MasterManager.Instance.CharacterManager.OwnPlayer).OnStartedMoving(Vec2_Input);
                         }
                         public void OnMouseMoveKeyPressed(InputAction.CallbackContext IACbC_Context) 
                         {
