@@ -45,7 +45,7 @@ public class BaseManager<GenericManager> : MonoBehaviourPunCallbacks where Gener
             public virtual void OnFixedUpdate(float Flt_FixedDT)
             {
             }
-            public virtual void OnUpdate(float Flt_FixedDT)
+            public virtual void OnUpdate(float Flt_DT)
             {
             }
         #endregion Custom Methods

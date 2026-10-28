@@ -58,10 +58,10 @@ public class BulletManager : BaseManager<BulletManager>
                         break;
                     }
             }
-            public override void OnUpdate(float Flt_FixedDT)
+            public override void OnUpdate(float Flt_DT)
             {
                 // Resume Base //
-                    base.OnUpdate(Flt_FixedDT);
+                    base.OnUpdate(Flt_DT);
                 // Scene dependant Behaviour //
                     switch (SceneManager.GetActiveScene().buildIndex) 
                     {

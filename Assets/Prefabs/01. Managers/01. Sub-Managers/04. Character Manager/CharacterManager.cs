@@ -22,8 +22,11 @@ public class CharacterManager : BaseManager<CharacterManager>
             float IO_Flt_ShootCooldown;
             public float ShootCooldown => IO_Flt_ShootCooldown;
             [SerializeField] BasePlayer _ownPlayer;
-            BasePlayer O_Ctm_BP_OwnPlayer;
-            public BasePlayer OwnPlayer => O_Ctm_BP_OwnPlayer; 
+            BasePlayer IO_Ctm_BP_OwnPlayer;
+            public BasePlayer OwnPlayer => IO_Ctm_BP_OwnPlayer; 
+            [SerializeField] BasePlayer _enemyPlayer;
+            BasePlayer IO_Ctm_BP_EnemyPlayer;
+            public BasePlayer EnemyPlayer => IO_Ctm_BP_EnemyPlayer; 
             BasePlayer[] O_Ctm_BP_A1_PlayerList;
         #region    Hashtables (Communication among instances)
             private const string PlayerName_KEY = "PlayerName";
@@ -43,7 +46,8 @@ public class CharacterManager : BaseManager<CharacterManager>
                     IO_Flt_MaxHealth = _maxHealth;
                     IO_Flt_ShootCooldown = _shootCooldown;
 
-                    O_Ctm_BP_OwnPlayer = _ownPlayer;
+                    IO_Ctm_BP_OwnPlayer = _ownPlayer;
+                    IO_Ctm_BP_EnemyPlayer = _enemyPlayer;
             }
         #endregion Unity Methods
         #region    Override Methods
@@ -65,19 +69,18 @@ public class CharacterManager : BaseManager<CharacterManager>
                         break;
                     }
             }
-            public override void OnUpdate(float Flt_FixedDT)
+            public override void OnUpdate(float Flt_DT)
             {
                 // Resume Base //
-                    base.OnUpdate(Flt_FixedDT);
+                    base.OnUpdate(Flt_DT);
                 // Scene dependant Behaviour //
                     switch (SceneManager.GetActiveScene().buildIndex) 
                     {
                         case 0:
                         break;
                         case 1: // Level //
-                            if (O_Ctm_BP_A1_PlayerList.Length == 0) return;
-//-//                            foreach (BasePlayer Ctm_BP_Player in O_Ctm_BP_A1_PlayerList) 
-//-//                                Ctm_BP_Player.OnUpdate(Flt_FixedDT);
+                            ((EnemyCharacter) IO_Ctm_BP_EnemyPlayer).OnUpdate(Flt_DT);
+                            ((PlayerPerspective) IO_Ctm_BP_OwnPlayer).OnUpdate(Flt_DT);
                         break;
                     }
             }
@@ -176,7 +179,7 @@ public class CharacterManager : BaseManager<CharacterManager>
                     public void ChangePlayerMaterial(BasePlayer Ctm_BP_Input = null, int Int_Input = -1)
                     {
                         if (Ctm_BP_Input == null)
-                            Ctm_BP_Input = O_Ctm_BP_OwnPlayer;
+                            Ctm_BP_Input = IO_Ctm_BP_OwnPlayer;
                         Hashtable Hsh_MapKeys = new Hashtable
                         {
                             { PlayerID_KEY, Ctm_BP_Input.GetComponent<PhotonView>().ViewID },

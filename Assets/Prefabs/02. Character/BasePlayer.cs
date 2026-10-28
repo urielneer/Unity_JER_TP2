@@ -13,6 +13,9 @@ public class BasePlayer : MonoBehaviourPunCallbacks
             protected virtual void Awake()
             {
             }
+            public virtual void OnUpdate(float Flt_DT)
+            {
+            }
         #endregion Unity Methods
     #endregion Methods    
 }

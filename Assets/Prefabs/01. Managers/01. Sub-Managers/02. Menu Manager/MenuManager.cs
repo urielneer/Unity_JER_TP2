@@ -46,12 +46,12 @@ public class MenuManager : BaseManager<CharacterManager>
                 // Screen Resiza //
                     
             }
-            public override void OnUpdate(float Flt_FixedDT)
+            public override void OnUpdate(float Flt_DT)
             {
                 // Resume Base //
-                    base.OnFixedUpdate(Flt_FixedDT);
+                    base.OnFixedUpdate(Flt_DT);
                 // Screen Resiza //
-                    if (O_Ctm_Memt_Current.MenuName == "HUD") ((MenuTypeHUD) O_Ctm_Memt_Current).OnUpdate(Flt_FixedDT);
+                    if (O_Ctm_Memt_Current.MenuName == "HUD") ((MenuTypeHUD) O_Ctm_Memt_Current).OnUpdate(Flt_DT);
             }
         #endregion Override Methods
         #region    Custom Methods

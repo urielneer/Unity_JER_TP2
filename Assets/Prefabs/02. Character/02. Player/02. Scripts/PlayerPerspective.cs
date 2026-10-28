@@ -100,11 +100,6 @@ public class PlayerPerspective : BasePlayer, IPunObservable
                                 else
                                     R_Bool_IsHiding = true;
                             // Animation Update? //
-                                I_Anim_Character.SetBool("IsHidden", R_Bool_IsHiding);
-                                I_Anim_Character.SetInteger("Location", R_Int_LocationIndex);
-                                I_Anim_Character.Play((I_Anim_Character.GetCurrentAnimatorStateInfo(0)).fullPathHash, 0, 0.99f);
-
-                        Debug.Log(R_Bool_IsHiding+", "+R_Int_LocationIndex);
                     }
                     public void OnStartedShooting() 
                     {

@@ -377,6 +377,10 @@ PrefabInstance:
       propertyPath: _ownPlayer
       value: 
       objectReference: {fileID: 1659110848554878851}
+    - target: {fileID: -3660053980865435512, guid: 01ef8b6e373ef484c810e187f9048888, type: 3}
+      propertyPath: _enemyPlayer
+      value: 
+      objectReference: {fileID: 1730517451371171530}
     - target: {fileID: 5660055400513330101, guid: 01ef8b6e373ef484c810e187f9048888, type: 3}
       propertyPath: m_Name
       value: Character Manager
@@ -3009,3 +3013,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90de7663735a3d94bbeefc991c50df73, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+--- !u!114 &1730517451371171530 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4853664041903361185, guid: 17accd5d5f098a74d86a721d10024cc9, type: 3}
+  m_PrefabInstance: {fileID: 6584163488617939563}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74af7e2a5608e3a47bf41e78fbf74a1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyCharacter
