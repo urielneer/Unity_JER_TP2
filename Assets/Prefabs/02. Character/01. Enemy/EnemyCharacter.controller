@@ -7,7 +7,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: HotFix_Idle_TR
+  m_Name: QuickFix_Idle_TR
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -655,7 +655,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: HotFix_Idle_TM
+  m_Name: QuickFix_Idle_TM
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -838,7 +838,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: HotFix_Idle_LL
+  m_Name: QuickFix_Idle_LL
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -1389,7 +1389,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: HotFix_Idle_LR
+  m_Name: QuickFix_Idle_LR
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -2492,7 +2492,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: HotFix_Idle_TL
+  m_Name: QuickFix_Idle_TL
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:

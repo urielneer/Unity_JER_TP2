@@ -59,6 +59,7 @@ MonoBehaviour:
   - RPC_SpawnCharacter
   - RPC_AlertShootToMaster
   - RPC_AlertWinnerToAll
+  - RPC_NotifyMovementUpdate
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

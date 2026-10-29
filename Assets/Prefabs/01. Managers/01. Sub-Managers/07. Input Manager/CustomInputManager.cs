@@ -121,8 +121,8 @@ public class CustomInputManager : BaseManager<CharacterManager>
                                                      };
                                     break;
                                 }
-                                ((EnemyCharacter) MasterManager.Instance.CharacterManager.EnemyPlayer).OnStartedMoving(Vec2_Input);
-                                //((PlayerPerspective) MasterManager.Instance.CharacterManager.OwnPlayer).OnStartedMoving(Vec2_Input);
+                                //((EnemyCharacter) MasterManager.Instance.CharacterManager.EnemyPlayer).OnStartedMoving(Vec2_Input);
+                                ((PlayerCharacter) MasterManager.Instance.CharacterManager.OwnPlayer).OnStartedMoving(Vec2_Input);
                         }
                         public void OnMouseMoveKeyPressed(InputAction.CallbackContext IACbC_Context) 
                         {

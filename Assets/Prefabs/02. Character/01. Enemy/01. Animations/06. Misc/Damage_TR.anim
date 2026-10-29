@@ -4665,7 +4665,7 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_Events:
   - time: 0.56666666
-    functionName: DamageOver
+    functionName: OtherDamageOver
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

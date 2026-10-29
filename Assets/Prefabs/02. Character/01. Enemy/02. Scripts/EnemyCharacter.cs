@@ -4,6 +4,11 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using static CustomExtension.ArrayExtensions;
 
+
+#region    "using" Script Clarification
+using Hashtable = ExitGames.Client.Photon.Hashtable;
+#endregion "using" Script Clarification
+
 public class EnemyCharacter : BasePlayer, IPunObservable
 {
     #region    Variables
@@ -25,7 +30,10 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                     [SerializeField] float _movementCoyoteTime;
                     float I_Flt_MovementCoyoteTime;
                     float R_Flt_MovementCoyoteCounter;
-                    private bool R_Bool_WasMovementCTEnabled; 
+                    private bool R_Bool_WasMovementCTEnabled;
+                // Hashtable Keys //
+                    private const string IsHiding_KEY = "IsHiding";
+                    private const string Location_KEY = "Location"; 
             [Space(10)]
             [Header(" Combat Settings")]
                 // Runtime //
@@ -96,6 +104,24 @@ public class EnemyCharacter : BasePlayer, IPunObservable
             }
         #endregion Override Methods
         #region    Custom Methods
+            #region    Network Methods
+                #region    Regular
+                #endregion Regular
+                #region    RPC
+                    [PunRPC]
+                    private void RPC_NotifyMovementUpdate(Hashtable Hsh_Input)
+                    {
+                        I_Anim_Character.SetBool("IsHidden"   , (bool) Hsh_Input[IsHiding_KEY]);
+                        I_Anim_Character.SetInteger("Location", (int)  Hsh_Input[Location_KEY]);   
+            
+                        I_Anim_Character.speed = 0f;
+
+                        I_Anim_Character.Update(0f);
+
+                        I_Anim_Character.speed = 1f;            
+                    }
+                #endregion RPC
+            #endregion Network Methods
         #endregion Custom Methods
         #region Listener Methods
             #region    Callee Methods
@@ -214,11 +240,11 @@ public class EnemyCharacter : BasePlayer, IPunObservable
         #endregion Coroutines Methods
     #endregion Methods    
     #region    Animation
-        public void HideStart()
+        public void OtherHideStart()
         {
 
         }
-        public void HideOver()
+        public void OtherHideOver()
         {
             if (R_Bool_IsRelocating)
             {
@@ -234,20 +260,20 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                     R_Bool_HasReachedLocation = true;
             }
         }
-        public void ShowStart()
+        public void OtherShowStart()
         {
 
         }
-        public void ShowOver()
+        public void OtherShowOver()
         {
             if (!R_Bool_HasReachedLocation)
                  R_Bool_HasReachedLocation = true;
         }
-        public void DamageOver()
+        public void OtherDamageOver()
         {
             R_Bool_HasReachedLocation = true;
         }
-        public void ShootOver()
+        public void OtherShootOver()
         {
         }
     #endregion Animation

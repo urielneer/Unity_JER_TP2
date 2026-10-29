@@ -80,7 +80,7 @@ public class CharacterManager : BaseManager<CharacterManager>
                         break;
                         case 1: // Level //
                             ((EnemyCharacter) IO_Ctm_BP_EnemyPlayer).OnUpdate(Flt_DT);
-                            ((PlayerPerspective) IO_Ctm_BP_OwnPlayer).OnUpdate(Flt_DT);
+                            ((PlayerCharacter) IO_Ctm_BP_OwnPlayer).OnUpdate(Flt_DT);
                         break;
                     }
             }
