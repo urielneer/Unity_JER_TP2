@@ -1,5 +1,6 @@
 using System;
 using Photon.Pun;
+using Unity.Burst.Intrinsics;
 using UnityEngine;
 using UnityEngine.UIElements;
 using static CustomExtension.ArrayExtensions;
@@ -14,12 +15,12 @@ public class PlayerCharacter : BasePlayer, IPunObservable
     #region    Variables
         #region    Controls 
             [Header(" Character Settings")]
-                    [SerializeField] Animator _animator;
+                    [SerializeField] private Animator _animator;
                     private Animator I_Anim_Character;
             [Space(10)]
             [Header(" Movement Settings")]
                 // Input //
-                    [SerializeField] float _movementSpeed;
+                    [SerializeField] private float _movementSpeed;
                     private float I_Flt_MovementSpeed;
                 // Runtime //
                     private int R_Int_LocationIndex = 2;
@@ -27,7 +28,7 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                     private bool R_Bool_IsHiding;
                     private bool R_Bool_IsRelocating; 
                     private bool R_Bool_HasReachedLocation; 
-                    [SerializeField] float _movementCoyoteTime;
+                    [SerializeField] private float _movementCoyoteTime;
                     float I_Flt_MovementCoyoteTime;
                     float R_Flt_MovementCoyoteCounter;
                     private bool R_Bool_WasMovementCTEnabled; 
@@ -37,6 +38,8 @@ public class PlayerCharacter : BasePlayer, IPunObservable
             [Space(10)]
             [Header(" Combat Settings")]
                 // Runtime //
+                    [SerializeField] private Aim _aim;
+                    Aim I_Aim_Own;
                     private bool R_Bool_IsShooting;
                     private bool R_Bool_CanShoot;
                     private bool R_Bool_IsUsingWindhorn;
@@ -84,6 +87,7 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                     R_Bool_HasReachedLocation = true;
                     R_Bool_WasMovementCTEnabled = false;
                     R_Bool_CanShoot = true;
+                    I_Aim_Own = _aim;
             }
         #endregion Unity Methods
         #region    Override Methods
@@ -177,7 +181,18 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                                             Hashtable Hsh_Keys = new Hashtable
                                             {
                                                 { IsHiding_KEY, R_Bool_IsHiding     },
-                                                { Location_KEY, R_Int_LocationIndex },
+                                                { 
+                                                    Location_KEY, 
+                                                    (Int_PotentialLocation) switch
+                                                    {
+                                                        4 => 0,   // Bottom Left Corner  //
+                                                        3 => 1,   // Top Left Corner     //
+                                                        2 => 2,   // Top Middle Corner   //
+                                                        1 => 3,   // Top Right Corner    //
+                                                        0 => 4,   // Bottom Right Corner //
+                                                        _ => 5,   // Default             //
+                                                    }
+                                                },
                                             }; 
                                             ((EnemyCharacter) (MasterManager.Instance.CharacterManager.EnemyPlayer)).GetComponent<PhotonView>().RPC(nameof(RPC_NotifyMovementUpdate),RpcTarget.Others, Hsh_Keys);
                                     }
@@ -207,10 +222,12 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                             if (R_Bool_WasKilled) return;
                         // Allow If It's Shootout Time //
                             if (!R_Bool_IsShootOutTime) return;
+                        // Allow If It's Not Hiding //
+                            if (!R_Bool_IsHiding) return;
                         // Proceed //
                             if (!R_Bool_CanShoot) return;   
                         // Logic //
-
+                            I_Aim_Own.SpawnBullet();
                     }
                     public void OnStartedReloading() 
                     {

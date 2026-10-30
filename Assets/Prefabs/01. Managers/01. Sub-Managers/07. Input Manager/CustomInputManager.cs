@@ -71,6 +71,12 @@ public class CustomInputManager : BaseManager<CharacterManager>
                             // Shoot //
                                 IAA_Player.Shoot.performed -= OnShootKeyPressed;
                                 IAA_Player.Shoot.performed += OnShootKeyPressed;
+                            // WindHorn //
+                                IAA_Player.WindHorn.performed -= OnWindHornKeyPressed;
+                                IAA_Player.WindHorn.performed += OnWindHornKeyPressed;
+                            // Shoot //
+                                IAA_Player.Reload.performed -= OnReloadKeyPressed;
+                                IAA_Player.Reload.performed += OnReloadKeyPressed;
                             // Pause //
                                 IAA_Player.Pause.performed -= OnPauseKeyPressed;
                                 IAA_Player.Pause.performed += OnPauseKeyPressed;
@@ -129,36 +135,32 @@ public class CustomInputManager : BaseManager<CharacterManager>
                             // Is In Proper Scene? //
                                 if (SceneManager.GetActiveScene().buildIndex != 1) return;
                             // Action //
-//-//                                MasterManager.Instance.CharacterManager.OwnPlayer.OnStartedMouseMoving(IACbC_Context.ReadValue<Vector2>());
+                                //((PlayerCharacter) MasterManager.Instance.CharacterManager.OwnPlayer).OnStartedMoving(Vec2_Input);
                         }
-                        public void OnRotateKeyPressed(InputAction.CallbackContext IACbC_Context)
-                        {
-                            // Is In Proper Scene? //
-                                if (SceneManager.GetActiveScene().buildIndex != 1) return;
-                            // Action //
-//-//                                MasterManager.Instance.CharacterManager.OwnPlayer.OnStartedRotating(IACbC_Context.ReadValue<Vector2>());
-                        } 
-                        public void OnJumpKeyPressed(InputAction.CallbackContext IACbC_Context)
-                        {
-                            // Is In Proper Scene? //
-                                if (SceneManager.GetActiveScene().buildIndex != 1) return;
-                            // Action //
-//-//                               MasterManager.Instance.CharacterManager.OwnPlayer.OnStartedJumping(); 
-                        } 
                         public void OnShootKeyPressed(InputAction.CallbackContext IACbC_Context)
                         {
                             // Is In Proper Scene? //
                                 if (SceneManager.GetActiveScene().buildIndex != 1) return;
                             // Action //
-                                MasterManager.Instance.GameManager.ShootDummy();
-//-//                               MasterManager.Instance.CharacterManager.OwnPlayer.OnStartedStraightShooting(); 
+                            // Action //
+                                //MasterManager.Instance.GameManager.ShootDummy();
+                                ((PlayerCharacter) MasterManager.Instance.CharacterManager.OwnPlayer).OnStartedShooting();
                         }
-                        public void OnCurvedShootKeyPressed(InputAction.CallbackContext IACbC_Context)
+                        public void OnReloadKeyPressed(InputAction.CallbackContext IACbC_Context)
                         {
                             // Is In Proper Scene? //
                                 if (SceneManager.GetActiveScene().buildIndex != 1) return;
                             // Action //
-//-//                               MasterManager.Instance.CharacterManager.OwnPlayer.OnStartedCurvedShooting(); 
+                                //MasterManager.Instance.GameManager.ShootDummy();
+                                ((PlayerCharacter) MasterManager.Instance.CharacterManager.OwnPlayer).OnStartedReloading();
+                        }
+                        public void OnWindHornKeyPressed(InputAction.CallbackContext IACbC_Context)
+                        {
+                            // Is In Proper Scene? //
+                                if (SceneManager.GetActiveScene().buildIndex != 1) return;
+                            // Action //
+                                //MasterManager.Instance.GameManager.ShootDummy();
+                                ((PlayerCharacter) MasterManager.Instance.CharacterManager.OwnPlayer).OnStartedWindhorn();
                         }
                         public void OnPauseKeyPressed(InputAction.CallbackContext IACbC_Context)
                         {
@@ -187,16 +189,6 @@ public class CustomInputManager : BaseManager<CharacterManager>
                                 StartCoroutine(ClearExtraCharNextFrame());
                            
                         }
-                        public void OnScoreBoardKeyPressed(InputAction.CallbackContext IACbC_Context)
-                        {
-                            // Is In Proper Scene? //
-                                if (SceneManager.GetActiveScene().buildIndex != 1) return;
-                            // Action //
-                        
-                            // Corroutine //
-                                StartCoroutine(ClearExtraCharNextFrame());
-                           
-                        } 
                         public void OnChatKeyPressed(InputAction.CallbackContext IACbC_Context)
                         { 
                             // Is In Proper Scene? //
@@ -216,20 +208,6 @@ public class CustomInputManager : BaseManager<CharacterManager>
                             // Action //
 //-//                               MasterManager.Instance.CharacterManager.DamageCharacter(MasterManager.Instance.CharacterManager.OwnPlayer.ID, 200f);
                         }   
-                        public void OnDestroyItemKeyPressed(InputAction.CallbackContext IACbC_Context)
-                        {
-                            // Is In Proper Scene? //
-                                if (SceneManager.GetActiveScene().buildIndex != 1) return;
-                            // Action //
-//-//                               MasterManager.Instance.CharacterManager.OwnPlayer.DestroyFromInventory();                            
-                        }  
-                        public void OnToggleSkillKeyPressed(InputAction.CallbackContext IACbC_Context)
-                        {
-                            // Is In Proper Scene? //
-                                if (SceneManager.GetActiveScene().buildIndex != 1) return;
-                            // Action //
-//-//                               MasterManager.Instance.CharacterManager.OwnPlayer.ToggleSkill();                            
-                        }   
                     // Cancelled //
                         public void OnMoveKeyCancelled(InputAction.CallbackContext IACbC_Context) 
                         {
@@ -246,30 +224,6 @@ public class CustomInputManager : BaseManager<CharacterManager>
                             // Action //
 //-//                                MasterManager.Instance.CharacterManager.OwnPlayer.OnStoppedMouseMoving(IACbC_Context.ReadValue<Vector2>());
                         }
-                        public void OnRotateKeyCancelled(InputAction.CallbackContext IACbC_Context)
-                        {
-                            // Is In Proper Scene? //
-                                if (SceneManager.GetActiveScene().buildIndex != 1) return;
-                            // Action //
-//-//                               MasterManager.Instance.CharacterManager.OwnPlayer.OnStoppedRotating(IACbC_Context.ReadValue<Vector2>());
-                        } 
-                        public void OnJumpKeyCancelled(InputAction.CallbackContext IACbC_Context)
-                        {
-                            // Is In Proper Scene? //
-                                if (SceneManager.GetActiveScene().buildIndex != 1) return;
-                            // Action //
-//-//                               MasterManager.Instance.CharacterManager.OwnPlayer.OnStoppedJumping(); 
-                        } 
-                        public void OnScoreBoardKeyCancelled(InputAction.CallbackContext IACbC_Context)
-                        {
-                            // Is In Proper Scene? //
-                                if (SceneManager.GetActiveScene().buildIndex != 1) return;
-                            // Action //
-                        
-                            // Corroutine //
-                                StartCoroutine(ClearExtraCharNextFrame());
-                           
-                        } 
                 #endregion Player Methods
                 #region    Chat Methods
                     public void OnSubmitChatMessage(InputAction.CallbackContext IACbC_Context)

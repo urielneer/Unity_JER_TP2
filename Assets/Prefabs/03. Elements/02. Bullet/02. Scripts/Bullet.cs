@@ -16,7 +16,12 @@ public class Bullet : MonoBehaviour
     #region    Animation
         public void ImpactOver()
         {
-
+            // Has Hit Player ? //
+                if (true)
+                {
+                }
+            // Self Destruct //
+                Destroy(this.gameObject);
         }
     #endregion Animation
 }

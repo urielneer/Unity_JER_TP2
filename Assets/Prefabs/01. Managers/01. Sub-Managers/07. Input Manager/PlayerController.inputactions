@@ -34,6 +34,24 @@
                     "initialStateCheck": true
                 },
                 {
+                    "name": "WindHorn",
+                    "type": "Value",
+                    "id": "6bb152cb-4878-48fc-9d2c-7c0f8012c030",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "Press(behavior=1)",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Reload",
+                    "type": "Value",
+                    "id": "7f2dc23f-9b8b-43bb-bb38-a2e74ec6548a",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "Press(behavior=1)",
+                    "initialStateCheck": true
+                },
+                {
                     "name": "Pause",
                     "type": "Value",
                     "id": "f5965cb2-b5ec-4fa2-843d-791b0a35993d",
@@ -70,6 +88,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Shoot",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "89eb748a-f3db-4629-a93d-b03f91a11bea",
+                    "path": "<Mouse>/middleButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "WindHorn",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2f9941d7-474b-4721-aa09-42a88a688af2",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Reload",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

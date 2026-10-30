@@ -13,12 +13,19 @@ public class Aim : MonoBehaviour
 {
     #region    Variables
         #region    Menu
-            [SerializeField] private RectTransform _cursor;
-            private RectTransform IO_RTfm_Cursor;
-            public RectTransform AimCursor => IO_RTfm_Cursor;
+            [Header(" Cursor Move")]
+                [SerializeField] private RectTransform _cursor;
+                private RectTransform IO_RTfm_Cursor;
+                public RectTransform AimCursor => IO_RTfm_Cursor;
 
-            [SerializeField] private Canvas _canvas;     
-            private Canvas I_Cvs_Scene;
+                [SerializeField] private Canvas _canvas;     
+                private Canvas I_Cvs_Scene;
+            [Space(10)]
+            [Header(" BulletShoot")]
+                [SerializeField] private GameObject _bulletContainer;     
+                private GameObject I_GObj_BulletContainer;
+                [SerializeField] private Bullet _bullet;     
+                private Bullet I_Bllt_Prefab;
         #endregion Menu
         #region    Manager-To-Manager Data
         #endregion Manager-To-Manager Data
@@ -30,6 +37,8 @@ public class Aim : MonoBehaviour
                 // Variables //
                     IO_RTfm_Cursor = _cursor;
                     I_Cvs_Scene = _canvas;
+                    I_GObj_BulletContainer = _bulletContainer; 
+                    I_Bllt_Prefab = _bullet;
             }
         #endregion Unity Methods
         #region    Override Methods
@@ -63,6 +72,12 @@ public class Aim : MonoBehaviour
                     );
                 // Return //
                     return Vec2_LocalPoint;
+            }
+            public void SpawnBullet()
+            {
+                Bullet Bllt_Spawned = Instantiate(I_Bllt_Prefab, (new Vector3(this.transform.position.x, this.transform.position.y, 5)), Quaternion.identity);
+                Bllt_Spawned.transform.SetParent(I_GObj_BulletContainer.transform, worldPositionStays: true);
+                Bllt_Spawned.transform.localScale = new Vector3(1,1,1);
             }
         #endregion Custom Methods
     #endregion Methods
