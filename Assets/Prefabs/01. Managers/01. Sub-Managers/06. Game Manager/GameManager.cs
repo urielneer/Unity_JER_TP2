@@ -59,7 +59,6 @@ public class GameManager : BaseManager<GameManager>
                             _elapsedTime = 0f;
                             _currentSeconds = 0;
                             O_Bool_CanShoot = false;
-                            _image.color = Color.yellow;
                         break;
                     }
             }
@@ -120,7 +119,7 @@ public class GameManager : BaseManager<GameManager>
                         if (_currentSeconds == Int_LastCurrent + 1)
                             { CompareTimeframes(); }
                         if (_currentSeconds == Int_LastCurrent + 2)
-                            { _image.color = Color.yellow; }     
+                            { /* */ }     
                     }
                     string Time_KEY = "Time_KEY";
                     string Ticks_KEY = "Ticks_KEY";

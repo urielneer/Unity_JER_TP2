@@ -92,7 +92,6 @@ public class EnemyCharacter : BasePlayer, IPunObservable
             #pragma warning restore CS1998
             {
                 // Reduce "Coyote" Counter //
-                //Debug.Log("AAA");
                     if (R_Bool_WasMovementCTEnabled)
                         R_Flt_MovementCoyoteCounter -= Flt_DT;
                 // Execute "Coyote" Stashed Movement //
@@ -104,24 +103,14 @@ public class EnemyCharacter : BasePlayer, IPunObservable
             }
         #endregion Override Methods
         #region    Custom Methods
-            #region    Network Methods
-                #region    Regular
-                #endregion Regular
-                #region    RPC
-                    [PunRPC]
-                    private void RPC_NotifyMovementUpdate(Hashtable Hsh_Input)
+            #region    Mirror Methods
+                #region    Movement
+                    public void NotifyMovementUpdate(Vector2 Vec2_Input)
                     {
-                        I_Anim_Character.SetBool("IsHidden"   , (bool) Hsh_Input[IsHiding_KEY]);
-                        I_Anim_Character.SetInteger("Location", (int)  Hsh_Input[Location_KEY]);   
-            
-                        I_Anim_Character.speed = 0f;
-
-                        I_Anim_Character.Update(0f);
-
-                        I_Anim_Character.speed = 1f;            
+                        OnStartedMoving(Vec2_Input);  
                     }
-                #endregion RPC
-            #endregion Network Methods
+                #endregion Movement
+            #endregion Mirror Methods
         #endregion Custom Methods
         #region Listener Methods
             #region    Callee Methods
@@ -143,7 +132,7 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                                                                     (+0.00f, +1.00f) => 2,   // Top Middle Corner   //
                                                                     (+0.71f, +0.71f) => 3,   // Top Right Corner    //
                                                                     (+1.00f, +0.00f) => 4,   // Bottom Right Corner //
-                                                                    _                => 5,   // Default             //
+                                                                    _                => 5,   // Bottom (Hide)       //
                                                                 };
                                 // Is Moving to a direfent location ? //
                                     if (R_Int_LocationIndex != Int_PotentialLocation)
@@ -173,6 +162,7 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                                             I_Anim_Character.Update(0f);
 
                                             I_Anim_Character.speed = 1f;
+Debug.Log("E) LI: "+R_Int_LocationIndex+" / IR:"+R_Bool_IsRelocating+" / HR:"+R_Bool_HasReachedLocation+" / IH:"+R_Bool_IsHiding);  
                                     }
                             }
                             else
@@ -184,7 +174,7 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                                                     (+0.00f, +1.00f) => 2,   // Top Middle Corner   //
                                                     (+0.71f, +0.71f) => 3,   // Top Right Corner    //
                                                     (+1.00f, +0.00f) => 4,   // Bottom Right Corner //
-                                                    _                => 5,   // Default             //
+                                                    _                => 5,   // Bottom (Hide)       //
                                                };
                                 if (Int_Temp != R_Int_LocationIndex)
                                 {
@@ -246,6 +236,7 @@ public class EnemyCharacter : BasePlayer, IPunObservable
         }
         public void OtherHideOver()
         {
+Debug.Log("ZZZ");
             if (R_Bool_IsRelocating)
             {
                 R_Bool_IsRelocating = false;
@@ -253,6 +244,13 @@ public class EnemyCharacter : BasePlayer, IPunObservable
 
                 I_Anim_Character.SetBool("IsHidden", R_Bool_IsHiding);
                 I_Anim_Character.SetInteger("Location", R_Int_LocationIndex);
+
+                I_Anim_Character.speed = 0f;
+
+                I_Anim_Character.Update(0f);
+
+                I_Anim_Character.speed = 1f;
+            Debug.Log("XXX");
             }
             else
             {

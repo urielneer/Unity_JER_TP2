@@ -115,7 +115,7 @@ public class CustomInputManager : BaseManager<CharacterManager>
                                                         (+0.00f, +1.00f) => new Vector2(+0.00f, +1.00f),   // Top Middle Corner   //
                                                         (+0.71f, +0.71f) => new Vector2(+1.00f, +0.00f),   // Bottom Right Corner //
                                                         (+1.00f, +0.00f) => new Vector2(+1.00f, +0.00f),   // Bottom Right Corner //
-                                                        _                => new Vector2(+0.00f, -1.00f),   // Default             //
+                                                        _                => new Vector2(+0.00f, -1.00f),   // Bottom (Hide)       //
                                                      };
                                     break;
                                     case "MoveDiagonal":
@@ -123,7 +123,7 @@ public class CustomInputManager : BaseManager<CharacterManager>
                                                      {
                                                         (-1.00f, +0.00f) => new Vector2(-0.71f, +0.71f),   // Top Left Corner     //
                                                         (+1.00f, +0.00f) => new Vector2(+0.71f, +0.71f),   // Bottom Right Corner //
-                                                        _                => new Vector2(+0.00f, -1.00f),   // Default             //
+                                                        _                => new Vector2(+0.00f, -1.00f),   // Bottom (Hide)       //
                                                      };
                                     break;
                                 }

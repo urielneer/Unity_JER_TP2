@@ -45,8 +45,6 @@ public class MenuListContainerPlayer : BaseMenuListContainer
                     string Str_Temp = (string) Obj_Element;
                 // Add //
                     Ctm_MLEP_Temp.SetUp(MasterContainer.gameObject, Str_Temp);
-                    if (PhotonNetwork.CurrentRoom.Players.TryGetValue((GameObject.Find("WaitingRoom")).GetComponent<MenuTypeWaitingRoom>().VigilantNumber, out Player Plyr));
-                        Ctm_MLEP_Temp.ButtonColor(Str_Temp == Plyr.NickName);
                     return Ctm_MLEP_Temp;
             }
         #endregion Override Methods

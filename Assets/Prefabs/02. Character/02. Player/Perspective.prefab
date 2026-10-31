@@ -556,6 +556,7 @@ GameObject:
   - component: {fileID: 2045308683542394356}
   - component: {fileID: 2782455018699865663}
   - component: {fileID: 5461316656594389616}
+  - component: {fileID: 528439792489148873}
   m_Layer: 0
   m_Name: Perspective
   m_TagString: Untagged
@@ -622,6 +623,31 @@ MonoBehaviour:
   _animator: {fileID: 2782455018699865663}
   _movementSpeed: 0
   _movementCoyoteTime: 6
+  _aim: {fileID: 0}
+--- !u!114 &528439792489148873
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6588461473767659777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: PhotonUnityNetworking::Photon.Pun.PhotonView
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents:
+  - {fileID: 5461316656594389616}
+  - {fileID: 4956262390907798329}
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &8334216460630145207
 GameObject:
   m_ObjectHideFlags: 0
@@ -872,6 +898,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4c4f9009c3727da4a90ed10f41480dbd, type: 3}
+--- !u!114 &4956262390907798329 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4063823654708519814, guid: 4c4f9009c3727da4a90ed10f41480dbd, type: 3}
+  m_PrefabInstance: {fileID: 8984035257804857535}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74af7e2a5608e3a47bf41e78fbf74a1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyCharacter
 --- !u!224 &7228322731333330681 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1800768383210882630, guid: 4c4f9009c3727da4a90ed10f41480dbd, type: 3}

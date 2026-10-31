@@ -115,14 +115,7 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                     [PunRPC]
                     private void RPC_NotifyMovementUpdate(Hashtable Hsh_Input)
                     {
-                        I_Anim_Character.SetBool("IsHidden"   , (bool) Hsh_Input[IsHiding_KEY]);
-                        I_Anim_Character.SetInteger("Location", (int)  Hsh_Input[Location_KEY]);   
-            
-                        I_Anim_Character.speed = 0f;
-
-                        I_Anim_Character.Update(0f);
-
-                        I_Anim_Character.speed = 1f;            
+                        ((EnemyCharacter) (MasterManager.Instance.CharacterManager.EnemyPlayer)).NotifyMovementUpdate((Vector2) Hsh_Input[Location_KEY]);
                     }
                 #endregion RPC
             #endregion Network Methods
@@ -147,7 +140,7 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                                                                     (+0.00f, +1.00f) => 2,   // Top Middle Corner   //
                                                                     (+0.71f, +0.71f) => 3,   // Top Right Corner    //
                                                                     (+1.00f, +0.00f) => 4,   // Bottom Right Corner //
-                                                                    _                => 5,   // Default             //
+                                                                    _                => 5,   // Bottom (Hide)       //
                                                                 };
                                 // Is Moving to a direfent location ? //
                                     if (R_Int_LocationIndex != Int_PotentialLocation)
@@ -180,21 +173,27 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                                         // Notify Opponent //
                                             Hashtable Hsh_Keys = new Hashtable
                                             {
-                                                { IsHiding_KEY, R_Bool_IsHiding     },
+                                                {
+                                                    IsHiding_KEY, 
+                                                    R_Bool_IsHiding
+                                                },
                                                 { 
                                                     Location_KEY, 
-                                                    (Int_PotentialLocation) switch
-                                                    {
-                                                        4 => 0,   // Bottom Left Corner  //
-                                                        3 => 1,   // Top Left Corner     //
-                                                        2 => 2,   // Top Middle Corner   //
-                                                        1 => 3,   // Top Right Corner    //
-                                                        0 => 4,   // Bottom Right Corner //
-                                                        _ => 5,   // Default             //
-                                                    }
+                                                    (Vector2) 
+                                                    (
+                                                        (Int_PotentialLocation) switch
+                                                        {
+                                                            4 => new Vector2 (-1.00f, +0.00f),   // Bottom Left Corner  //
+                                                            3 => new Vector2 (-0.71f, +0.71f),   // Top Left Corner     //
+                                                            2 => new Vector2 (+0.00f, +1.00f),   // Top Middle Corner   //
+                                                            1 => new Vector2 (+0.71f, +0.71f),   // Top Right Corner    //
+                                                            0 => new Vector2 (+1.00f, +0.00f),   // Bottom Right Corner //
+                                                            _ => new Vector2 (+0.00f, -1.00f),   // Bottom (Hide)       //
+                                                        } 
+                                                    )
                                                 },
                                             }; 
-                                            ((EnemyCharacter) (MasterManager.Instance.CharacterManager.EnemyPlayer)).GetComponent<PhotonView>().RPC(nameof(RPC_NotifyMovementUpdate),RpcTarget.Others, Hsh_Keys);
+                                            GetComponent<PhotonView>().RPC(nameof(RPC_NotifyMovementUpdate),RpcTarget.Others, Hsh_Keys);
                                     }
                             }
                             else
@@ -206,7 +205,7 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                                                     (+0.00f, +1.00f) => 2,   // Top Middle Corner   //
                                                     (+0.71f, +0.71f) => 3,   // Top Right Corner    //
                                                     (+1.00f, +0.00f) => 4,   // Bottom Right Corner //
-                                                    _                => 5,   // Default             //
+                                                    _                => 5,   // Bottom (Hide)       //
                                                };
                                 if (Int_Temp != R_Int_LocationIndex)
                                 {
@@ -277,13 +276,18 @@ public class PlayerCharacter : BasePlayer, IPunObservable
 
                 I_Anim_Character.SetBool("IsHidden", R_Bool_IsHiding);
                 I_Anim_Character.SetInteger("Location", R_Int_LocationIndex);
+
+                I_Anim_Character.speed = 0f;
+
+                I_Anim_Character.Update(0f);
+
+                I_Anim_Character.speed = 1f;
             }
             else
             {
                 if (!R_Bool_HasReachedLocation && (R_Int_LocationIndex == 5))
                     R_Bool_HasReachedLocation = true;
             }
-            Debug.Log("AAA: "+ R_Bool_HasReachedLocation);
         }
         public void OwnShowStart()
         {
@@ -293,7 +297,6 @@ public class PlayerCharacter : BasePlayer, IPunObservable
         {
             if (!R_Bool_HasReachedLocation)
                  R_Bool_HasReachedLocation = true;
-            Debug.Log("BBB: " + R_Bool_HasReachedLocation);
         }
         public void OwnDamageOver()
         {
