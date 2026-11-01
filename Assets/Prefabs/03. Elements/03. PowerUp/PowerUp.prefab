@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 2652706786752488279}
   - component: {fileID: 26879557126981859}
   - component: {fileID: 4990673099724501199}
-  m_Layer: 5
+  - component: {fileID: 7632760122392535997}
+  m_Layer: 9
   m_Name: PowerUp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -112,6 +113,42 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e93fbe42082bc7246b90fc2032d0634d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PowerUp
+--- !u!58 &7632760122392535997
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7325256210146129467}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Radius: 66
 --- !u!1 &8376550742350239779
 GameObject:
   m_ObjectHideFlags: 0
@@ -123,7 +160,7 @@ GameObject:
   - component: {fileID: 266221483626266395}
   - component: {fileID: 7232911937630052929}
   - component: {fileID: 7778001085529031806}
-  m_Layer: 5
+  m_Layer: 9
   m_Name: Icon
   m_TagString: Untagged
   m_Icon: {fileID: 0}

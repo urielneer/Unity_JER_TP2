@@ -19,7 +19,7 @@ public class EnemyCharacter : BasePlayer, IPunObservable
             [Space(10)]
             [Header(" Movement Settings")]
                 // Input //
-                    [SerializeField] float _movementSpeed;
+                    [SerializeField] private float _movementSpeed;
                     private float I_Flt_MovementSpeed;
                 // Runtime //
                     private int R_Int_LocationIndex = 2;
@@ -27,19 +27,20 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                     private bool R_Bool_IsHiding;
                     private bool R_Bool_IsRelocating; 
                     private bool R_Bool_HasReachedLocation; 
-                    [SerializeField] float _movementCoyoteTime;
+                    [SerializeField] private float _movementCoyoteTime;
                     float I_Flt_MovementCoyoteTime;
                     float R_Flt_MovementCoyoteCounter;
-                    private bool R_Bool_WasMovementCTEnabled;
+                    private bool R_Bool_WasMovementCTEnabled; 
                 // Hashtable Keys //
                     private const string IsHiding_KEY = "IsHiding";
-                    private const string Location_KEY = "Location"; 
+                    private const string Location_KEY = "Location";
             [Space(10)]
             [Header(" Combat Settings")]
                 // Runtime //
+                    [SerializeField] private Aim _aim;
+                    Aim I_Aim_Own;
                     private bool R_Bool_IsShooting;
                     private bool R_Bool_CanShoot;
-                    private bool R_Bool_IsUsingWindhorn;
                     private bool R_Bool_IsReloading;
                     private bool R_Bool_IsHealing; 
 
@@ -48,6 +49,7 @@ public class EnemyCharacter : BasePlayer, IPunObservable
             [Header(" State Settings")]
                 // Runtime //
                     private bool R_Bool_WasDamaged;
+                    private bool R_Bool_WasWindHorned;
                     private bool R_Bool_WasKilled;
         #endregion Controls 
     #endregion Variables
@@ -80,10 +82,21 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                     I_Flt_MovementSpeed =_movementSpeed; 
                     I_Flt_MovementCoyoteTime = _movementCoyoteTime;
                     I_Anim_Character = _animator;
-                    R_Bool_IsRelocating = false;
-                    R_Bool_HasReachedLocation = true;
-                    R_Bool_WasMovementCTEnabled = false;
+
+                    R_Bool_IsHiding = false;
+                    R_Bool_IsRelocating = false; 
+                    R_Bool_HasReachedLocation = true; 
+                    R_Bool_WasMovementCTEnabled = false; 
+
+                    R_Bool_IsShooting = false;
                     R_Bool_CanShoot = true;
+                    R_Bool_IsReloading = false;
+                    R_Bool_IsHealing = false; 
+                    R_Bool_IsShootOutTime = false;
+            
+                    R_Bool_WasDamaged = false;
+                    R_Bool_WasWindHorned = false;
+                    R_Bool_WasKilled = false;
             }
         #endregion Unity Methods
         #region    Override Methods
@@ -103,6 +116,22 @@ public class EnemyCharacter : BasePlayer, IPunObservable
             }
         #endregion Override Methods
         #region    Custom Methods
+            #region    Network Methods
+                #region    Regular
+                #endregion Regular
+                #region    RPC
+                    [PunRPC]
+                    private void RPC_NotifyDamageUpdate(Hashtable Hsh_Input)
+                    {
+                        ((PlayerCharacter) (MasterManager.Instance.CharacterManager.OwnPlayer)).NotifyDamageUpdate((Vector2) Hsh_Input[Location_KEY]);
+                    }
+                    [PunRPC]
+                    private void RPC_NotifyWindhornUpdate(Hashtable Hsh_Input)
+                    {
+                        ((PlayerCharacter) (MasterManager.Instance.CharacterManager.OwnPlayer)).NotifyWindhornUpdate((Vector2) Hsh_Input[Location_KEY]);
+                    }
+                #endregion RPC
+            #endregion Network Methods
             #region    Mirror Methods
                 #region    Movement
                     public void NotifyMovementUpdate(Vector2 Vec2_Input)
@@ -117,11 +146,20 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                 #region   OnStarted
                     public void OnStartedMoving(Vector2 Vec2_Input)
                     {
-                        // Stop If Dead //
-                            if (R_Bool_WasKilled) return;
-                        // Stop If It's Shootout Time //
-                            if (R_Bool_IsShootOutTime) return;
-                        // Proceed //
+                        // Valdidation //
+                            #region    Should Proceed [?]
+                                if 
+                                (
+//                                    R_Bool_IsShootOutTime || // Stop If Shootout Time //
+                                    R_Bool_WasKilled      || // Stop If Dead //
+                                    R_Bool_WasDamaged     || // Stop If Damaged //
+                                    R_Bool_WasWindHorned  || // Stop If Afected By A Windhorn //
+                                    R_Bool_IsReloading    || // Stop If Reloading //
+                                    R_Bool_IsShooting        // Stop If Shooting //
+                                )
+                                return;
+                            #endregion Should Proceed [?] 
+                        // Logic //
                             if (R_Bool_HasReachedLocation)
                             {
                                 // Get New Location //
@@ -155,6 +193,8 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                                         // Animation Update? //
                                             AnimatorStateInfo ASI_StateInfo = _animator.GetCurrentAnimatorStateInfo(0);
                                             I_Anim_Character.SetBool("IsHidden", R_Bool_IsHiding);
+                                            I_Anim_Character.SetBool("IsDamaged", R_Bool_WasDamaged);
+                                            I_Anim_Character.SetBool("IsShooting", R_Bool_IsShooting);
                                             I_Anim_Character.SetInteger("Location", R_Int_LocationIndex);
             
                                             I_Anim_Character.speed = 0f;
@@ -162,7 +202,6 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                                             I_Anim_Character.Update(0f);
 
                                             I_Anim_Character.speed = 1f;
-Debug.Log("E) LI: "+R_Int_LocationIndex+" / IR:"+R_Bool_IsRelocating+" / HR:"+R_Bool_HasReachedLocation+" / IH:"+R_Bool_IsHiding);  
                                     }
                             }
                             else
@@ -186,34 +225,50 @@ Debug.Log("E) LI: "+R_Int_LocationIndex+" / IR:"+R_Bool_IsRelocating+" / HR:"+R_
                     }
                     public void OnStartedShooting() 
                     {
-                        // Stop If Dead //
-                            if (R_Bool_WasKilled) return;
-                        // Allow If It's Shootout Time //
-                            if (!R_Bool_IsShootOutTime) return;
-                        // Proceed //
-                            if (!R_Bool_CanShoot) return;   
+                        // Valdidation //
+                            #region    Should Proceed [?]
+                                if 
+                                (
+                                    !R_Bool_IsShootOutTime || // Stop If Outside Of Shootout Time //
+                                    R_Bool_IsHiding        || // Stop If Hiding //
+                                    R_Bool_WasKilled       || // Stop If Dead //
+                                    R_Bool_WasDamaged      || // Stop If Damaged //
+                                    R_Bool_WasWindHorned   || // Stop If Afected By A Windhorn //
+                                    R_Bool_IsReloading        // Stop If Reloading //
+                                )
+                                return;
+                            #endregion Should Proceed [?] 
                         // Logic //
 
                     }
                     public void OnStartedReloading() 
                     {
-                        // Stop If Dead //
-                            if (R_Bool_WasKilled) return;
-                        // Allow If It's Shootout Time //
-//                            if (!R_Bool_IsShootOutTime) return;
-                        // Proceed //
-//                            if (!R_Bool_CanShoot) return;   
+                        // Valdidation //
+                            #region    Should Proceed [?]
+                                if 
+                                (
+                                    !R_Bool_IsShootOutTime || // Stop If Outside Of Shootout Time //
+                                    R_Bool_WasKilled       || // Stop If Dead //
+                                    R_Bool_WasDamaged      || // Stop If Damaged //
+                                    R_Bool_WasWindHorned   || // Stop If Afected By A Windhorn //
+                                    R_Bool_IsShooting         // Stop If Shooting //
+                                )
+                                return;
+                            #endregion Should Proceed [?]
                         //  Logic //
-
                     }
                     public void OnStartedWindhorn() 
                     {
-                        // Stop If Dead //
-                            if (R_Bool_WasKilled) return;
-                        // Allow If It's Shootout Time //
-//                            if (!R_Bool_IsShootOutTime) return;
-                        // Proceed //
-//                            if (!R_Bool_CanShoot) return;   
+                        // Valdidation //
+                            #region    Should Proceed [?]
+                                if 
+                                (
+                                    R_Bool_WasKilled       || // Stop If Dead //
+                                    R_Bool_WasDamaged      || // Stop If Damaged //
+                                    R_Bool_WasWindHorned      // Stop If Afected By A Windhorn //
+                                )
+                                return;
+                            #endregion Should Proceed [?]
                         // Logic //
 
                     }
@@ -236,13 +291,14 @@ Debug.Log("E) LI: "+R_Int_LocationIndex+" / IR:"+R_Bool_IsRelocating+" / HR:"+R_
         }
         public void OtherHideOver()
         {
-Debug.Log("ZZZ");
             if (R_Bool_IsRelocating)
             {
                 R_Bool_IsRelocating = false;
                 R_Bool_IsHiding = false;
-
+            
                 I_Anim_Character.SetBool("IsHidden", R_Bool_IsHiding);
+                I_Anim_Character.SetBool("IsDamaged", R_Bool_WasDamaged);
+                I_Anim_Character.SetBool("IsShooting", R_Bool_IsShooting);
                 I_Anim_Character.SetInteger("Location", R_Int_LocationIndex);
 
                 I_Anim_Character.speed = 0f;
@@ -250,7 +306,6 @@ Debug.Log("ZZZ");
                 I_Anim_Character.Update(0f);
 
                 I_Anim_Character.speed = 1f;
-            Debug.Log("XXX");
             }
             else
             {
@@ -270,6 +325,18 @@ Debug.Log("ZZZ");
         public void OtherDamageOver()
         {
             R_Bool_HasReachedLocation = true;
+            R_Bool_WasDamaged = false;
+
+            I_Anim_Character.SetBool("IsHidden", R_Bool_IsHiding);
+            I_Anim_Character.SetBool("IsDamaged", R_Bool_WasDamaged);
+            I_Anim_Character.SetBool("IsShooting", R_Bool_IsShooting);
+            I_Anim_Character.SetInteger("Location", R_Int_LocationIndex);
+
+            I_Anim_Character.speed = 0f;
+
+            I_Anim_Character.Update(0f);
+
+            I_Anim_Character.speed = 1f;
         }
         public void OtherShootOver()
         {

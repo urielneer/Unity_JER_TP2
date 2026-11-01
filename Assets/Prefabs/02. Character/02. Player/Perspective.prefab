@@ -190,7 +190,7 @@ GameObject:
   - component: {fileID: 7960490103662025092}
   - component: {fileID: 8860013020594527803}
   - component: {fileID: 208157835284188168}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Haystack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
