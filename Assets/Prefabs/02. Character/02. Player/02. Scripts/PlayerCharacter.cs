@@ -40,8 +40,9 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                 // Runtime //
                     [SerializeField] private Aim _aim;
                     Aim I_Aim_Own;
+                    private bool O_Bool_CanShoot;
+                    public bool CanShoot => O_Bool_CanShoot;
                     private bool R_Bool_IsShooting;
-                    private bool R_Bool_CanShoot;
                     private bool R_Bool_IsReloading;
                     private bool R_Bool_IsHealing; 
 
@@ -77,8 +78,15 @@ public class PlayerCharacter : BasePlayer, IPunObservable
             }
             protected override void Awake()
             {
-                // Singleton Operations //
-                    base.Awake();
+                base.Awake();
+                OnStartUp();
+            }
+        #endregion Unity Methods
+        #region    Override Methods
+            #pragma warning disable CS1998
+            public async void OnStartUp()
+            #pragma warning restore CS1998
+            {
                 // Variables //
                     I_Flt_MovementSpeed =_movementSpeed; 
                     I_Flt_MovementCoyoteTime = _movementCoyoteTime;
@@ -90,18 +98,20 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                     R_Bool_HasReachedLocation = true; 
                     R_Bool_WasMovementCTEnabled = false; 
 
+                    
+                    O_Bool_CanShoot = true;
                     R_Bool_IsShooting = false;
-                    R_Bool_CanShoot = true;
                     R_Bool_IsReloading = false;
                     R_Bool_IsHealing = false; 
-                    R_Bool_IsShootOutTime = false;
+                    R_Bool_IsShootOutTime = true;
+//                    R_Bool_IsShootOutTime = false;
             
                     R_Bool_WasDamaged = false;
                     R_Bool_WasWindHorned = false;
                     R_Bool_WasKilled = false;
+                // Children StartUp //
+                    I_Aim_Own.OnStartUp();
             }
-        #endregion Unity Methods
-        #region    Override Methods
             #pragma warning disable CS1998
             public async void OnUpdate(float Flt_DT)
             #pragma warning restore CS1998
@@ -120,6 +130,12 @@ public class PlayerCharacter : BasePlayer, IPunObservable
             }
         #endregion Override Methods
         #region    Custom Methods
+            #region    Bool-Resseters
+                public void ResetCanshootFlag()
+                {
+                    O_Bool_CanShoot = true;
+                }
+            #endregion Bool-Resseters
             #region    Network Methods
                 #region    Regular
                 #endregion Regular
@@ -259,12 +275,14 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                                     R_Bool_WasKilled       || // Stop If Dead //
                                     R_Bool_WasDamaged      || // Stop If Damaged //
                                     R_Bool_WasWindHorned   || // Stop If Afected By A Windhorn //
-                                    R_Bool_IsReloading        // Stop If Reloading //
+                                    R_Bool_IsReloading     || // Stop If Reloading //
+                                    !O_Bool_CanShoot          // Stop If Not Allowed To Shoot //
                                 )
                                 return;
                             #endregion Should Proceed [?] 
                         // Logic //
                             I_Aim_Own.SpawnBullet();
+                            O_Bool_CanShoot = false;
                     }
                     public void OnStartedReloading() 
                     {

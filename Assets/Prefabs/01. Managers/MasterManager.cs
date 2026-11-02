@@ -129,10 +129,9 @@ public class MasterManager : BaseManager<MasterManager>
                 // Resume Base //
                     base.OnUpdate(Flt_DT);
                 // Start Up Sub-Managers //
-                    if (I_Ctm_MnMgr_MenuManager   != null) I_Ctm_MnMgr_MenuManager.OnUpdate(Flt_DT);       
-                    // 1) Manage in-game GUI //
+                    if (I_Ctm_MnMgr_MenuManager   != null) I_Ctm_MnMgr_MenuManager.OnUpdate(Flt_DT);       // 1) Manage in-game GUI //
                     if (I_Ctm_CMgr_CharManager    != null) I_Ctm_CMgr_CharManager.OnUpdate(Flt_DT);   // 1) Player Controls //
-//-//                    if (I_Ctm_BMgr_BulletManager  != null) I_Ctm_BMgr_BulletManager.OnUpdate(Flt_FixedDT); // 2) Bullet "Flight" //
+                    if (I_Ctm_BMgr_BulletManager  != null) I_Ctm_BMgr_BulletManager.OnUpdate(Flt_DT); // 2) Bullet "Flight" //
             }
             public override void OnFixedUpdate(float Flt_FixedDT)
             {

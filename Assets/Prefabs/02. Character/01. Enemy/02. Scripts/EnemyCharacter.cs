@@ -22,6 +22,7 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                     [SerializeField] private float _movementSpeed;
                     private float I_Flt_MovementSpeed;
                 // Runtime //
+                    private Vector2 R_Vec2_OldLocation = new Vector2(+0.00f, +1.00f);
                     private int R_Int_LocationIndex = 2;
                     private Vector2 R_Vec2_StashedLocation;
                     private bool R_Bool_IsHiding;
@@ -40,7 +41,7 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                     [SerializeField] private Aim _aim;
                     Aim I_Aim_Own;
                     private bool R_Bool_IsShooting;
-                    private bool R_Bool_CanShoot;
+                    private bool O_Bool_CanShoot;
                     private bool R_Bool_IsReloading;
                     private bool R_Bool_IsHealing; 
 
@@ -76,12 +77,22 @@ public class EnemyCharacter : BasePlayer, IPunObservable
             }
             protected override void Awake()
             {
-                // Singleton Operations //
-                    base.Awake();
+                base.Awake(); 
+                OnStartUp();
+            }
+        #endregion Unity Methods
+        #region    Override Methods
+            #pragma warning disable CS1998
+            public async void OnStartUp()
+            #pragma warning restore CS1998
+            {
                 // Variables //
                     I_Flt_MovementSpeed =_movementSpeed; 
                     I_Flt_MovementCoyoteTime = _movementCoyoteTime;
                     I_Anim_Character = _animator;
+        
+                    R_Vec2_OldLocation = new Vector2(+0.00f, +1.00f);
+                    R_Int_LocationIndex = 2;
 
                     R_Bool_IsHiding = false;
                     R_Bool_IsRelocating = false; 
@@ -89,33 +100,69 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                     R_Bool_WasMovementCTEnabled = false; 
 
                     R_Bool_IsShooting = false;
-                    R_Bool_CanShoot = true;
+                    O_Bool_CanShoot = true;
                     R_Bool_IsReloading = false;
                     R_Bool_IsHealing = false; 
-                    R_Bool_IsShootOutTime = false;
+                    R_Bool_IsShootOutTime = true;
+//                    R_Bool_IsShootOutTime = false;
             
                     R_Bool_WasDamaged = false;
                     R_Bool_WasWindHorned = false;
                     R_Bool_WasKilled = false;
+
             }
-        #endregion Unity Methods
-        #region    Override Methods
             #pragma warning disable CS1998
             public async void OnUpdate(float Flt_DT)
             #pragma warning restore CS1998
             {
-                // Reduce "Coyote" Counter //
-                    if (R_Bool_WasMovementCTEnabled)
-                        R_Flt_MovementCoyoteCounter -= Flt_DT;
-                // Execute "Coyote" Stashed Movement //
-                    if (R_Bool_WasMovementCTEnabled && (R_Flt_MovementCoyoteCounter > 0) && R_Bool_HasReachedLocation)
-                         OnStartedMoving(R_Vec2_StashedLocation);
-                    else
-                        if (R_Flt_MovementCoyoteCounter < 0)
-                            R_Bool_WasMovementCTEnabled = false;
+                #region    Movement
+                    // Reduce "Coyote" Counter //
+                        if (R_Bool_WasMovementCTEnabled)
+                            R_Flt_MovementCoyoteCounter -= Flt_DT;
+                    // Execute "Coyote" Stashed Movement //
+                        if (R_Bool_WasMovementCTEnabled && (R_Flt_MovementCoyoteCounter > 0) && R_Bool_HasReachedLocation)
+                             OnStartedMoving(R_Vec2_StashedLocation);
+                        else
+                            if (R_Flt_MovementCoyoteCounter < 0)
+                                R_Bool_WasMovementCTEnabled = false;
+                #endregion Movement
+                #region    IncreaseWindhorn
+                #endregion IncreaseWindhorn
             }
         #endregion Override Methods
         #region    Custom Methods
+            #region    Bool-Resseters
+                public void Damage()
+                {
+                    // Health //
+
+                    // Animation //
+                        R_Vec2_StashedLocation = new Vector2();
+                        R_Bool_WasMovementCTEnabled = false;
+                        R_Flt_MovementCoyoteCounter = 0;
+                        R_Bool_HasReachedLocation = true;
+                        R_Bool_IsHiding = false;
+                        R_Bool_IsRelocating = false;
+                        R_Bool_IsShooting = false;
+                        R_Bool_WasDamaged = true;
+                        R_Int_LocationIndex = (R_Vec2_OldLocation.x, R_Vec2_OldLocation.y) switch 
+                                              {
+                                                  (-1.00f, +0.00f) => 0,   // Bottom Left Corner  //
+                                                  (-0.71f, +0.71f) => 1,   // Top Left Corner     //
+                                                  (+0.00f, +1.00f) => 2,   // Top Middle Corner   //
+                                                  (+0.71f, +0.71f) => 3,   // Top Right Corner    //
+                                                  (+1.00f, +0.00f) => 4,   // Bottom Right Corner //
+                                                  _                => 5,   // Bottom (Hide)       //
+                                              };
+
+                        I_Anim_Character.SetBool("IsHidden", R_Bool_IsHiding);
+                        I_Anim_Character.SetBool("IsDamaged", R_Bool_WasDamaged);
+                        I_Anim_Character.SetBool("IsShooting", R_Bool_IsShooting);
+                        I_Anim_Character.SetInteger("Location", R_Int_LocationIndex);
+                    // Network //
+
+                }
+            #endregion Bool-Resseters
             #region    Network Methods
                 #region    Regular
                 #endregion Regular
@@ -147,18 +194,6 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                     public void OnStartedMoving(Vector2 Vec2_Input)
                     {
                         // Valdidation //
-                            #region    Should Proceed [?]
-                                if 
-                                (
-//                                    R_Bool_IsShootOutTime || // Stop If Shootout Time //
-                                    R_Bool_WasKilled      || // Stop If Dead //
-                                    R_Bool_WasDamaged     || // Stop If Damaged //
-                                    R_Bool_WasWindHorned  || // Stop If Afected By A Windhorn //
-                                    R_Bool_IsReloading    || // Stop If Reloading //
-                                    R_Bool_IsShooting        // Stop If Shooting //
-                                )
-                                return;
-                            #endregion Should Proceed [?] 
                         // Logic //
                             if (R_Bool_HasReachedLocation)
                             {
@@ -176,6 +211,7 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                                     if (R_Int_LocationIndex != Int_PotentialLocation)
                                     {
                                         // Set New Location //
+                                            R_Vec2_OldLocation = Vec2_Input;
                                             R_Int_LocationIndex = Int_PotentialLocation;
                                             R_Vec2_StashedLocation = new Vector2();
                                             R_Bool_WasMovementCTEnabled = false;

@@ -47,7 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   _speed: 15
   _damage: 50
-  _prefab: {fileID: 1151785857852036544, guid: af68460285cb8f44590eb4b76e689407, type: 3}
+  _prefab: {fileID: 7634731481292289354, guid: 61de2f85064ca994791525b5b8d7e909, type: 3}
   _mapContainer: {fileID: 0}
 --- !u!114 &5245965361388573263
 MonoBehaviour:

@@ -459,6 +459,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Bullet Manager
       objectReference: {fileID: 0}
+    - target: {fileID: 3223036978052631767, guid: 7d48881a26017fd4b9ac0b2c87f41088, type: 3}
+      propertyPath: _mapContainer
+      value: 
+      objectReference: {fileID: 7855029373775452066}
+    - target: {fileID: 3223036978052631767, guid: 7d48881a26017fd4b9ac0b2c87f41088, type: 3}
+      propertyPath: _bulletContainer
+      value: 
+      objectReference: {fileID: 7855029373775452066}
     - target: {fileID: 4227406361651076887, guid: 7d48881a26017fd4b9ac0b2c87f41088, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -3012,7 +3020,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 90de7663735a3d94bbeefc991c50df73, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: '::'
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCharacter
 --- !u!114 &1730517451371171530 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4853664041903361185, guid: 17accd5d5f098a74d86a721d10024cc9, type: 3}
@@ -3024,3 +3032,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74af7e2a5608e3a47bf41e78fbf74a1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyCharacter
+--- !u!224 &7855029373775452066 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 3917303021969495497, guid: 17accd5d5f098a74d86a721d10024cc9, type: 3}
+  m_PrefabInstance: {fileID: 6584163488617939563}
+  m_PrefabAsset: {fileID: 0}

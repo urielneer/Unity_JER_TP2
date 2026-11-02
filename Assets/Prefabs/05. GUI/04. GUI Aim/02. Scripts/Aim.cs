@@ -34,11 +34,7 @@ public class Aim : MonoBehaviour
         #region    Unity Methods
             void Awake()
             {
-                // Variables //
-                    IO_RTfm_Cursor = _cursor;
-                    I_Cvs_Scene = _canvas;
-                    I_GObj_BulletContainer = _bulletContainer; 
-                    I_Bllt_Prefab = _bullet;
+                OnStartUp();
             }
         #endregion Unity Methods
         #region    Override Methods
@@ -46,7 +42,11 @@ public class Aim : MonoBehaviour
             public async void OnStartUp()
             #pragma warning restore CS1998
             {
-
+                // Variables //
+                    IO_RTfm_Cursor = _cursor;
+                    I_Cvs_Scene = _canvas;
+                    I_GObj_BulletContainer = _bulletContainer; 
+                    I_Bllt_Prefab = _bullet;
             }
             #pragma warning disable CS1998
             public async void OnUpdate(float Flt_DT)
@@ -75,9 +75,7 @@ public class Aim : MonoBehaviour
             }
             public void SpawnBullet()
             {
-                Bullet Bllt_Spawned = Instantiate(I_Bllt_Prefab, (new Vector3(this.transform.position.x, this.transform.position.y, 5)), Quaternion.identity);
-                Bllt_Spawned.transform.SetParent(I_GObj_BulletContainer.transform, worldPositionStays: true);
-                Bllt_Spawned.transform.localScale = new Vector3(1,1,1);
+                MasterManager.Instance.BulletManager.SpawnBullet((new Vector3(this.transform.position.x, this.transform.position.y, 5)));
             }
         #endregion Custom Methods
     #endregion Methods

@@ -19,16 +19,8 @@ public class BulletManager : BaseManager<BulletManager>
         [Header(" Manager Settings")]
             [SerializeField] Bullet _prefab;
             Bullet I_Ctm_Bllt_Prefab;
-            [SerializeField] private Transform _mapContainer;
-            private Transform I_Trfm_MapContainer;
-        #region    Hashtables (Communication among instances)
-            private const string BulletOwnerID_KEY = "BulletOwnerID";
-            private const string BulletOwnerName_KEY = "BulletOwnerName";
-            private const string BulletPos_KEY = "BulletPos";
-            private const string BulletQuat_KEY = "BulletQuat";
-            private const string BulletDir_KEY = "BulletDir";
-            private const string BulletType_KEY = "BulletType";
-        #endregion Hashtables (Communication among instances)
+            [SerializeField] private Transform _bulletContainer;
+            private Transform I_Trfm_BulletContainer;
     #endregion Variables
     #region    Methods
         #region    Unity Methods
@@ -37,7 +29,7 @@ public class BulletManager : BaseManager<BulletManager>
                 // Singleton Operations //
                     base.Awake();
                 // Variables //
-                    I_Trfm_MapContainer = _mapContainer;
+                    I_Trfm_BulletContainer = _bulletContainer;
                     I_Flt_Speed = _speed;
                     I_Flt_Damage = _damage;
                     I_Ctm_Bllt_Prefab = _prefab;
@@ -54,7 +46,10 @@ public class BulletManager : BaseManager<BulletManager>
                         case 0:
                         break;
                         case 1: // Level //
-                            // MapManager - Container //
+                            foreach (Transform Tfrm_Bullet in I_Trfm_BulletContainer.transform)
+                            {
+                                Tfrm_Bullet.GetComponent<Bullet>().OnStartUp();
+                            }
                         break;
                     }
             }
@@ -68,6 +63,10 @@ public class BulletManager : BaseManager<BulletManager>
                         case 0:
                         break;
                         case 1: // Level //
+                            foreach (Transform Tfrm_Bullet in I_Trfm_BulletContainer.transform)
+                            {
+                                Tfrm_Bullet.GetComponent<Bullet>().OnUpdate(Flt_DT);
+                            }
                         break;
                     }
             }
@@ -86,38 +85,16 @@ public class BulletManager : BaseManager<BulletManager>
             }
         #endregion Override Methods
         #region    Custom Methods
-            public void SpawnBullet(string Str_OwnerNickname, int Int_ID, Vector3 Vec3_Pos, Quaternion Quat_Rot, Vector3 Vec3_Dir, int Int_Type, float Flt_SpeedMult)
+            public void SpawnBullet(Vector3 Vec3_Pos)
             {
-Debug.Log(" "+Str_OwnerNickname+") ID: "+Int_ID+" Dir: "+Vec3_Dir+" Speed: "+I_Flt_Speed+" Damage "+I_Flt_Damage+" Type: "+Int_Type);
                 #region    Spawn
                     // Spawn Bullet //
-                        Bullet Ctm_Bllt_Own = (Instantiate(I_Ctm_Bllt_Prefab, Vec3_Pos, Quat_Rot)).GetComponent<Bullet>();
-                    // Setup Bullets Dir & Speed //
-//-//                        Ctm_Bllt_Own.SetData(Str_OwnerNickname, Int_ID, Vec3_Dir, I_Flt_Speed * Flt_SpeedMult, I_Flt_Damage, Int_Type);
-                    // Start Up // 
-//-//                        Ctm_Bllt_Own.OnStartUp();
+                        Bullet Ctm_Bllt_Own = (Instantiate(I_Ctm_Bllt_Prefab, Vec3_Pos, Quaternion.identity)).GetComponent<Bullet>();
+                        Ctm_Bllt_Own.transform.localScale = new Vector3(1,1,1);
                     // MapManager - Container //
-                        Ctm_Bllt_Own.gameObject.transform.SetParent(I_Trfm_MapContainer, true);
+                        Ctm_Bllt_Own.gameObject.transform.SetParent(I_Trfm_BulletContainer, true);
+                        Ctm_Bllt_Own.transform.localScale = new Vector3(1,1,1);
                 #endregion Spawn
-            }
-            public void SynchronizeBullet(BasePlayer Ctm_BP_Owner, Vector3 Vec3_Dir, int Int_Index = 0)
-            {
-                // Variables //
-//-//                    Transform Tfm_SpawnSource = Ctm_BP_Owner.CanonAnchor;
-//-//                    Vector3 Vec3_Pos = Tfm_SpawnSource.transform.position;
-//-//                   Quaternion Quat_Rot = Tfm_SpawnSource.transform.rotation;
-                // Synchronize //
-                    Hashtable Hsh_MapKeys = new Hashtable
-                    {
-//-//                       { BulletOwnerName_KEY , Ctm_BP_Owner.OwnerNickname },
-//-//                       { BulletOwnerID_KEY   , Ctm_BP_Owner.ID            },
-//-//                       { BulletPos_KEY       , Vec3_Pos                   },
-//-//                       { BulletQuat_KEY      , Quat_Rot                   },
-                        { BulletDir_KEY       , Vec3_Dir                   },
-                        { BulletType_KEY      , Int_Index                   },
-                    }; 
-                    UpdateAllBulletManagers(Hsh_MapKeys);
-                    PhotonNetwork.SendAllOutgoingCommands();
             }
         #endregion Custom Methods
         #region    PUN         
@@ -130,12 +107,7 @@ Debug.Log(" "+Str_OwnerNickname+") ID: "+Int_ID+" Dir: "+Vec3_Dir+" Speed: "+I_F
                     private bool AreBulletDataHashtables(Hashtable Hsh_Input)
                     {
                         if ( 
-                            Hsh_Input.ContainsKey(BulletOwnerID_KEY)   &&
-                            Hsh_Input.ContainsKey(BulletOwnerName_KEY) &&
-                            Hsh_Input.ContainsKey(BulletPos_KEY)       &&
-                            Hsh_Input.ContainsKey(BulletQuat_KEY)      &&
-                            Hsh_Input.ContainsKey(BulletDir_KEY)       &&
-                            Hsh_Input.ContainsKey(BulletType_KEY)       
+                            true
                            )
                         { 
                             return true; 
@@ -157,15 +129,7 @@ Debug.Log(" "+Str_OwnerNickname+") ID: "+Int_ID+" Dir: "+Vec3_Dir+" Speed: "+I_F
                             {                                
                                 float Flt_Multiplier = (PhotonNetwork.IsMasterClient) ? 1 : 10;
                                 // Force Spawn //
-                                    MasterManager.Instance.BulletManager.SpawnBullet(
-                                                                                     (string)Hsh_Input[BulletOwnerName_KEY], 
-                                                                                     (int)Hsh_Input[BulletOwnerID_KEY],
-                                                                                     (Vector3)Hsh_Input[BulletPos_KEY], 
-                                                                                     (Quaternion)Hsh_Input[BulletQuat_KEY], 
-                                                                                     (Vector3)Hsh_Input[BulletDir_KEY],
-                                                                                     (int)Hsh_Input[BulletType_KEY],
-                                                                                     Flt_Multiplier
-                                                                                    );
+                                    //MasterManager.Instance.BulletManager.SpawnBullet();
                             }
                         }
                 #endregion Hashtables 

@@ -65,7 +65,8 @@ public class CharacterManager : BaseManager<CharacterManager>
                         case 0:
                         break;
                         case 1: // Level //
-                            // Variables //
+                            ((PlayerCharacter)  IO_Ctm_BP_OwnPlayer).OnStartUp();
+                            ((EnemyCharacter) IO_Ctm_BP_EnemyPlayer).OnStartUp();
                         break;
                     }
             }

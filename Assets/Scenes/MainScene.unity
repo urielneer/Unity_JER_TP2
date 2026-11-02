@@ -340,7 +340,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &1192874057
+--- !u!1001 &1847398856
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -1090,7 +1090,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2425343494525545943, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
       propertyPath: m_fontColor.g
-      value: 0.06110128
+      value: 0.0627451
       objectReference: {fileID: 0}
     - target: {fileID: 2449117146073720376, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
       propertyPath: m_AnchorMax.y
@@ -1198,7 +1198,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2734036733736303217, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
       propertyPath: m_fontColor.r
-      value: 0.11633529
+      value: 0.11764706
       objectReference: {fileID: 0}
     - target: {fileID: 2915434217224632345, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
       propertyPath: m_AnchorMax.y
@@ -1562,7 +1562,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4584431189417456664, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
       propertyPath: m_fontColor.r
-      value: 0.16960435
+      value: 0.16862746
       objectReference: {fileID: 0}
     - target: {fileID: 4595706065547911396, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
       propertyPath: m_AnchorMax.y
@@ -1610,7 +1610,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4801880992074289625, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
       propertyPath: m_fontColor.r
-      value: 0.23308776
+      value: 0.23137255
       objectReference: {fileID: 0}
     - target: {fileID: 4837671313468205271, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
       propertyPath: m_AnchorMax.y
@@ -1730,7 +1730,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5410220729557144678, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
       propertyPath: m_fontColor.b
-      value: 0.18155028
+      value: 0.18039216
       objectReference: {fileID: 0}
     - target: {fileID: 5443862231259376502, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
       propertyPath: m_AnchorMax.y
@@ -1814,7 +1814,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5946991342561611268, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
       propertyPath: m_fontColor.b
-      value: 0.06719935
+      value: 0.06666667
       objectReference: {fileID: 0}
     - target: {fileID: 6011349100078567785, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
       propertyPath: m_AnchorMax.y
@@ -1932,6 +1932,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6630728227795126234, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
+      propertyPath: m_fontColor.g
+      value: 0.19607843
+      objectReference: {fileID: 0}
     - target: {fileID: 6662467920939553254, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -1954,7 +1958,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6839656099517664344, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
       propertyPath: m_fontColor.g
-      value: 0.24769115
+      value: 0.24705882
       objectReference: {fileID: 0}
     - target: {fileID: 6924179761580771054, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
       propertyPath: m_AnchorMax.y
@@ -2478,7 +2482,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8597491962598197453, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
       propertyPath: m_fontColor.r
-      value: 0.2528302
+      value: 0.2509804
       objectReference: {fileID: 0}
     - target: {fileID: 8612223835297755846, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
       propertyPath: m_AnchorMax.y
@@ -2739,4 +2743,4 @@ SceneRoots:
   m_Roots:
   - {fileID: 519420032}
   - {fileID: 619394802}
-  - {fileID: 1192874057}
+  - {fileID: 1847398856}
