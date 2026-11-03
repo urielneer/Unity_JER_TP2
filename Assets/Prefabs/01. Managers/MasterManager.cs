@@ -38,6 +38,10 @@ public class MasterManager : BaseManager<MasterManager>
                 [SerializeField] private CustomInputManager _inputManager;
                 private CustomInputManager I_Ctm_IMgr_InputManager;
                 public CustomInputManager InputManager => I_Ctm_IMgr_InputManager;
+            // AUDIO //
+                [SerializeField] private AudioManager _audioManager;
+                private AudioManager I_Ctm_AMgr_AudioManager;
+                public AudioManager AudioManager => I_Ctm_AMgr_AudioManager;
         #endregion Sub-Managers
         #region    Flags
             TaskCompletionSource<bool> R_Bool_StartupAwait; 
@@ -72,6 +76,7 @@ public class MasterManager : BaseManager<MasterManager>
                         if (_bulletManager  != null) _instance._bulletManager =     (BulletManager) UpdateSubManager(_instance._bulletManager, _bulletManager, _bulletManager.gameObject);
                         if (_networkManager != null) _instance._networkManager =   (NetworkManager) UpdateSubManager(_instance._networkManager, _networkManager, _networkManager.gameObject);
                         if (_inputManager   != null) _instance._inputManager = (CustomInputManager) UpdateSubManager(_instance._inputManager, _inputManager, _inputManager.gameObject);
+                        if (_audioManager   != null) _instance._audioManager =       (AudioManager) UpdateSubManager(_instance._audioManager, _audioManager, _audioManager.gameObject);
                     }
                 // Resume Base //
                     base.Awake();
@@ -83,6 +88,7 @@ public class MasterManager : BaseManager<MasterManager>
                     I_Ctm_BMgr_BulletManager = _bulletManager;   
                     I_Ctm_NMgr_NetworkManager = _networkManager;
                     I_Ctm_IMgr_InputManager = _inputManager;
+                    I_Ctm_AMgr_AudioManager = _audioManager;
             }
             private void Start()
             {
@@ -107,6 +113,7 @@ public class MasterManager : BaseManager<MasterManager>
                     base.OnStartUp();
                 // Start Up Sub-Managers //
                     // Start //
+                        if (I_Ctm_AMgr_AudioManager   != null) I_Ctm_AMgr_AudioManager.OnStartUp();   // Setup Audio //
                         if (I_Ctm_IMgr_InputManager   != null) I_Ctm_IMgr_InputManager.OnStartUp();   // Set Key Actions //
                         if (I_Ctm_MnMgr_MenuManager   != null) I_Ctm_MnMgr_MenuManager.OnStartUp();   // Set Menu Up //
                         if (I_Ctm_NMgr_NetworkManager != null) I_Ctm_NMgr_NetworkManager.OnStartUp(); // Set Nework status On (If It's Off) //
@@ -129,9 +136,10 @@ public class MasterManager : BaseManager<MasterManager>
                 // Resume Base //
                     base.OnUpdate(Flt_DT);
                 // Start Up Sub-Managers //
-                    if (I_Ctm_MnMgr_MenuManager   != null) I_Ctm_MnMgr_MenuManager.OnUpdate(Flt_DT);       // 1) Manage in-game GUI //
-                    if (I_Ctm_CMgr_CharManager    != null) I_Ctm_CMgr_CharManager.OnUpdate(Flt_DT);   // 1) Player Controls //
-                    if (I_Ctm_BMgr_BulletManager  != null) I_Ctm_BMgr_BulletManager.OnUpdate(Flt_DT); // 2) Bullet "Flight" //
+                    if (I_Ctm_MnMgr_MenuManager   != null) I_Ctm_MnMgr_MenuManager.OnUpdate(Flt_DT);  // 1) Manage in-game GUI //
+                    if (I_Ctm_CMgr_CharManager    != null) I_Ctm_CMgr_CharManager.OnUpdate(Flt_DT);   // 2) Player Controls //
+                    if (I_Ctm_BMgr_BulletManager  != null) I_Ctm_BMgr_BulletManager.OnUpdate(Flt_DT); // 3) Bullet "Flight" //
+                    if (I_Ctm_AMgr_AudioManager   != null) I_Ctm_AMgr_AudioManager.OnUpdate(Flt_DT);  // 4) Voice-Chat //
             }
             public override void OnFixedUpdate(float Flt_FixedDT)
             {
