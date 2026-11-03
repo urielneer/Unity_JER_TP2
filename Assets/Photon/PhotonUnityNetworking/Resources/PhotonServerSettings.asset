@@ -63,6 +63,8 @@ MonoBehaviour:
   - RPC_NotifyDamageUpdate
   - RPC_NotifyWindhornUpdate
   - RPC_ForceLocationUpdate
+  - RPC_NotifyShootUpdate
+  - RPC_ForceShootEnd
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

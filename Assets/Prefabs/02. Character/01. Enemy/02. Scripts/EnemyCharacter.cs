@@ -148,6 +148,29 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                                           };
                     I_Anim_Character.SetInteger("Location", R_Int_LocationIndex);
                 }
+                public void ForceShootAnimation(int Int_Input)
+                {
+                    // Valdidation //
+                        #region    Should Proceed [?]
+                            if 
+                            (
+                                R_Bool_WasDamaged // Stop If Damaged ///
+                            )
+                            return;
+                        #endregion Should Proceed [?] 
+                    // Logic //
+                        R_Int_LocationIndex = Int_Input;
+
+                        R_Bool_IsHiding = false;
+                        R_Bool_IsRelocating = false;
+                        R_Bool_IsShooting = true;
+                        R_Bool_WasDamaged = false;
+
+                        I_Anim_Character.SetBool("IsHidden", R_Bool_IsHiding);
+                        I_Anim_Character.SetBool("IsDamaged", R_Bool_WasDamaged);
+                        I_Anim_Character.SetBool("IsShooting", R_Bool_IsShooting);
+                        I_Anim_Character.SetInteger("Location", R_Int_LocationIndex);
+                }
             #endregion ForceUpdate-Variables
             #region    Combat
                 public void Damage()
@@ -235,6 +258,11 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                     private void RPC_NotifyWindhornUpdate(Hashtable Hsh_Input)
                     {
                         ((PlayerCharacter) (MasterManager.Instance.CharacterManager.OwnPlayer)).NotifyWindhornUpdate((Vector2) Hsh_Input[Location_KEY]);
+                    }
+                    [PunRPC]
+                    private void RPC_NotifyShootUpdate()
+                    {
+                        ((PlayerCharacter) (MasterManager.Instance.CharacterManager.OwnPlayer)).NotifyShootingUpdate();
                     }
                 #endregion RPC
             #endregion Network Methods
@@ -434,14 +462,16 @@ public class EnemyCharacter : BasePlayer, IPunObservable
             R_Bool_HasReachedLocation = true;
             R_Bool_IsHiding = false;
             R_Bool_WasDamaged = false;
-            R_Int_LocationIndex = ((I_Anim_Character.GetCurrentAnimatorClipInfo(0))[0].clip.name) switch 
+            R_Bool_IsShooting = false;
+            string Str_Temp = (I_Anim_Character.GetCurrentAnimatorClipInfo(0))[0].clip.name;
+            R_Int_LocationIndex = (Str_Temp.Substring(Math.Max(0, Str_Temp.Length - 2))) switch 
                                   {
-                                      "Idle_LL" => 0,   // Bottom Left Corner  //
-                                      "Idle_TL" => 1,   // Top Left Corner     //
-                                      "Idle_TM" => 2,   // Top Middle Corner   //
-                                      "Idle_TR" => 3,   // Top Right Corner    //
-                                      "Idle_LR" => 4,   // Bottom Right Corner //
-                                      _         => 5,   // Bottom (Hide)       //
+                                      "LL" => 0,   // Bottom Left Corner  //
+                                      "TL" => 1,   // Top Left Corner     //
+                                      "TM" => 2,   // Top Middle Corner   //
+                                      "TR" => 3,   // Top Right Corner    //
+                                      "LR" => 4,   // Bottom Right Corner //
+                                      _    => 5,   // Bottom (Hide)       //
                                   };
             R_Vec2_StashedLocation = new Vector2();
 
@@ -452,6 +482,27 @@ public class EnemyCharacter : BasePlayer, IPunObservable
         }
         public void OtherShootOver()
         {
+            R_Bool_HasReachedLocation = true;
+            R_Bool_IsHiding = false;
+            R_Bool_IsShooting = false;
+            string Str_Temp = (I_Anim_Character.GetCurrentAnimatorClipInfo(0))[0].clip.name;
+            R_Int_LocationIndex = (Str_Temp.Substring(Math.Max(0, Str_Temp.Length - 2))) switch 
+                                  {
+                                      "LL" => 0,   // Bottom Left Corner  //
+                                      "TL" => 1,   // Top Left Corner     //
+                                      "TM" => 2,   // Top Middle Corner   //
+                                      "TR" => 3,   // Top Right Corner    //
+                                      "LR" => 4,   // Bottom Right Corner //
+                                      _    => 5,   // Bottom (Hide)       //
+                                  };
+            R_Vec2_StashedLocation = new Vector2();
+
+            I_Anim_Character.SetBool("IsHidden", R_Bool_IsHiding);
+            I_Anim_Character.SetBool("IsDamaged", R_Bool_WasDamaged);
+            I_Anim_Character.SetBool("IsShooting", R_Bool_IsShooting);
+            I_Anim_Character.SetInteger("Location", R_Int_LocationIndex);
+
+            GetComponent<PhotonView>().RPC(nameof(RPC_NotifyShootUpdate),RpcTarget.Others);
         }
     #endregion Animation
 }
