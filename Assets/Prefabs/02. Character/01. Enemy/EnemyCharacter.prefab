@@ -241,6 +241,7 @@ GameObject:
   - component: {fileID: 6519898156636761911}
   - component: {fileID: 2080773630502947327}
   - component: {fileID: 4063823654708519814}
+  - component: {fileID: 4648583877053211112}
   m_Layer: 0
   m_Name: EnemyCharacter
   m_TagString: Untagged
@@ -349,6 +350,30 @@ MonoBehaviour:
   _animator: {fileID: 2080773630502947327}
   _movementSpeed: 0
   _movementCoyoteTime: 4
+  _aim: {fileID: 0}
+--- !u!114 &4648583877053211112
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5402905549391638697}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: PhotonUnityNetworking::Photon.Pun.PhotonView
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents:
+  - {fileID: 4063823654708519814}
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &5577123906385935258
 GameObject:
   m_ObjectHideFlags: 0

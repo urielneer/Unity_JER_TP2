@@ -34,6 +34,8 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                     private bool R_Bool_WasMovementCTEnabled; 
                 // Hashtable Keys //
                     private const string IsHiding_KEY = "IsHiding";
+                    private const string IsDamaged_KEY = "IsDamaged";
+                    private const string IsShooting_KEY = "IsShooting";
                     private const string Location_KEY = "Location";
             [Space(10)]
             [Header(" Combat Settings")]
@@ -131,38 +133,95 @@ public class EnemyCharacter : BasePlayer, IPunObservable
             }
         #endregion Override Methods
         #region    Custom Methods
-            #region    Bool-Resseters
+            #region    ForceUpdate-Variables
+                public void ForceUpdateLocation(Vector2 Vec2_Input)
+                {
+                    R_Vec2_OldLocation = Vec2_Input;
+                    R_Int_LocationIndex = (R_Vec2_OldLocation.x, R_Vec2_OldLocation.y) switch 
+                                          {
+                                              (-1.00f, +0.00f) => 0,   // Bottom Left Corner  //
+                                              (-0.71f, +0.71f) => 1,   // Top Left Corner     //
+                                              (+0.00f, +1.00f) => 2,   // Top Middle Corner   //
+                                              (+0.71f, +0.71f) => 3,   // Top Right Corner    //
+                                              (+1.00f, +0.00f) => 4,   // Bottom Right Corner //
+                                              _                => 5,   // Bottom (Hide)       //
+                                          };
+                    I_Anim_Character.SetInteger("Location", R_Int_LocationIndex);
+                }
+            #endregion ForceUpdate-Variables
+            #region    Combat
                 public void Damage()
                 {
-                    // Health //
+                    // Valdidation //
+                        #region    Should Proceed [?]
+                            if 
+                            (
+                                R_Bool_WasDamaged // Stop If Already Damaged ///
+                            )
+                            return;
+                        #endregion Should Proceed [?] 
+                    // Logic //
+                        #region    Health
+                        #endregion Health
+                        #region    Animation
+                            R_Vec2_StashedLocation = new Vector2();
+                            R_Bool_WasMovementCTEnabled = false;
+                            R_Flt_MovementCoyoteCounter = 0;
+                            R_Bool_HasReachedLocation = true;
+                            R_Bool_IsHiding = false;
+                            R_Bool_IsRelocating = false;
+                            R_Bool_IsShooting = false;
+                            R_Bool_WasDamaged = true;
+                            R_Int_LocationIndex = (R_Vec2_OldLocation.x, R_Vec2_OldLocation.y) switch 
+                                                  {
+                                                      (-1.00f, +0.00f) => 0,   // Bottom Left Corner  //
+                                                      (-0.71f, +0.71f) => 1,   // Top Left Corner     //
+                                                      (+0.00f, +1.00f) => 2,   // Top Middle Corner   //
+                                                      (+0.71f, +0.71f) => 3,   // Top Right Corner    //
+                                                      (+1.00f, +0.00f) => 4,   // Bottom Right Corner //
+                                                      _                => 5,   // Bottom (Hide)       //
+                                                  };
 
-                    // Animation //
-                        R_Vec2_StashedLocation = new Vector2();
-                        R_Bool_WasMovementCTEnabled = false;
-                        R_Flt_MovementCoyoteCounter = 0;
-                        R_Bool_HasReachedLocation = true;
-                        R_Bool_IsHiding = false;
-                        R_Bool_IsRelocating = false;
-                        R_Bool_IsShooting = false;
-                        R_Bool_WasDamaged = true;
-                        R_Int_LocationIndex = (R_Vec2_OldLocation.x, R_Vec2_OldLocation.y) switch 
-                                              {
-                                                  (-1.00f, +0.00f) => 0,   // Bottom Left Corner  //
-                                                  (-0.71f, +0.71f) => 1,   // Top Left Corner     //
-                                                  (+0.00f, +1.00f) => 2,   // Top Middle Corner   //
-                                                  (+0.71f, +0.71f) => 3,   // Top Right Corner    //
-                                                  (+1.00f, +0.00f) => 4,   // Bottom Right Corner //
-                                                  _                => 5,   // Bottom (Hide)       //
-                                              };
-
-                        I_Anim_Character.SetBool("IsHidden", R_Bool_IsHiding);
-                        I_Anim_Character.SetBool("IsDamaged", R_Bool_WasDamaged);
-                        I_Anim_Character.SetBool("IsShooting", R_Bool_IsShooting);
-                        I_Anim_Character.SetInteger("Location", R_Int_LocationIndex);
-                    // Network //
-
+                            I_Anim_Character.SetBool("IsHidden", R_Bool_IsHiding);
+                            I_Anim_Character.SetBool("IsDamaged", R_Bool_WasDamaged);
+                            I_Anim_Character.SetBool("IsShooting", R_Bool_IsShooting);
+                            I_Anim_Character.SetInteger("Location", R_Int_LocationIndex);
+                        #endregion Animation
+                        #region    Network
+                            Hashtable Hsh_Keys = new Hashtable
+                            {
+                                {
+                                    IsHiding_KEY, 
+                                    R_Bool_IsHiding
+                                },
+                                {
+                                    IsDamaged_KEY,
+                                    R_Bool_WasDamaged
+                                },
+                                {
+                                    IsShooting_KEY,
+                                    R_Bool_IsShooting
+                                },
+                                { 
+                                    Location_KEY, 
+                                    (Vector2) 
+                                    (
+                                        (R_Int_LocationIndex) switch
+                                        {
+                                            4 => new Vector2 (-1.00f, +0.00f),   // Bottom Left Corner  //
+                                            3 => new Vector2 (-0.71f, +0.71f),   // Top Left Corner     //
+                                            2 => new Vector2 (+0.00f, +1.00f),   // Top Middle Corner   //
+                                            1 => new Vector2 (+0.71f, +0.71f),   // Top Right Corner    //
+                                            0 => new Vector2 (+1.00f, +0.00f),   // Bottom Right Corner //
+                                            _ => new Vector2 (+0.00f, -1.00f),   // Bottom (Hide)       //
+                                        } 
+                                    )
+                                },
+                            }; 
+                            GetComponent<PhotonView>().RPC(nameof(RPC_NotifyDamageUpdate),RpcTarget.Others, Hsh_Keys);
+                        #endregion Network
                 }
-            #endregion Bool-Resseters
+            #endregion Combat
             #region    Network Methods
                 #region    Regular
                 #endregion Regular
@@ -170,7 +229,7 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                     [PunRPC]
                     private void RPC_NotifyDamageUpdate(Hashtable Hsh_Input)
                     {
-                        ((PlayerCharacter) (MasterManager.Instance.CharacterManager.OwnPlayer)).NotifyDamageUpdate((Vector2) Hsh_Input[Location_KEY]);
+                        ((PlayerCharacter) (MasterManager.Instance.CharacterManager.OwnPlayer)).NotifyDamageUpdate(Hsh_Input);
                     }
                     [PunRPC]
                     private void RPC_NotifyWindhornUpdate(Hashtable Hsh_Input)
@@ -194,6 +253,18 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                     public void OnStartedMoving(Vector2 Vec2_Input)
                     {
                         // Valdidation //
+                            #region    Should Proceed [?]
+                                if 
+                                (
+//                                    R_Bool_IsShootOutTime || // Stop If Shootout Time //
+                                    R_Bool_WasKilled      || // Stop If Dead //
+                                    R_Bool_WasDamaged     || // Stop If Damaged //
+                                    R_Bool_WasWindHorned  || // Stop If Afected By A Windhorn //
+                                    R_Bool_IsReloading    || // Stop If Reloading //
+                                    R_Bool_IsShooting        // Stop If Shooting //
+                                )
+                                return;
+                            #endregion Should Proceed [?] 
                         // Logic //
                             if (R_Bool_HasReachedLocation)
                             {
@@ -361,18 +432,23 @@ public class EnemyCharacter : BasePlayer, IPunObservable
         public void OtherDamageOver()
         {
             R_Bool_HasReachedLocation = true;
+            R_Bool_IsHiding = false;
             R_Bool_WasDamaged = false;
+            R_Int_LocationIndex = ((I_Anim_Character.GetCurrentAnimatorClipInfo(0))[0].clip.name) switch 
+                                  {
+                                      "Idle_LL" => 0,   // Bottom Left Corner  //
+                                      "Idle_TL" => 1,   // Top Left Corner     //
+                                      "Idle_TM" => 2,   // Top Middle Corner   //
+                                      "Idle_TR" => 3,   // Top Right Corner    //
+                                      "Idle_LR" => 4,   // Bottom Right Corner //
+                                      _         => 5,   // Bottom (Hide)       //
+                                  };
+            R_Vec2_StashedLocation = new Vector2();
 
             I_Anim_Character.SetBool("IsHidden", R_Bool_IsHiding);
             I_Anim_Character.SetBool("IsDamaged", R_Bool_WasDamaged);
             I_Anim_Character.SetBool("IsShooting", R_Bool_IsShooting);
             I_Anim_Character.SetInteger("Location", R_Int_LocationIndex);
-
-            I_Anim_Character.speed = 0f;
-
-            I_Anim_Character.Update(0f);
-
-            I_Anim_Character.speed = 1f;
         }
         public void OtherShootOver()
         {

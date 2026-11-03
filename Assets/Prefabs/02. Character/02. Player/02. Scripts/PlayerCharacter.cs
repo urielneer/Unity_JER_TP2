@@ -34,6 +34,8 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                     private bool R_Bool_WasMovementCTEnabled; 
                 // Hashtable Keys //
                     private const string IsHiding_KEY = "IsHiding";
+                    private const string IsDamaged_KEY = "IsDamaged";
+                    private const string IsShooting_KEY = "IsShooting";
                     private const string Location_KEY = "Location";
             [Space(10)]
             [Header(" Combat Settings")]
@@ -88,6 +90,8 @@ public class PlayerCharacter : BasePlayer, IPunObservable
             #pragma warning restore CS1998
             {
                 // Variables //
+                    R_Int_LocationIndex = 2;
+
                     I_Flt_MovementSpeed =_movementSpeed; 
                     I_Flt_MovementCoyoteTime = _movementCoyoteTime;
                     I_Anim_Character = _animator;
@@ -145,13 +149,37 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                     {
                         ((EnemyCharacter) (MasterManager.Instance.CharacterManager.EnemyPlayer)).NotifyMovementUpdate((Vector2) Hsh_Input[Location_KEY]);
                     }
+                    [PunRPC]
+                    private void RPC_ForceLocationUpdate(Vector2 Vec2_Input)
+                    {
+                        ((EnemyCharacter) (MasterManager.Instance.CharacterManager.EnemyPlayer)).ForceUpdateLocation(Vec2_Input);
+                    }
                 #endregion RPC
             #endregion Network Methods
             #region    Mirror Methods
                 #region    Combat
-                    public void NotifyDamageUpdate(Vector2 Vec2_Input)
+                    public void NotifyDamageUpdate(Hashtable Hsh_Input)
                     {
-                        OnStartedMoving(Vec2_Input);  
+                        // Clear Values //
+                            R_Vec2_StashedLocation = new Vector2();
+                            R_Bool_WasMovementCTEnabled = false;
+                            R_Flt_MovementCoyoteCounter = 0;
+                            R_Bool_HasReachedLocation = true;
+                            R_Bool_IsRelocating = false;
+                        // Overwrite Values //
+                            R_Bool_IsHiding = (bool) Hsh_Input[IsHiding_KEY];
+                            R_Bool_WasDamaged = (bool)Hsh_Input[IsDamaged_KEY];
+                            R_Bool_IsShooting = (bool)Hsh_Input[IsShooting_KEY];
+                        // Reposition & Animate //
+                            I_Anim_Character.SetBool("IsHidden", R_Bool_IsHiding);
+                            I_Anim_Character.SetBool("IsDamaged", R_Bool_WasDamaged);
+                            I_Anim_Character.SetInteger("Location", R_Int_LocationIndex);
+            
+                            I_Anim_Character.speed = 0f;
+
+                            I_Anim_Character.Update(0f);
+
+                            I_Anim_Character.speed = 1f;
                     }
                     public void NotifyWindhornUpdate(Vector2 Vec2_Input)
                     {
@@ -212,6 +240,7 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                                         // Animation Update? //
                                             AnimatorStateInfo ASI_StateInfo = _animator.GetCurrentAnimatorStateInfo(0);
                                             I_Anim_Character.SetBool("IsHidden", R_Bool_IsHiding);
+                                            I_Anim_Character.SetBool("IsDamaged", R_Bool_WasDamaged);
                                             I_Anim_Character.SetInteger("Location", R_Int_LocationIndex);
             
                                             I_Anim_Character.speed = 0f;
@@ -222,10 +251,6 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                                         // Notify Opponent //
                                             Hashtable Hsh_Keys = new Hashtable
                                             {
-                                                {
-                                                    IsHiding_KEY, 
-                                                    R_Bool_IsHiding
-                                                },
                                                 { 
                                                     Location_KEY, 
                                                     (Vector2) 
@@ -247,21 +272,22 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                             }
                             else
                             {   
-                                int Int_Temp = (Vec2_Input.x, Vec2_Input.y) switch 
-                                               {
-                                                    (-1.00f, +0.00f) => 0,   // Bottom Left Corner  //
-                                                    (-0.71f, +0.71f) => 1,   // Top Left Corner     //
-                                                    (+0.00f, +1.00f) => 2,   // Top Middle Corner   //
-                                                    (+0.71f, +0.71f) => 3,   // Top Right Corner    //
-                                                    (+1.00f, +0.00f) => 4,   // Bottom Right Corner //
-                                                    _                => 5,   // Bottom (Hide)       //
-                                               };
-                                if (Int_Temp != R_Int_LocationIndex)
-                                {
-                                    R_Bool_WasMovementCTEnabled = true;
-                                    R_Flt_MovementCoyoteCounter = I_Flt_MovementCoyoteTime;
-                                    R_Vec2_StashedLocation = Vec2_Input;
-                                }
+                                // Coyote Relocation //
+                                    int Int_Temp = (Vec2_Input.x, Vec2_Input.y) switch 
+                                                   {
+                                                        (-1.00f, +0.00f) => 0,   // Bottom Left Corner  //
+                                                        (-0.71f, +0.71f) => 1,   // Top Left Corner     //
+                                                        (+0.00f, +1.00f) => 2,   // Top Middle Corner   //
+                                                        (+0.71f, +0.71f) => 3,   // Top Right Corner    //
+                                                        (+1.00f, +0.00f) => 4,   // Bottom Right Corner //
+                                                        _                => 5,   // Bottom (Hide)       //
+                                                   };
+                                    if (Int_Temp != R_Int_LocationIndex)
+                                    {
+                                        R_Bool_WasMovementCTEnabled = true;
+                                        R_Flt_MovementCoyoteCounter = I_Flt_MovementCoyoteTime;
+                                        R_Vec2_StashedLocation = Vec2_Input;
+                                    }
                             }
                     }
                     public void OnStartedShooting() 
@@ -341,6 +367,7 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                 R_Bool_IsHiding = false;
 
                 I_Anim_Character.SetBool("IsHidden", R_Bool_IsHiding);
+                I_Anim_Character.SetBool("IsDamaged", R_Bool_WasDamaged);
                 I_Anim_Character.SetInteger("Location", R_Int_LocationIndex);
 
                 I_Anim_Character.speed = 0f;
@@ -367,6 +394,22 @@ public class PlayerCharacter : BasePlayer, IPunObservable
         public void OwnDamageOver()
         {
             R_Bool_HasReachedLocation = true;
+            R_Bool_IsHiding = false;
+            R_Bool_WasDamaged = false;
+            R_Int_LocationIndex = ((I_Anim_Character.GetCurrentAnimatorClipInfo(0))[0].clip.name) switch 
+                                    {
+                                        "Idle_LL" => 0,   // Bottom Left Corner  //
+                                        "Idle_TL" => 1,   // Top Left Corner     //
+                                        "Idle_TM" => 2,   // Top Middle Corner   //
+                                        "Idle_TR" => 3,   // Top Right Corner    //
+                                        "Idle_LR" => 4,   // Bottom Right Corner //
+                                        _         => 5,   // Bottom (Hide)       //
+                                    };
+            R_Vec2_StashedLocation = new Vector2();
+
+            I_Anim_Character.SetBool("IsHidden", R_Bool_IsHiding);
+            I_Anim_Character.SetBool("IsDamaged", R_Bool_WasDamaged);
+            I_Anim_Character.SetInteger("Location", R_Int_LocationIndex);
         }
         public void OwnShootOver()
         {
