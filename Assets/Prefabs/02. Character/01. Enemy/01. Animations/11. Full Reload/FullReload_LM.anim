@@ -651,17 +651,15 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: 21300000, guid: fbd4ccd73ab357042b69f4acc2f7e5ef, type: 3}
+      value: {fileID: 21300000, guid: 3d2b2f4c4f1f1b046902814ddec6a7f0, type: 3}
     - time: 0.083333336
-      value: {fileID: 21300000, guid: 939674ada1b0fe442a071201a7aafd02, type: 3}
+      value: {fileID: 21300000, guid: 43ef41721666ffe43a5acc0cf5206ca7, type: 3}
     - time: 0.25
-      value: {fileID: 21300000, guid: 5508388fa74d6bc4288c67a3ff6040c4, type: 3}
-    - time: 0.26666668
-      value: {fileID: 21300000, guid: 5508388fa74d6bc4288c67a3ff6040c4, type: 3}
+      value: {fileID: 21300000, guid: 2b2925efa78d7644497143284516dae8, type: 3}
     - time: 0.41666666
-      value: {fileID: 21300000, guid: a05b33eaa00993a47985123613bdabcc, type: 3}
+      value: {fileID: 21300000, guid: d1fb31e5d7abd6d4aae1398ef31f9715, type: 3}
     - time: 0.5
-      value: {fileID: 21300000, guid: 0dbd57732822bda4aad14a924378f624, type: 3}
+      value: {fileID: 21300000, guid: f0b419afb1a93ac418107effc456a7cc, type: 3}
     - time: 0.55
       value: {fileID: 21300000, guid: 5c7ec803aeeb8694791f7d3950f2071f, type: 3}
     attribute: m_Sprite
@@ -924,12 +922,11 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
-    - {fileID: 21300000, guid: fbd4ccd73ab357042b69f4acc2f7e5ef, type: 3}
-    - {fileID: 21300000, guid: 939674ada1b0fe442a071201a7aafd02, type: 3}
-    - {fileID: 21300000, guid: 5508388fa74d6bc4288c67a3ff6040c4, type: 3}
-    - {fileID: 21300000, guid: 5508388fa74d6bc4288c67a3ff6040c4, type: 3}
-    - {fileID: 21300000, guid: a05b33eaa00993a47985123613bdabcc, type: 3}
-    - {fileID: 21300000, guid: 0dbd57732822bda4aad14a924378f624, type: 3}
+    - {fileID: 21300000, guid: 3d2b2f4c4f1f1b046902814ddec6a7f0, type: 3}
+    - {fileID: 21300000, guid: 43ef41721666ffe43a5acc0cf5206ca7, type: 3}
+    - {fileID: 21300000, guid: 2b2925efa78d7644497143284516dae8, type: 3}
+    - {fileID: 21300000, guid: d1fb31e5d7abd6d4aae1398ef31f9715, type: 3}
+    - {fileID: 21300000, guid: f0b419afb1a93ac418107effc456a7cc, type: 3}
     - {fileID: 21300000, guid: 5c7ec803aeeb8694791f7d3950f2071f, type: 3}
     - {fileID: 21300000, guid: 5c7ec803aeeb8694791f7d3950f2071f, type: 3}
     - {fileID: 21300000, guid: 5c7ec803aeeb8694791f7d3950f2071f, type: 3}
@@ -2205,7 +2202,7 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_Events:
   - time: 0.53333336
-    functionName: OtherReloadOver
+    functionName: OtherFullReloadOver
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

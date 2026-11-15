@@ -510,7 +510,10 @@ public class EnemyCharacter : BasePlayer, IPunObservable
         public void OtherWindhornOver()
         {
         }
-        public void OtherStunnedOver()
+        public void OtherStunShowOver()
+        {
+        }
+        public void OtherStunLoopOver()
         {
         }
         public void OtherHealOver()
