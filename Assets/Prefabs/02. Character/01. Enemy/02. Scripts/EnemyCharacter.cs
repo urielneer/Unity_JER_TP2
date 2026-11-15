@@ -504,5 +504,20 @@ public class EnemyCharacter : BasePlayer, IPunObservable
 
             GetComponent<PhotonView>().RPC(nameof(RPC_NotifyShootUpdate),RpcTarget.Others);
         }
+        public void OtherReloadOver()
+        {
+        }
+        public void OtherWindhornOver()
+        {
+        }
+        public void OtherStunnedOver()
+        {
+        }
+        public void OtherHealOver()
+        {
+        }
+        public void OtherFullReloadOver()
+        {
+        }
     #endregion Animation
 }

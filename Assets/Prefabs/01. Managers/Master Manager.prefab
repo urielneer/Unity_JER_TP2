@@ -139,7 +139,7 @@ MonoBehaviour:
   _networkManager: {fileID: 186511392764341379}
   _menuManager: {fileID: 1658897487353472861}
   _inputManager: {fileID: 403907098182333870}
-  _audioManager: {fileID: 0}
+  _audioManager: {fileID: 7315535074881684969}
 --- !u!1001 &737258540386085277
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -356,6 +356,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1621424461338592021, guid: 637cb37aaedf98446986f189de7d809d, type: 3}
   m_PrefabInstance: {fileID: 1011809907428954459}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7315535074881684969 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7749757780344296626, guid: 637cb37aaedf98446986f189de7d809d, type: 3}
+  m_PrefabInstance: {fileID: 1011809907428954459}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29eae853a53765b4eb61c88bd6916d9e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AudioManager
 --- !u!1001 &3309782686840500964
 PrefabInstance:
   m_ObjectHideFlags: 0
