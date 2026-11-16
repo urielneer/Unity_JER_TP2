@@ -11,9 +11,9 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9f3758f8f58fdef43803eb9be1df0608, type: 3}
   m_Name: PhotonServerSettings
-  m_EditorClassIdentifier: PhotonUnityNetworking::Photon.Pun.ServerSettings
+  m_EditorClassIdentifier: 
   AppSettings:
-    AppIdRealtime: fa32514e-1dda-4995-ba13-5c22741e501e
+    AppIdRealtime: 
     AppIdFusion: 
     AppIdChat: 
     AppIdVoice: 
@@ -24,7 +24,7 @@ MonoBehaviour:
     Server: 
     Port: 0
     ProxyServer: 
-    Protocol: 1
+    Protocol: 0
     EnableProtocolFallback: 1
     AuthMode: 0
     EnableLobbyStatistics: 0
@@ -32,39 +32,38 @@ MonoBehaviour:
   DevRegion: 
   PunLogging: 0
   EnableSupportLogger: 0
-  RunInBackground: 0
+  RunInBackground: 1
   StartInOfflineMode: 0
   RpcList:
+  - CantHearYou
+  - ChangeColour
+  - HeresWhy
   - ClickRpc
   - DestroyRpc
-  - DestroySpaceship
-  - Fire
-  - RespawnSpaceship
   - RPC_AddCharacterToMaster
   - RPC_AddSelfToMaster
+  - RPC_AlertShootToMaster
+  - RPC_AlertWinnerToAll
   - RPC_CharacterMaterial
   - RPC_ForceBulletUpdateToClients
   - RPC_ForceCharacterUpdateToClients
+  - RPC_ForceLocationUpdate
   - RPC_ForceMapUpdateToClients
   - RPC_ForceUpdateListToClients
   - RPC_ForceUpdateListToEveryone
   - RPC_ForceUpdateVigilantNumber
   - RPC_MasterWaitCompleted
+  - RPC_NotifyDamageUpdate
   - RPC_NotifyDeathToMaster
   - RPC_NotifyKillToMaster
+  - RPC_NotifyMovementUpdate
   - RPC_NotifyPingToMaster
+  - RPC_NotifyShootUpdate
+  - RPC_NotifyWindhornUpdate
   - RPC_ReduceClientLoadCounter
   - RPC_RemoveSelfFromMaster
   - RPC_SendMessageToMaster
   - RPC_SpawnCharacter
-  - RPC_AlertShootToMaster
-  - RPC_AlertWinnerToAll
-  - RPC_NotifyMovementUpdate
-  - RPC_NotifyDamageUpdate
-  - RPC_NotifyWindhornUpdate
-  - RPC_ForceLocationUpdate
-  - RPC_NotifyShootUpdate
-  - RPC_ForceShootEnd
   DisableAutoOpenWizard: 1
-  ShowSettings: 1
+  ShowSettings: 0
   DevRegionSetOnce: 0

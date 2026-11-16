@@ -557,6 +557,8 @@ GameObject:
   - component: {fileID: 2782455018699865663}
   - component: {fileID: 5461316656594389616}
   - component: {fileID: 528439792489148873}
+  - component: {fileID: -6701231571262163568}
+  - component: {fileID: 8840886885024392760}
   m_Layer: 0
   m_Name: Perspective
   m_TagString: Untagged
@@ -644,10 +646,66 @@ MonoBehaviour:
   observableSearch: 2
   ObservedComponents:
   - {fileID: 5461316656594389616}
-  - {fileID: 4956262390907798329}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &-6701231571262163568
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6588461473767659777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91175dcc15224463780e01a8a98b1b60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: PhotonVoice::Photon.Voice.Unity.Recorder
+  voiceDetection: 0
+  voiceDetectionThreshold: 0.01
+  voiceDetectionDelayMs: 500
+  interestGroup: 0
+  useTargetPlayers: 0
+  targetPlayers: 
+  debugEchoMode: 0
+  reliableMode: 0
+  encrypt: 0
+  transmitEnabled: 1
+  samplingRate: 24000
+  frameDuration: 40000
+  bitrate: 30000
+  sourceType: 0
+  microphoneType: 0
+  audioClip: {fileID: 0}
+  loopAudioClip: 1
+  recordingEnabled: 1
+  audioSessionParameters:
+    Category: 4
+    Mode: 1
+    CategoryOptions: 0800000004000000
+  editorAudioSessionPreset: 1
+  androidMicrophoneSettings:
+    EnableAEC: 1
+    EnableAGC: 1
+    EnableNS: 1
+  stopRecordingWhenPaused: 0
+  useOnAudioFilterRead: 0
+  useMicrophoneTypeFallback: 1
+  recordWhenJoined: 1
+--- !u!114 &8840886885024392760
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6588461473767659777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bb0534c5c812844ebf0ec984531e6b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PhotonVoiceChatService
+  _voiceRecorder: {fileID: -6701231571262163568}
+  _photonView: {fileID: 528439792489148873}
 --- !u!1 &8334216460630145207
 GameObject:
   m_ObjectHideFlags: 0
@@ -898,17 +956,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4c4f9009c3727da4a90ed10f41480dbd, type: 3}
---- !u!114 &4956262390907798329 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4063823654708519814, guid: 4c4f9009c3727da4a90ed10f41480dbd, type: 3}
-  m_PrefabInstance: {fileID: 8984035257804857535}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 74af7e2a5608e3a47bf41e78fbf74a1a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyCharacter
 --- !u!224 &7228322731333330681 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1800768383210882630, guid: 4c4f9009c3727da4a90ed10f41480dbd, type: 3}
