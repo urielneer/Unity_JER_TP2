@@ -2,6 +2,7 @@ using System;
 using Photon.Pun;
 using Unity.Burst.Intrinsics;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.UIElements;
 using static CustomExtension.ArrayExtensions;
 
@@ -40,6 +41,8 @@ public class PlayerCharacter : BasePlayer, IPunObservable
             [Space(10)]
             [Header(" Combat Settings")]
                 // Runtime //
+                    [SerializeField] private int _bulletCount;
+                    private int I_Int_BulletCount;
                     [SerializeField] private Aim _aim;
                     Aim I_Aim_Own;
                     private bool O_Bool_CanShoot;
@@ -55,6 +58,13 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                     private bool R_Bool_WasDamaged;
                     private bool R_Bool_IsStunned;
                     private bool R_Bool_WasKilled;
+            [Space(10)]
+            [Header(" GUI Settings")]
+                // Runtime //
+                    [SerializeField] private UnityEngine.UI.Image _cillinder;
+                    private UnityEngine.UI.Image I_Image_Cillinder;
+                    [SerializeField] private Sprite[] _bullets;
+                    private Sprite[] I_SpriteA1_Bullets;
         #endregion Controls 
     #endregion Variables
     #region    Methods
@@ -90,6 +100,11 @@ public class PlayerCharacter : BasePlayer, IPunObservable
             #pragma warning restore CS1998
             {
                 // Variables //
+                    I_Int_BulletCount = _bulletCount;
+                    I_SpriteA1_Bullets = _bullets;
+                    I_Image_Cillinder = _cillinder;
+                    I_Image_Cillinder.sprite = I_SpriteA1_Bullets[I_Int_BulletCount];
+
                     R_Int_LocationIndex = 2;
 
                     I_Flt_MovementSpeed =_movementSpeed; 
@@ -155,6 +170,16 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                         ((EnemyCharacter) (MasterManager.Instance.CharacterManager.EnemyPlayer)).ForceShootAnimation(R_Int_LocationIndex);
                     }
                     [PunRPC]
+                    private void RPC_NotifyReloadUpdate(int Int_Input)
+                    {
+                        ((EnemyCharacter) (MasterManager.Instance.CharacterManager.EnemyPlayer)).ForceReloadAnimation(R_Int_LocationIndex);
+                    }
+                    [PunRPC]
+                    private void RPC_NotifyWindhornUpdate(int Int_Input)
+                    {
+                        ((EnemyCharacter) (MasterManager.Instance.CharacterManager.EnemyPlayer)).ForceWindhornAnimation(R_Int_LocationIndex);
+                    }
+                    [PunRPC]
                     private void RPC_ForceLocationUpdate(Vector2 Vec2_Input)
                     {
                         ((EnemyCharacter) (MasterManager.Instance.CharacterManager.EnemyPlayer)).ForceUpdateLocation(Vec2_Input);
@@ -212,6 +237,14 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                     public void NotifyWindhornUpdate(Vector2 Vec2_Input)
                     {
                         OnStartedMoving(Vec2_Input);  
+                    }
+                    public void NotifyReloadingUpdate(int Int_Input)
+                    {
+        Debug.Log("Reloaded");
+                        I_Int_BulletCount = (I_Int_BulletCount + Int_Input <= 6) ? 
+                                                I_Int_BulletCount : 
+                                                6;
+                        I_Image_Cillinder.sprite = I_SpriteA1_Bullets[I_Int_BulletCount];
                     }
                 #endregion Combat
             #endregion Mirror Methods
@@ -329,7 +362,7 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                                     R_Bool_IsHiding        || // Stop If Hiding //
                                     R_Bool_WasKilled       || // Stop If Dead //
                                     R_Bool_WasDamaged      || // Stop If Damaged //
-                                    R_Bool_IsStunned   || // Stop If Afected By A Windhorn //
+                                    R_Bool_IsStunned       || // Stop If Afected By A Windhorn //
                                     R_Bool_IsReloading     || // Stop If Reloading //
                                     !O_Bool_CanShoot          // Stop If Not Allowed To Shoot //
                                 )
@@ -368,12 +401,15 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                                     !R_Bool_IsShootOutTime || // Stop If Outside Of Shootout Time //
                                     R_Bool_WasKilled       || // Stop If Dead //
                                     R_Bool_WasDamaged      || // Stop If Damaged //
-                                    R_Bool_IsStunned   || // Stop If Afected By A Windhorn //
-                                    R_Bool_IsShooting         // Stop If Shooting //
+                                    R_Bool_IsStunned       || // Stop If Afected By A Windhorn //
+                                    R_Bool_IsShooting      || // Stop If Shooting //
+                                    I_Int_BulletCount > 5     // Stop If Cillinder Is Full //
                                 )
                                 return;
                             #endregion Should Proceed [?]
                         //  Logic //
+                            Debug.Log("Reloading");
+                            GetComponent<PhotonView>().RPC(nameof(RPC_NotifyShootUpdate),RpcTarget.Others, R_Int_LocationIndex);
 
                     }
                     public void OnStartedWindhorn() 
