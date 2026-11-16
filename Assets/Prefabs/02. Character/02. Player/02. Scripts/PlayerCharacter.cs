@@ -53,7 +53,7 @@ public class PlayerCharacter : BasePlayer, IPunObservable
             [Header(" State Settings")]
                 // Runtime //
                     private bool R_Bool_WasDamaged;
-                    private bool R_Bool_WasWindHorned;
+                    private bool R_Bool_IsStunned;
                     private bool R_Bool_WasKilled;
         #endregion Controls 
     #endregion Variables
@@ -111,7 +111,7 @@ public class PlayerCharacter : BasePlayer, IPunObservable
 //                    R_Bool_IsShootOutTime = false;
             
                     R_Bool_WasDamaged = false;
-                    R_Bool_WasWindHorned = false;
+                    R_Bool_IsStunned = false;
                     R_Bool_WasKilled = false;
                 // Children StartUp //
                     I_Aim_Own.OnStartUp();
@@ -228,7 +228,7 @@ public class PlayerCharacter : BasePlayer, IPunObservable
 //                                    R_Bool_IsShootOutTime || // Stop If Shootout Time //
                                     R_Bool_WasKilled      || // Stop If Dead //
                                     R_Bool_WasDamaged     || // Stop If Damaged //
-                                    R_Bool_WasWindHorned  || // Stop If Afected By A Windhorn //
+                                    R_Bool_IsStunned  || // Stop If Afected By A Windhorn //
                                     R_Bool_IsReloading    || // Stop If Reloading //
                                     R_Bool_IsShooting        // Stop If Shooting //
                                 )
@@ -329,7 +329,7 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                                     R_Bool_IsHiding        || // Stop If Hiding //
                                     R_Bool_WasKilled       || // Stop If Dead //
                                     R_Bool_WasDamaged      || // Stop If Damaged //
-                                    R_Bool_WasWindHorned   || // Stop If Afected By A Windhorn //
+                                    R_Bool_IsStunned   || // Stop If Afected By A Windhorn //
                                     R_Bool_IsReloading     || // Stop If Reloading //
                                     !O_Bool_CanShoot          // Stop If Not Allowed To Shoot //
                                 )
@@ -368,7 +368,7 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                                     !R_Bool_IsShootOutTime || // Stop If Outside Of Shootout Time //
                                     R_Bool_WasKilled       || // Stop If Dead //
                                     R_Bool_WasDamaged      || // Stop If Damaged //
-                                    R_Bool_WasWindHorned   || // Stop If Afected By A Windhorn //
+                                    R_Bool_IsStunned   || // Stop If Afected By A Windhorn //
                                     R_Bool_IsShooting         // Stop If Shooting //
                                 )
                                 return;
@@ -384,7 +384,7 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                                 (
                                     R_Bool_WasKilled       || // Stop If Dead //
                                     R_Bool_WasDamaged      || // Stop If Damaged //
-                                    R_Bool_WasWindHorned      // Stop If Afected By A Windhorn //
+                                    R_Bool_IsStunned      // Stop If Afected By A Windhorn //
                                 )
                                 return;
                             #endregion Should Proceed [?]

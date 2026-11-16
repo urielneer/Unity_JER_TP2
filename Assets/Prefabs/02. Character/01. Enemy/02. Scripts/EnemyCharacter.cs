@@ -42,17 +42,20 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                 // Runtime //
                     [SerializeField] private Aim _aim;
                     Aim I_Aim_Own;
-                    private bool R_Bool_IsShooting;
                     private bool O_Bool_CanShoot;
+                    private bool R_Bool_IsShooting;
                     private bool R_Bool_IsReloading;
-                    private bool R_Bool_IsHealing; 
+                    private bool R_Bool_IsWindhorning;
+
 
                     private bool R_Bool_IsShootOutTime;
             [Space(10)]
             [Header(" State Settings")]
                 // Runtime //
-                    private bool R_Bool_WasDamaged;
-                    private bool R_Bool_WasWindHorned;
+                    private bool R_Bool_IsHealing; 
+    
+                    private bool R_Bool_IsStunned;
+                    private bool R_Bool_IsDamaged;
                     private bool R_Bool_WasKilled;
         #endregion Controls 
     #endregion Variables
@@ -104,12 +107,14 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                     R_Bool_IsShooting = false;
                     O_Bool_CanShoot = true;
                     R_Bool_IsReloading = false;
-                    R_Bool_IsHealing = false; 
+                    R_Bool_IsHealing = false;
+                    R_Bool_IsWindhorning = false;
                     R_Bool_IsShootOutTime = true;
+                    R_Bool_IsWindhorning = false;
 //                    R_Bool_IsShootOutTime = false;
             
-                    R_Bool_WasDamaged = false;
-                    R_Bool_WasWindHorned = false;
+                    R_Bool_IsDamaged = false;
+                    R_Bool_IsStunned = false;
                     R_Bool_WasKilled = false;
 
             }
@@ -154,22 +159,15 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                         #region    Should Proceed [?]
                             if 
                             (
-                                R_Bool_WasDamaged // Stop If Damaged ///
+                                R_Bool_IsDamaged // Stop If Damaged ///
                             )
                             return;
                         #endregion Should Proceed [?] 
                     // Logic //
                         R_Int_LocationIndex = Int_Input;
-
-                        R_Bool_IsHiding = false;
-                        R_Bool_IsRelocating = false;
-                        R_Bool_IsShooting = true;
-                        R_Bool_WasDamaged = false;
-
-                        I_Anim_Character.SetBool("IsHidden", R_Bool_IsHiding);
-                        I_Anim_Character.SetBool("IsDamaged", R_Bool_WasDamaged);
-                        I_Anim_Character.SetBool("IsShooting", R_Bool_IsShooting);
-                        I_Anim_Character.SetInteger("Location", R_Int_LocationIndex);
+                
+                        ResetAnimBooleans(null, 2); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? //
+                        UpdateAnimator();
                 }
             #endregion ForceUpdate-Variables
             #region    Combat
@@ -179,7 +177,7 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                         #region    Should Proceed [?]
                             if 
                             (
-                                R_Bool_WasDamaged // Stop If Already Damaged ///
+                                R_Bool_IsDamaged // Stop If Already Damaged ///
                             )
                             return;
                         #endregion Should Proceed [?] 
@@ -191,10 +189,7 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                             R_Bool_WasMovementCTEnabled = false;
                             R_Flt_MovementCoyoteCounter = 0;
                             R_Bool_HasReachedLocation = true;
-                            R_Bool_IsHiding = false;
-                            R_Bool_IsRelocating = false;
-                            R_Bool_IsShooting = false;
-                            R_Bool_WasDamaged = true;
+                            ResetAnimBooleans(true, 1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? //
                             R_Int_LocationIndex = (R_Vec2_OldLocation.x, R_Vec2_OldLocation.y) switch 
                                                   {
                                                       (-1.00f, +0.00f) => 0,   // Bottom Left Corner  //
@@ -204,11 +199,7 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                                                       (+1.00f, +0.00f) => 4,   // Bottom Right Corner //
                                                       _                => 5,   // Bottom (Hide)       //
                                                   };
-
-                            I_Anim_Character.SetBool("IsHidden", R_Bool_IsHiding);
-                            I_Anim_Character.SetBool("IsDamaged", R_Bool_WasDamaged);
-                            I_Anim_Character.SetBool("IsShooting", R_Bool_IsShooting);
-                            I_Anim_Character.SetInteger("Location", R_Int_LocationIndex);
+                            UpdateAnimator();
                         #endregion Animation
                         #region    Network
                             Hashtable Hsh_Keys = new Hashtable
@@ -219,7 +210,7 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                                 },
                                 {
                                     IsDamaged_KEY,
-                                    R_Bool_WasDamaged
+                                    R_Bool_IsDamaged
                                 },
                                 {
                                     IsShooting_KEY,
@@ -286,8 +277,8 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                                 (
 //                                    R_Bool_IsShootOutTime || // Stop If Shootout Time //
                                     R_Bool_WasKilled      || // Stop If Dead //
-                                    R_Bool_WasDamaged     || // Stop If Damaged //
-                                    R_Bool_WasWindHorned  || // Stop If Afected By A Windhorn //
+                                    R_Bool_IsDamaged     || // Stop If Damaged //
+                                    R_Bool_IsStunned  || // Stop If Afected By A Windhorn //
                                     R_Bool_IsReloading    || // Stop If Reloading //
                                     R_Bool_IsShooting        // Stop If Shooting //
                                 )
@@ -326,17 +317,7 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                                             else
                                                 R_Bool_IsHiding = true;
                                         // Animation Update? //
-                                            AnimatorStateInfo ASI_StateInfo = _animator.GetCurrentAnimatorStateInfo(0);
-                                            I_Anim_Character.SetBool("IsHidden", R_Bool_IsHiding);
-                                            I_Anim_Character.SetBool("IsDamaged", R_Bool_WasDamaged);
-                                            I_Anim_Character.SetBool("IsShooting", R_Bool_IsShooting);
-                                            I_Anim_Character.SetInteger("Location", R_Int_LocationIndex);
-            
-                                            I_Anim_Character.speed = 0f;
-
-                                            I_Anim_Character.Update(0f);
-
-                                            I_Anim_Character.speed = 1f;
+                                            UpdateAnimator();
                                     }
                             }
                             else
@@ -367,8 +348,8 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                                     !R_Bool_IsShootOutTime || // Stop If Outside Of Shootout Time //
                                     R_Bool_IsHiding        || // Stop If Hiding //
                                     R_Bool_WasKilled       || // Stop If Dead //
-                                    R_Bool_WasDamaged      || // Stop If Damaged //
-                                    R_Bool_WasWindHorned   || // Stop If Afected By A Windhorn //
+                                    R_Bool_IsDamaged      || // Stop If Damaged //
+                                    R_Bool_IsStunned   || // Stop If Afected By A Windhorn //
                                     R_Bool_IsReloading        // Stop If Reloading //
                                 )
                                 return;
@@ -384,8 +365,8 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                                 (
                                     !R_Bool_IsShootOutTime || // Stop If Outside Of Shootout Time //
                                     R_Bool_WasKilled       || // Stop If Dead //
-                                    R_Bool_WasDamaged      || // Stop If Damaged //
-                                    R_Bool_WasWindHorned   || // Stop If Afected By A Windhorn //
+                                    R_Bool_IsDamaged      || // Stop If Damaged //
+                                    R_Bool_IsStunned   || // Stop If Afected By A Windhorn //
                                     R_Bool_IsShooting         // Stop If Shooting //
                                 )
                                 return;
@@ -399,8 +380,8 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                                 if 
                                 (
                                     R_Bool_WasKilled       || // Stop If Dead //
-                                    R_Bool_WasDamaged      || // Stop If Damaged //
-                                    R_Bool_WasWindHorned      // Stop If Afected By A Windhorn //
+                                    R_Bool_IsDamaged      || // Stop If Damaged //
+                                    R_Bool_IsStunned      // Stop If Afected By A Windhorn //
                                 )
                                 return;
                             #endregion Should Proceed [?]
@@ -420,107 +401,130 @@ public class EnemyCharacter : BasePlayer, IPunObservable
         #endregion Coroutines Methods
     #endregion Methods    
     #region    Animation
-        public void OtherHideStart()
-        {
-
-        }
-        public void OtherHideOver()
-        {
-            if (R_Bool_IsRelocating)
+        #region    Events
+            public void OtherHideStart()
             {
-                R_Bool_IsRelocating = false;
-                R_Bool_IsHiding = false;
-            
-                I_Anim_Character.SetBool("IsHidden", R_Bool_IsHiding);
-                I_Anim_Character.SetBool("IsDamaged", R_Bool_WasDamaged);
-                I_Anim_Character.SetBool("IsShooting", R_Bool_IsShooting);
-                I_Anim_Character.SetInteger("Location", R_Int_LocationIndex);
 
-                I_Anim_Character.speed = 0f;
-
-                I_Anim_Character.Update(0f);
-
-                I_Anim_Character.speed = 1f;
             }
-            else
+            public void OtherHideOver()
             {
-                if (!R_Bool_HasReachedLocation && (R_Int_LocationIndex == 5))
-                    R_Bool_HasReachedLocation = true;
+                if (R_Bool_IsRelocating)
+                {
+                    ResetAnimBooleans(false, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? //
+                    UpdateAnimator();
+                }
+                else
+                {
+                    if (!R_Bool_HasReachedLocation && (R_Int_LocationIndex == 5))
+                        R_Bool_HasReachedLocation = true;
+                }
             }
-        }
-        public void OtherShowStart()
-        {
+            public void OtherShowStart()
+            {
 
-        }
-        public void OtherShowOver()
-        {
-            if (!R_Bool_HasReachedLocation)
-                 R_Bool_HasReachedLocation = true;
-        }
-        public void OtherDamageOver()
-        {
-            R_Bool_HasReachedLocation = true;
-            R_Bool_IsHiding = false;
-            R_Bool_WasDamaged = false;
-            R_Bool_IsShooting = false;
-            string Str_Temp = (I_Anim_Character.GetCurrentAnimatorClipInfo(0))[0].clip.name;
-            R_Int_LocationIndex = (Str_Temp.Substring(Math.Max(0, Str_Temp.Length - 2))) switch 
-                                  {
-                                      "LL" => 0,   // Bottom Left Corner  //
-                                      "TL" => 1,   // Top Left Corner     //
-                                      "TM" => 2,   // Top Middle Corner   //
-                                      "TR" => 3,   // Top Right Corner    //
-                                      "LR" => 4,   // Bottom Right Corner //
-                                      _    => 5,   // Bottom (Hide)       //
-                                  };
-            R_Vec2_StashedLocation = new Vector2();
+            }
+            public void OtherShowOver()
+            {
+                if (!R_Bool_HasReachedLocation)
+                     R_Bool_HasReachedLocation = true;
+            }
+            public void OtherDamageOver()
+            {
+                ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? //
+                ForciblyResetLocation();
+                UpdateAnimator();
+            }
+            public void OtherShootOver()
+            {
+                ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? //
+                ForciblyResetLocation();
+                UpdateAnimator();
 
-            I_Anim_Character.SetBool("IsHidden", R_Bool_IsHiding);
-            I_Anim_Character.SetBool("IsDamaged", R_Bool_WasDamaged);
-            I_Anim_Character.SetBool("IsShooting", R_Bool_IsShooting);
-            I_Anim_Character.SetInteger("Location", R_Int_LocationIndex);
-        }
-        public void OtherShootOver()
-        {
-            R_Bool_HasReachedLocation = true;
-            R_Bool_IsHiding = false;
-            R_Bool_IsShooting = false;
-            string Str_Temp = (I_Anim_Character.GetCurrentAnimatorClipInfo(0))[0].clip.name;
-            R_Int_LocationIndex = (Str_Temp.Substring(Math.Max(0, Str_Temp.Length - 2))) switch 
-                                  {
-                                      "LL" => 0,   // Bottom Left Corner  //
-                                      "TL" => 1,   // Top Left Corner     //
-                                      "TM" => 2,   // Top Middle Corner   //
-                                      "TR" => 3,   // Top Right Corner    //
-                                      "LR" => 4,   // Bottom Right Corner //
-                                      _    => 5,   // Bottom (Hide)       //
-                                  };
-            R_Vec2_StashedLocation = new Vector2();
+                GetComponent<PhotonView>().RPC(nameof(RPC_NotifyShootUpdate),RpcTarget.Others);
+            }
+            public void OtherReloadOver()
+            {
+                ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? //
+                ForciblyResetLocation();
+                UpdateAnimator();
 
-            I_Anim_Character.SetBool("IsHidden", R_Bool_IsHiding);
-            I_Anim_Character.SetBool("IsDamaged", R_Bool_WasDamaged);
-            I_Anim_Character.SetBool("IsShooting", R_Bool_IsShooting);
-            I_Anim_Character.SetInteger("Location", R_Int_LocationIndex);
+            }
+            public void OtherWindhornOver()
+            {
+                ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? //
+                ForciblyResetLocation();
+                UpdateAnimator();
 
-            GetComponent<PhotonView>().RPC(nameof(RPC_NotifyShootUpdate),RpcTarget.Others);
-        }
-        public void OtherReloadOver()
-        {
-        }
-        public void OtherWindhornOver()
-        {
-        }
-        public void OtherStunShowOver()
-        {
-        }
-        public void OtherStunLoopOver()
-        {
-        }
-        public void OtherHealOver()
-        {
-        }
-        public void OtherFullReloadOver()
-        {
-        }
+            }
+            public void OtherStunShowOver()
+            {
+                ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? //
+                ForciblyResetLocation();
+                UpdateAnimator();
+
+            }
+            public void OtherStunLoopOver()
+            {
+                ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? //
+                ForciblyResetLocation();
+                UpdateAnimator();
+
+            }
+            public void OtherHealOver()
+            {
+                ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? //
+                ForciblyResetLocation();
+                UpdateAnimator();
+
+            }
+            public void OtherFullReloadOver()
+            {
+                ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? //
+                ForciblyResetLocation();
+                UpdateAnimator();
+
+            }
+        #endregion Events
+        #region    Reusables
+            public void ResetAnimBooleans(bool? B_Input, int Int_Input) // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? //
+            {
+                if (B_Input != null)
+                    R_Bool_HasReachedLocation = (bool) B_Input;
+        
+                R_Bool_IsHiding      = (Int_Input == 0) ? true : false;
+                R_Bool_IsDamaged     = (Int_Input == 1) ? true : false;
+                R_Bool_IsShooting    = (Int_Input == 2) ? true : false;
+                R_Bool_IsReloading   = (Int_Input == 3) ? true : false;
+                R_Bool_IsWindhorning = (Int_Input == 4) ? true : false;
+                R_Bool_IsStunned     = (Int_Input == 5) ? true : false;
+
+            }
+            public void UpdateAnimator()
+            {
+                // Values //
+                    I_Anim_Character.SetBool("IsHidden", R_Bool_IsHiding);
+                    I_Anim_Character.SetBool("IsDamaged", R_Bool_IsDamaged);
+                    I_Anim_Character.SetBool("IsShooting", R_Bool_IsShooting);
+                    I_Anim_Character.SetInteger("Location", R_Int_LocationIndex);
+                // Proceed //
+                    I_Anim_Character.speed = 0f;
+                    I_Anim_Character.Update(0f);
+                    I_Anim_Character.speed = 1f;
+            }
+            public void ForciblyResetLocation()
+            {
+                string Str_Temp = (I_Anim_Character.GetCurrentAnimatorClipInfo(0))[0].clip.name;
+                R_Int_LocationIndex = (Str_Temp.Substring(Math.Max(0, Str_Temp.Length - 2))) switch
+                {
+                    "LL" => 0,   // Bottom Left Corner  //
+                    "TL" => 1,   // Top Left Corner     //
+                    "TM" => 2,   // Top Middle Corner   //
+                    "TR" => 3,   // Top Right Corner    //
+                    "LR" => 4,   // Bottom Right Corner //
+                    _ => 5,      // Bottom (Hide)       //
+                };
+                R_Vec2_StashedLocation = new Vector2();
+            }
+        #endregion Reusables
     #endregion Animation
 }
