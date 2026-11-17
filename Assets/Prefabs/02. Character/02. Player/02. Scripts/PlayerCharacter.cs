@@ -49,7 +49,10 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                     public bool CanShoot => O_Bool_CanShoot;
                     private bool R_Bool_IsShooting;
                     private bool R_Bool_IsReloading;
-                    private bool R_Bool_IsHealing; 
+                    private bool R_Bool_IsHealing;
+                    private bool R_Bool_IsDamaged;
+                    private bool R_Bool_IsWindhorning;
+                    private bool R_Bool_IsFullReloading;
 
                     private bool R_Bool_IsShootOutTime;
             [Space(10)]
@@ -116,7 +119,10 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                     R_Bool_IsRelocating = false; 
                     R_Bool_HasReachedLocation = true; 
                     R_Bool_WasMovementCTEnabled = false; 
-
+        
+                    R_Bool_IsDamaged = false;
+                    R_Bool_IsWindhorning = false;
+                    R_Bool_IsFullReloading = false;
                     
                     O_Bool_CanShoot = true;
                     R_Bool_IsShooting = false;
@@ -440,67 +446,121 @@ public class PlayerCharacter : BasePlayer, IPunObservable
         #endregion Coroutines Methods
     #endregion Methods    
     #region    Animation
-        public void OwnHideStart()
-        {
-
-        }
-        public void OwnHideOver()
-        {
-            if (R_Bool_IsRelocating)
+        #region    Events
+            public void OwnHideStart()
             {
-                R_Bool_IsRelocating = false;
+
+            }
+            public void OwnHideOver()
+            {
+                if (R_Bool_IsRelocating)
+                {
+                    R_Bool_IsRelocating = false;
+                    R_Bool_IsHiding = false;
+
+                    I_Anim_Character.SetBool("IsHidden", R_Bool_IsHiding);
+                    I_Anim_Character.SetBool("IsDamaged", R_Bool_WasDamaged);
+                    I_Anim_Character.SetBool("IsShooting", R_Bool_IsShooting);
+                    I_Anim_Character.SetInteger("Location", R_Int_LocationIndex);
+
+                    I_Anim_Character.speed = 0f;
+
+                    I_Anim_Character.Update(0f);
+
+                    I_Anim_Character.speed = 1f;
+                }
+                else
+                {
+                    if (!R_Bool_HasReachedLocation && (R_Int_LocationIndex == 5))
+                        R_Bool_HasReachedLocation = true;
+                }
+            }
+            public void OwnShowStart()
+            {
+
+            }
+            public void OwnShowOver()
+            {
+                if (!R_Bool_HasReachedLocation)
+                     R_Bool_HasReachedLocation = true;
+            }
+            public void OwnDamageOver()
+            {
+                R_Bool_HasReachedLocation = true;
                 R_Bool_IsHiding = false;
+                R_Bool_WasDamaged = false;
+                string Str_Temp = (I_Anim_Character.GetCurrentAnimatorClipInfo(0))[0].clip.name;
+                R_Int_LocationIndex = (Str_Temp.Substring(Math.Max(0, Str_Temp.Length - 2))) switch 
+                                        {
+                                            "LL" => 0,   // Bottom Left Corner  //
+                                            "TL" => 1,   // Top Left Corner     //
+                                            "TM" => 2,   // Top Middle Corner   //
+                                            "TR" => 3,   // Top Right Corner    //
+                                            "LR" => 4,   // Bottom Right Corner //
+                                            _    => 5,   // Bottom (Hide)       //
+                                        };
+                R_Vec2_StashedLocation = new Vector2();
 
                 I_Anim_Character.SetBool("IsHidden", R_Bool_IsHiding);
                 I_Anim_Character.SetBool("IsDamaged", R_Bool_WasDamaged);
                 I_Anim_Character.SetBool("IsShooting", R_Bool_IsShooting);
                 I_Anim_Character.SetInteger("Location", R_Int_LocationIndex);
-
-                I_Anim_Character.speed = 0f;
-
-                I_Anim_Character.Update(0f);
-
-                I_Anim_Character.speed = 1f;
             }
-            else
+            public void OwnShootOver()
             {
-                if (!R_Bool_HasReachedLocation && (R_Int_LocationIndex == 5))
-                    R_Bool_HasReachedLocation = true;
             }
-        }
-        public void OwnShowStart()
-        {
-
-        }
-        public void OwnShowOver()
-        {
-            if (!R_Bool_HasReachedLocation)
-                 R_Bool_HasReachedLocation = true;
-        }
-        public void OwnDamageOver()
-        {
-            R_Bool_HasReachedLocation = true;
-            R_Bool_IsHiding = false;
-            R_Bool_WasDamaged = false;
-            string Str_Temp = (I_Anim_Character.GetCurrentAnimatorClipInfo(0))[0].clip.name;
-            R_Int_LocationIndex = (Str_Temp.Substring(Math.Max(0, Str_Temp.Length - 2))) switch 
-                                    {
-                                        "LL" => 0,   // Bottom Left Corner  //
-                                        "TL" => 1,   // Top Left Corner     //
-                                        "TM" => 2,   // Top Middle Corner   //
-                                        "TR" => 3,   // Top Right Corner    //
-                                        "LR" => 4,   // Bottom Right Corner //
-                                        _    => 5,   // Bottom (Hide)       //
-                                    };
-            R_Vec2_StashedLocation = new Vector2();
-
-            I_Anim_Character.SetBool("IsHidden", R_Bool_IsHiding);
-            I_Anim_Character.SetBool("IsDamaged", R_Bool_WasDamaged);
-            I_Anim_Character.SetBool("IsShooting", R_Bool_IsShooting);
-            I_Anim_Character.SetInteger("Location", R_Int_LocationIndex);
-        }
-        public void OwnShootOver()
-        {
-        }
+        #endregion Events
+        #region    Reusables
+            public void ResetAnimBooleans(bool? B_Input, int Int_Input) // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned?  / 6: Healing PU / 7: FullReload //
+            {
+                if (B_Input != null)
+                    R_Bool_HasReachedLocation = (bool) B_Input;
+        
+                R_Bool_IsHiding        = (Int_Input == 0) ? true : false;
+                R_Bool_IsDamaged       = (Int_Input == 1) ? true : false;
+                R_Bool_IsShooting      = (Int_Input == 2) ? true : false;
+                R_Bool_IsReloading     = (Int_Input == 3) ? true : false;
+                R_Bool_IsWindhorning   = (Int_Input == 4) ? true : false;
+                R_Bool_IsStunned       = (Int_Input == 5) ? true : false;
+        
+                R_Bool_IsHealing       = (Int_Input == 6) ? true : false;
+                R_Bool_IsFullReloading = (Int_Input == 7) ? true : false;
+            }
+            public void UpdateAnimator()
+            {
+                // Values //
+                    I_Anim_Character.SetBool("IsHidden"     , R_Bool_IsHiding);
+                    I_Anim_Character.SetBool("IsDamaged"    , R_Bool_IsDamaged);
+                    I_Anim_Character.SetBool("IsShooting"   , R_Bool_IsShooting);
+                    I_Anim_Character.SetBool("IsReloading"  , R_Bool_IsReloading);
+                    I_Anim_Character.SetBool("IsWindhorning", R_Bool_IsShooting);
+                    I_Anim_Character.SetBool("IsStunned"    , R_Bool_IsStunned);
+                    I_Anim_Character.SetInteger("Location"  , R_Int_LocationIndex);
+                    I_Anim_Character.SetInteger("PowerUp"  ,  (R_Bool_IsHealing) ?
+                                                                 1 :
+                                                                 (R_Bool_IsFullReloading) ?
+                                                                    2 :
+                                                                    0
+                                               );
+                // Proceed //
+                    I_Anim_Character.speed = 0f;
+                    I_Anim_Character.Update(0f);
+                    I_Anim_Character.speed = 1f;
+            }
+            public void ForciblyResetLocation()
+            {
+                string Str_Temp = (I_Anim_Character.GetCurrentAnimatorClipInfo(0))[0].clip.name;
+                R_Int_LocationIndex = (Str_Temp.Substring(Math.Max(0, Str_Temp.Length - 2))) switch
+                {
+                    "LL" => 0,   // Bottom Left Corner  //
+                    "TL" => 1,   // Top Left Corner     //
+                    "TM" => 2,   // Top Middle Corner   //
+                    "TR" => 3,   // Top Right Corner    //
+                    "LR" => 4,   // Bottom Right Corner //
+                    _ => 5,      // Bottom (Hide)       //
+                };
+                R_Vec2_StashedLocation = new Vector2();
+            }
+        #endregion Reusables
     #endregion Animation
 }

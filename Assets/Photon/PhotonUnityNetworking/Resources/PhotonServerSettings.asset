@@ -65,6 +65,7 @@ MonoBehaviour:
   - RPC_ForceLocationUpdate
   - RPC_NotifyShootUpdate
   - RPC_ForceShootEnd
+  - RPC_NotifyReloadUpdate
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0
