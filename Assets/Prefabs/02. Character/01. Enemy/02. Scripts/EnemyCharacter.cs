@@ -52,9 +52,8 @@ public class EnemyCharacter : BasePlayer, IPunObservable
             [Space(10)]
             [Header(" State Settings")]
                 // Runtime //
-                    private bool R_Bool_IsHealing;
-                    private bool R_Bool_IsFullReloading;
-
+                    private bool R_Bool_IsHealing; 
+    
                     private bool R_Bool_IsStunned;
                     private bool R_Bool_IsDamaged;
                     private bool R_Bool_WasKilled;
@@ -108,13 +107,10 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                     R_Bool_IsShooting = false;
                     O_Bool_CanShoot = true;
                     R_Bool_IsReloading = false;
+                    R_Bool_IsHealing = false;
                     R_Bool_IsWindhorning = false;
                     R_Bool_IsShootOutTime = true;
                     R_Bool_IsWindhorning = false;
-
-                    R_Bool_IsFullReloading = false;
-                    R_Bool_IsHealing = false;
-
 //                    R_Bool_IsShootOutTime = false;
             
                     R_Bool_IsDamaged = false;
@@ -530,36 +526,26 @@ public class EnemyCharacter : BasePlayer, IPunObservable
             }
         #endregion Events
         #region    Reusables
-            public void ResetAnimBooleans(bool? B_Input, int Int_Input) // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned?  / 6: Healing PU / 7: FReload PU //
+            public void ResetAnimBooleans(bool? B_Input, int Int_Input) // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? //
             {
                 if (B_Input != null)
                     R_Bool_HasReachedLocation = (bool) B_Input;
         
-                R_Bool_IsHiding        = (Int_Input == 0) ? true : false;
-                R_Bool_IsDamaged       = (Int_Input == 1) ? true : false;
-                R_Bool_IsShooting      = (Int_Input == 2) ? true : false;
-                R_Bool_IsReloading     = (Int_Input == 3) ? true : false;
-                R_Bool_IsWindhorning   = (Int_Input == 4) ? true : false;
-                R_Bool_IsStunned       = (Int_Input == 5) ? true : false;
-        
-                R_Bool_IsHealing       = (Int_Input == 6) ? true : false;
-                R_Bool_IsFullReloading = (Int_Input == 7) ? true : false;
+                R_Bool_IsHiding      = (Int_Input == 0) ? true : false;
+                R_Bool_IsDamaged     = (Int_Input == 1) ? true : false;
+                R_Bool_IsShooting    = (Int_Input == 2) ? true : false;
+                R_Bool_IsReloading   = (Int_Input == 3) ? true : false;
+                R_Bool_IsWindhorning = (Int_Input == 4) ? true : false;
+                R_Bool_IsStunned     = (Int_Input == 5) ? true : false;
+
             }
             public void UpdateAnimator()
             {
                 // Values //
-                    I_Anim_Character.SetBool("IsHidden"     , R_Bool_IsHiding);
-                    I_Anim_Character.SetBool("IsDamaged"    , R_Bool_IsDamaged);
-                    I_Anim_Character.SetBool("IsShooting"   , R_Bool_IsShooting);
-                    I_Anim_Character.SetBool("IsReloading"  , R_Bool_IsReloading);
-                    I_Anim_Character.SetBool("IsWindhorning", R_Bool_IsShooting);
-                    I_Anim_Character.SetInteger("Location"  , R_Int_LocationIndex);
-                    I_Anim_Character.SetInteger("PowerUp"  ,  (R_Bool_IsHealing) ?
-                                                                 1 :
-                                                                 (R_Bool_IsFullReloading) ?
-                                                                    2 :
-                                                                    0
-                                               );
+                    I_Anim_Character.SetBool("IsHidden", R_Bool_IsHiding);
+                    I_Anim_Character.SetBool("IsDamaged", R_Bool_IsDamaged);
+                    I_Anim_Character.SetBool("IsShooting", R_Bool_IsShooting);
+                    I_Anim_Character.SetInteger("Location", R_Int_LocationIndex);
                 // Proceed //
                     I_Anim_Character.speed = 0f;
                     I_Anim_Character.Update(0f);
