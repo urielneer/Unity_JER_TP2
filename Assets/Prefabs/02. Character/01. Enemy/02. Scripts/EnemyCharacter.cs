@@ -510,10 +510,26 @@ public class EnemyCharacter : BasePlayer, IPunObservable
             public void UpdateAnimator()
             {
                 // Values //
+<<<<<<< Updated upstream
                     I_Anim_Character.SetBool("IsHidden", R_Bool_IsHiding);
                     I_Anim_Character.SetBool("IsDamaged", R_Bool_IsDamaged);
                     I_Anim_Character.SetBool("IsShooting", R_Bool_IsShooting);
                     I_Anim_Character.SetInteger("Location", R_Int_LocationIndex);
+=======
+                    I_Anim_Character.SetBool("IsHidden"     , R_Bool_IsHiding);
+                    I_Anim_Character.SetBool("IsDamaged"    , R_Bool_IsDamaged);
+                    I_Anim_Character.SetBool("IsShooting"   , R_Bool_IsShooting);
+                    I_Anim_Character.SetBool("IsReloading"  , R_Bool_IsReloading);
+                    I_Anim_Character.SetBool("IsWindhorning", R_Bool_IsShooting);
+                    I_Anim_Character.SetBool("IsStunned"    , R_Bool_IsStunned);
+                    I_Anim_Character.SetInteger("Location"  , R_Int_LocationIndex);
+                    I_Anim_Character.SetInteger("PowerUp"  ,  (R_Bool_IsHealing) ?
+                                                                 1 :
+                                                                 (R_Bool_IsFullReloading) ?
+                                                                    2 :
+                                                                    0
+                                               );
+>>>>>>> Stashed changes
                 // Proceed //
                     I_Anim_Character.speed = 0f;
                     I_Anim_Character.Update(0f);
