@@ -169,38 +169,6 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                         ResetAnimBooleans(null, 2); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? //
                         UpdateAnimator();
                 }
-                public void ForceReloadAnimation(int Int_Input)
-                {
-                    // Valdidation //
-                        #region    Should Proceed [?]
-                            if 
-                            (
-                                R_Bool_IsDamaged // Stop If Damaged ///
-                            )
-                            return;
-                        #endregion Should Proceed [?] 
-                    // Logic //
-                        R_Int_LocationIndex = Int_Input;
-                
-                        ResetAnimBooleans(null, 3); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? //
-                        UpdateAnimator();
-                }
-                public void ForceWindhornAnimation(int Int_Input)
-                {
-                    // Valdidation //
-                        #region    Should Proceed [?]
-                            if 
-                            (
-                                R_Bool_IsDamaged // Stop If Damaged ///
-                            )
-                            return;
-                        #endregion Should Proceed [?] 
-                    // Logic //
-                        R_Int_LocationIndex = Int_Input;
-                
-                        ResetAnimBooleans(null, 4); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? //
-                        UpdateAnimator();
-                }
             #endregion ForceUpdate-Variables
             #region    Combat
                 public void Damage()
@@ -287,12 +255,6 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                     {
                         ((PlayerCharacter) (MasterManager.Instance.CharacterManager.OwnPlayer)).NotifyShootingUpdate();
                     }
-                    [PunRPC]
-                    private void RPC_NotifyReloadUpdate(int Int_Input)
-                    {
-                        ((PlayerCharacter) (MasterManager.Instance.CharacterManager.OwnPlayer)).NotifyReloadingUpdate(Int_Input);
-                GetComponent<PhotonView>().RPC(nameof(RPC_NotifyReloadUpdate),RpcTarget.Others, 1);
-                    }
                 #endregion RPC
             #endregion Network Methods
             #region    Mirror Methods
@@ -315,8 +277,8 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                                 (
 //                                    R_Bool_IsShootOutTime || // Stop If Shootout Time //
                                     R_Bool_WasKilled      || // Stop If Dead //
-                                    R_Bool_IsDamaged      || // Stop If Damaged //
-                                    R_Bool_IsStunned      || // Stop If Afected By A Windhorn //
+                                    R_Bool_IsDamaged     || // Stop If Damaged //
+                                    R_Bool_IsStunned  || // Stop If Afected By A Windhorn //
                                     R_Bool_IsReloading    || // Stop If Reloading //
                                     R_Bool_IsShooting        // Stop If Shooting //
                                 )
@@ -386,8 +348,8 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                                     !R_Bool_IsShootOutTime || // Stop If Outside Of Shootout Time //
                                     R_Bool_IsHiding        || // Stop If Hiding //
                                     R_Bool_WasKilled       || // Stop If Dead //
-                                    R_Bool_IsDamaged       || // Stop If Damaged //
-                                    R_Bool_IsStunned       || // Stop If Afected By A Windhorn //
+                                    R_Bool_IsDamaged      || // Stop If Damaged //
+                                    R_Bool_IsStunned   || // Stop If Afected By A Windhorn //
                                     R_Bool_IsReloading        // Stop If Reloading //
                                 )
                                 return;
@@ -403,8 +365,8 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                                 (
                                     !R_Bool_IsShootOutTime || // Stop If Outside Of Shootout Time //
                                     R_Bool_WasKilled       || // Stop If Dead //
-                                    R_Bool_IsDamaged       || // Stop If Damaged //
-                                    R_Bool_IsStunned       || // Stop If Afected By A Windhorn //
+                                    R_Bool_IsDamaged      || // Stop If Damaged //
+                                    R_Bool_IsStunned   || // Stop If Afected By A Windhorn //
                                     R_Bool_IsShooting         // Stop If Shooting //
                                 )
                                 return;
@@ -418,8 +380,8 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                                 if 
                                 (
                                     R_Bool_WasKilled       || // Stop If Dead //
-                                    R_Bool_IsDamaged       || // Stop If Damaged //
-                                    R_Bool_IsStunned          // Stop If Afected By A Windhorn //
+                                    R_Bool_IsDamaged      || // Stop If Damaged //
+                                    R_Bool_IsStunned      // Stop If Afected By A Windhorn //
                                 )
                                 return;
                             #endregion Should Proceed [?]
@@ -485,8 +447,7 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                 ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? //
                 ForciblyResetLocation();
                 UpdateAnimator();
-        
-                GetComponent<PhotonView>().RPC(nameof(RPC_NotifyReloadUpdate),RpcTarget.Others, 1);
+
             }
             public void OtherWindhornOver()
             {
@@ -521,8 +482,7 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                 ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? //
                 ForciblyResetLocation();
                 UpdateAnimator();
-        
-                GetComponent<PhotonView>().RPC(nameof(RPC_NotifyReloadUpdate),RpcTarget.Others, 6);
+
             }
         #endregion Events
         #region    Reusables
