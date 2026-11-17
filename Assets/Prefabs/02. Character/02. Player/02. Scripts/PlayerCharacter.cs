@@ -260,6 +260,7 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                 #region   OnStarted
                     public void OnStartedMoving(Vector2 Vec2_Input)
                     {
+        Debug.Log("ADWAD");
                         // Valdidation //
                             #region    Should Proceed [?]
                                 if 
@@ -370,7 +371,8 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                                     R_Bool_WasDamaged      || // Stop If Damaged //
                                     R_Bool_IsStunned       || // Stop If Afected By A Windhorn //
                                     R_Bool_IsReloading     || // Stop If Reloading //
-                                    !O_Bool_CanShoot          // Stop If Not Allowed To Shoot //
+                                    !O_Bool_CanShoot       || // Stop If Not Allowed To Shoot //
+                                    I_Int_BulletCount < 1     // Stop If Cillinder Is Empty //
                                 )
                                 return;
                             #endregion Should Proceed [?] 
