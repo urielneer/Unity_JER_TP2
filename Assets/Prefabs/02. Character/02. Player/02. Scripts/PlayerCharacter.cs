@@ -178,6 +178,7 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                     [PunRPC]
                     private void RPC_NotifyReloadUpdate(int Int_Input)
                     {
+                        Debug.Log("B: ToEnemy");
                         ((EnemyCharacter) (MasterManager.Instance.CharacterManager.EnemyPlayer)).ForceReloadAnimation(R_Int_LocationIndex);
                     }
                     [PunRPC]
@@ -238,18 +239,20 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                         I_Anim_Character.SetBool("IsHidden", R_Bool_IsHiding);
                         I_Anim_Character.SetBool("IsDamaged", R_Bool_WasDamaged);
                         I_Anim_Character.SetBool("IsShooting", R_Bool_IsShooting);
-                        I_Anim_Character.SetInteger("Location", R_Int_LocationIndex);  
-                    }
+                        I_Anim_Character.SetInteger("Location", R_Int_LocationIndex);
+        I_Int_BulletCount--;
+        I_Image_Cillinder.sprite = I_SpriteA1_Bullets[I_Int_BulletCount];
+    }
                     public void NotifyWindhornUpdate(Vector2 Vec2_Input)
                     {
                         OnStartedMoving(Vec2_Input);  
                     }
                     public void NotifyReloadingUpdate(int Int_Input)
                     {
-        Debug.Log("Reloaded");
-                        I_Int_BulletCount = (I_Int_BulletCount + Int_Input <= 6) ? 
-                                                I_Int_BulletCount : 
+                        I_Int_BulletCount = (I_Int_BulletCount + Int_Input <= 6) ?
+                                                I_Int_BulletCount + Int_Input : 
                                                 6;
+             Debug.Log("F: ReloadNotified ("+ I_Int_BulletCount + ")");
                         I_Image_Cillinder.sprite = I_SpriteA1_Bullets[I_Int_BulletCount];
                     }
                 #endregion Combat
@@ -260,7 +263,6 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                 #region   OnStarted
                     public void OnStartedMoving(Vector2 Vec2_Input)
                     {
-        Debug.Log("ADWAD");
                         // Valdidation //
                             #region    Should Proceed [?]
                                 if 
@@ -403,6 +405,13 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                     public void OnStartedReloading() 
                     {
                         // Valdidation //
+                            Debug.Log("!R_Bool_IsShootOutTime = "+ !R_Bool_IsShootOutTime + "\n" +
+                                      "R_Bool_WasKilled       = "+ R_Bool_WasKilled       + "\n" +
+                                      "R_Bool_WasDamaged      = "+ R_Bool_WasDamaged      + "\n" +
+                                      "R_Bool_IsStunned       = "+ R_Bool_IsStunned       + "\n" +
+                                      "R_Bool_IsShooting      = "+ R_Bool_IsShooting      + "\n" +
+                                      "I_Int_BulletCount > 5  = "+ I_Int_BulletCount      + "\n" +
+                                      "? "+ (!R_Bool_IsShootOutTime || R_Bool_WasKilled || R_Bool_WasDamaged || R_Bool_IsStunned || R_Bool_IsShooting ||I_Int_BulletCount > 5));
                             #region    Should Proceed [?]
                                 if 
                                 (
@@ -416,8 +425,8 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                                 return;
                             #endregion Should Proceed [?]
                         //  Logic //
-                            Debug.Log("Reloading");
-                            GetComponent<PhotonView>().RPC(nameof(RPC_NotifyShootUpdate),RpcTarget.Others, R_Int_LocationIndex);
+                            Debug.Log("A: Reloading");
+                            GetComponent<PhotonView>().RPC(nameof(RPC_NotifyReloadUpdate),RpcTarget.Others, R_Int_LocationIndex);
 
                     }
                     public void OnStartedWindhorn() 
@@ -521,7 +530,7 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                 R_Bool_IsHiding        = (Int_Input == 0) ? true : false;
                 R_Bool_IsDamaged       = (Int_Input == 1) ? true : false;
                 R_Bool_IsShooting      = (Int_Input == 2) ? true : false;
-                R_Bool_IsReloading     = (Int_Input == 3) ? true : false;
+                R_Bool_IsReloading     = ((Int_Input == 3) || (Int_Input == 7)) ? true : false;
                 R_Bool_IsWindhorning   = (Int_Input == 4) ? true : false;
                 R_Bool_IsStunned       = (Int_Input == 5) ? true : false;
         
@@ -535,7 +544,7 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                     I_Anim_Character.SetBool("IsDamaged"    , R_Bool_IsDamaged);
                     I_Anim_Character.SetBool("IsShooting"   , R_Bool_IsShooting);
                     I_Anim_Character.SetBool("IsReloading"  , R_Bool_IsReloading);
-                    I_Anim_Character.SetBool("IsWindhorning", R_Bool_IsShooting);
+                    I_Anim_Character.SetBool("IsWindhorning", R_Bool_IsWindhorning);
                     I_Anim_Character.SetBool("IsStunned"    , R_Bool_IsStunned);
                     I_Anim_Character.SetInteger("Location"  , R_Int_LocationIndex);
                     I_Anim_Character.SetInteger("PowerUp"  ,  (R_Bool_IsHealing) ?

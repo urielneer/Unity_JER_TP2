@@ -186,6 +186,7 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                     // Logic //
                         R_Int_LocationIndex = Int_Input;
                 
+                        Debug.Log("C: EnemyRecieved");
                         ResetAnimBooleans(null, 3); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned?  / 6: Healing PU / 7: FullReload //
                         UpdateAnimator();
                 }
@@ -295,7 +296,6 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                     private void RPC_NotifyReloadUpdate(int Int_Input)
                     {
                         ((PlayerCharacter) (MasterManager.Instance.CharacterManager.OwnPlayer)).NotifyReloadingUpdate(Int_Input);
-                GetComponent<PhotonView>().RPC(nameof(RPC_NotifyReloadUpdate),RpcTarget.Others, 1);
                     }
                 #endregion RPC
             #endregion Network Methods
@@ -490,6 +490,7 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                 ForciblyResetLocation();
                 UpdateAnimator();
         
+                Debug.Log("D: EnemyReloaded");
                 GetComponent<PhotonView>().RPC(nameof(RPC_NotifyReloadUpdate),RpcTarget.Others, 1);
             }
             public void OtherWindhornOver()
@@ -511,7 +512,8 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                 ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned?  / 6: Healing PU / 7: FullReload //
                 ForciblyResetLocation();
                 UpdateAnimator();
-
+        
+                //GetComponent<PhotonView>().RPC(nameof(RPC_NotifyReloadUpdate),RpcTarget.Others, 6);
             }
             public void OtherHealOver()
             {
@@ -538,7 +540,7 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                 R_Bool_IsHiding        = (Int_Input == 0) ? true : false;
                 R_Bool_IsDamaged       = (Int_Input == 1) ? true : false;
                 R_Bool_IsShooting      = (Int_Input == 2) ? true : false;
-                R_Bool_IsReloading     = (Int_Input == 3) ? true : false;
+                R_Bool_IsReloading     = ((Int_Input == 3) || (Int_Input == 7)) ? true : false;
                 R_Bool_IsWindhorning   = (Int_Input == 4) ? true : false;
                 R_Bool_IsStunned       = (Int_Input == 5) ? true : false;
         
@@ -552,7 +554,7 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                     I_Anim_Character.SetBool("IsDamaged"    , R_Bool_IsDamaged);
                     I_Anim_Character.SetBool("IsShooting"   , R_Bool_IsShooting);
                     I_Anim_Character.SetBool("IsReloading"  , R_Bool_IsReloading);
-                    I_Anim_Character.SetBool("IsWindhorning", R_Bool_IsShooting);
+                    I_Anim_Character.SetBool("IsWindhorning", R_Bool_IsWindhorning);
                     I_Anim_Character.SetBool("IsStunned"    , R_Bool_IsStunned);
                     I_Anim_Character.SetInteger("Location"  , R_Int_LocationIndex);
                     I_Anim_Character.SetInteger("PowerUp"  ,  (R_Bool_IsHealing) ?
