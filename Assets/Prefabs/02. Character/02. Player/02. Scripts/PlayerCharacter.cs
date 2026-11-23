@@ -183,7 +183,9 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                     [PunRPC]
                     private void RPC_NotifyWindhornUpdate(int Int_Input)
                     {
-                        ((EnemyCharacter) (MasterManager.Instance.CharacterManager.EnemyPlayer)).ForceWindhornAnimation(R_Int_LocationIndex);
+                        // Mirror Animation //
+                            ((EnemyCharacter) (MasterManager.Instance.CharacterManager.EnemyPlayer)).ForceWindhornAnimation(R_Int_LocationIndex);
+                        // Stun Enemy //
                     }
                     [PunRPC]
                     private void RPC_ForceLocationUpdate(Vector2 Vec2_Input)
@@ -369,13 +371,6 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                     public void OnStartedReloading() 
                     {
                         // Valdidation //
-                            Debug.Log("!R_Bool_IsShootOutTime = "+ !R_Bool_IsShootOutTime + "\n" +
-                                      "R_Bool_WasKilled       = "+ R_Bool_WasKilled       + "\n" +
-                                      "R_Bool_WasDamaged      = "+ R_Bool_WasDamaged      + "\n" +
-                                      "R_Bool_IsStunned       = "+ R_Bool_IsStunned       + "\n" +
-                                      "R_Bool_IsShooting      = "+ R_Bool_IsShooting      + "\n" +
-                                      "I_Int_BulletCount > 5  = "+ I_Int_BulletCount      + "\n" +
-                                      "? "+ (!R_Bool_IsShootOutTime || R_Bool_WasKilled || R_Bool_WasDamaged || R_Bool_IsStunned || R_Bool_IsShooting ||I_Int_BulletCount > 5));
                             #region    Should Proceed [?]
                                 if 
                                 (
@@ -405,7 +400,7 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                                 return;
                             #endregion Should Proceed [?]
                         // Logic //
-
+                            GetComponent<PhotonView>().RPC(nameof(RPC_NotifyWindhornUpdate),RpcTarget.Others, R_Int_LocationIndex);
                     }
                 #endregion OnStarted
                 #region    OnStopped
