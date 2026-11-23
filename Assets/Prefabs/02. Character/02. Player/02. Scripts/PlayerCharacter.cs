@@ -178,7 +178,6 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                     [PunRPC]
                     private void RPC_NotifyReloadUpdate(int Int_Input)
                     {
-                        Debug.Log("B: ToEnemy");
                         ((EnemyCharacter) (MasterManager.Instance.CharacterManager.EnemyPlayer)).ForceReloadAnimation(R_Int_LocationIndex);
                     }
                     [PunRPC]
@@ -201,58 +200,34 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                             R_Vec2_StashedLocation = new Vector2();
                             R_Bool_WasMovementCTEnabled = false;
                             R_Flt_MovementCoyoteCounter = 0;
-                            R_Bool_HasReachedLocation = true;
                             R_Bool_IsRelocating = false;
+                        // Update Anim Values //
+                            ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned?  / 6: Healing PU / 7: FullReload //
+                            ForciblyResetLocation();
                         // Overwrite Values //
                             R_Bool_IsHiding = (bool) Hsh_Input[IsHiding_KEY];
                             R_Bool_WasDamaged = (bool)Hsh_Input[IsDamaged_KEY];
                             R_Bool_IsShooting = (bool)Hsh_Input[IsShooting_KEY];
-                        // Reposition & Animate //
-                            I_Anim_Character.SetBool("IsHidden", R_Bool_IsHiding);
-                            I_Anim_Character.SetBool("IsDamaged", R_Bool_WasDamaged);
-                            I_Anim_Character.SetBool("IsShooting", R_Bool_IsShooting);
-                            I_Anim_Character.SetInteger("Location", R_Int_LocationIndex);
-            
-                            I_Anim_Character.speed = 0f;
-
-                            I_Anim_Character.Update(0f);
-
-                            I_Anim_Character.speed = 1f;
+                        // Animator //
+                            UpdateAnimator();
                     }
                     public void NotifyShootingUpdate()
                     {
-                        R_Bool_HasReachedLocation = true;
-                        R_Bool_IsHiding = false;
-                        R_Bool_IsShooting = false;
-                        string Str_Temp = (I_Anim_Character.GetCurrentAnimatorClipInfo(0))[0].clip.name;
-                        R_Int_LocationIndex = (Str_Temp.Substring(Math.Max(0, Str_Temp.Length - 2))) switch 
-                                                {
-                                                    "LL" => 0,   // Bottom Left Corner  //
-                                                    "TL" => 1,   // Top Left Corner     //
-                                                    "TM" => 2,   // Top Middle Corner   //
-                                                    "TR" => 3,   // Top Right Corner    //
-                                                    "LR" => 4,   // Bottom Right Corner //
-                                                    _    => 5,   // Bottom (Hide)       //
-                                                };
-                        R_Vec2_StashedLocation = new Vector2();
-
-                        I_Anim_Character.SetBool("IsHidden", R_Bool_IsHiding);
-                        I_Anim_Character.SetBool("IsDamaged", R_Bool_WasDamaged);
-                        I_Anim_Character.SetBool("IsShooting", R_Bool_IsShooting);
-                        I_Anim_Character.SetInteger("Location", R_Int_LocationIndex);
-        I_Int_BulletCount--;
-        I_Image_Cillinder.sprite = I_SpriteA1_Bullets[I_Int_BulletCount];
-    }
-                    public void NotifyWindhornUpdate(Vector2 Vec2_Input)
+                        ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned?  / 6: Healing PU / 7: FullReload //
+                        ForciblyResetLocation();
+                        UpdateAnimator();
+                    }
+                    public void NotifyWindhornUpdate()
                     {
-                        OnStartedMoving(Vec2_Input);  
+                        ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned?  / 6: Healing PU / 7: FullReload //
+                        ForciblyResetLocation();
+                        UpdateAnimator();
                     }
                     public void NotifyReloadingUpdate(int Int_Input)
                     {
                         I_Int_BulletCount = (I_Int_BulletCount + Int_Input <= 6) ?
                                                 I_Int_BulletCount + Int_Input : 
                                                 6;
-             Debug.Log("F: ReloadNotified ("+ I_Int_BulletCount + ")");
                         I_Image_Cillinder.sprite = I_SpriteA1_Bullets[I_Int_BulletCount];
                     }
                 #endregion Combat
@@ -379,27 +354,16 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                                 return;
                             #endregion Should Proceed [?] 
                         // Logic //
-                            R_Bool_HasReachedLocation = true;
-                            R_Bool_IsHiding = false;
-                            R_Bool_IsShooting = true;
-                            string Str_Temp = (I_Anim_Character.GetCurrentAnimatorClipInfo(0))[0].clip.name;
-                            R_Int_LocationIndex = (Str_Temp.Substring(Math.Max(0, Str_Temp.Length - 2))) switch 
-                                                    {
-                                                        "LL" => 0,   // Bottom Left Corner  //
-                                                        "TL" => 1,   // Top Left Corner     //
-                                                        "TM" => 2,   // Top Middle Corner   //
-                                                        "TR" => 3,   // Top Right Corner    //
-                                                        "LR" => 4,   // Bottom Right Corner //
-                                                        _    => 5,   // Bottom (Hide)       //
-                                                    };
-                            R_Vec2_StashedLocation = new Vector2();
-
-                            I_Anim_Character.SetBool("IsHidden", R_Bool_IsHiding);
-                            I_Anim_Character.SetBool("IsDamaged", R_Bool_WasDamaged);
-                            I_Anim_Character.SetBool("IsShooting", R_Bool_IsShooting);
-                            I_Anim_Character.SetInteger("Location", R_Int_LocationIndex); 
-                            I_Aim_Own.SpawnBullet();
-                            O_Bool_CanShoot = false;
+                            // Animation //
+                                ResetAnimBooleans(true, 2); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned?  / 6: Healing PU / 7: FullReload //
+                                ForciblyResetLocation();
+                                UpdateAnimator();
+                            // Spawn Bullet //
+                                I_Aim_Own.SpawnBullet();
+                                O_Bool_CanShoot = false;
+                            // Reduce Bullets //
+                                I_Int_BulletCount--;
+                                I_Image_Cillinder.sprite = I_SpriteA1_Bullets[I_Int_BulletCount];
                             GetComponent<PhotonView>().RPC(nameof(RPC_NotifyShootUpdate),RpcTarget.Others, R_Int_LocationIndex);
                     }
                     public void OnStartedReloading() 
@@ -425,7 +389,6 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                                 return;
                             #endregion Should Proceed [?]
                         //  Logic //
-                            Debug.Log("A: Reloading");
                             GetComponent<PhotonView>().RPC(nameof(RPC_NotifyReloadUpdate),RpcTarget.Others, R_Int_LocationIndex);
 
                     }
@@ -467,18 +430,8 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                 if (R_Bool_IsRelocating)
                 {
                     R_Bool_IsRelocating = false;
-                    R_Bool_IsHiding = false;
-
-                    I_Anim_Character.SetBool("IsHidden", R_Bool_IsHiding);
-                    I_Anim_Character.SetBool("IsDamaged", R_Bool_WasDamaged);
-                    I_Anim_Character.SetBool("IsShooting", R_Bool_IsShooting);
-                    I_Anim_Character.SetInteger("Location", R_Int_LocationIndex);
-
-                    I_Anim_Character.speed = 0f;
-
-                    I_Anim_Character.Update(0f);
-
-                    I_Anim_Character.speed = 1f;
+                    ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned?  / 6: Healing PU / 7: FullReload //
+                    UpdateAnimator();
                 }
                 else
                 {
@@ -497,25 +450,9 @@ public class PlayerCharacter : BasePlayer, IPunObservable
             }
             public void OwnDamageOver()
             {
-                R_Bool_HasReachedLocation = true;
-                R_Bool_IsHiding = false;
-                R_Bool_WasDamaged = false;
-                string Str_Temp = (I_Anim_Character.GetCurrentAnimatorClipInfo(0))[0].clip.name;
-                R_Int_LocationIndex = (Str_Temp.Substring(Math.Max(0, Str_Temp.Length - 2))) switch 
-                                        {
-                                            "LL" => 0,   // Bottom Left Corner  //
-                                            "TL" => 1,   // Top Left Corner     //
-                                            "TM" => 2,   // Top Middle Corner   //
-                                            "TR" => 3,   // Top Right Corner    //
-                                            "LR" => 4,   // Bottom Right Corner //
-                                            _    => 5,   // Bottom (Hide)       //
-                                        };
-                R_Vec2_StashedLocation = new Vector2();
-
-                I_Anim_Character.SetBool("IsHidden", R_Bool_IsHiding);
-                I_Anim_Character.SetBool("IsDamaged", R_Bool_WasDamaged);
-                I_Anim_Character.SetBool("IsShooting", R_Bool_IsShooting);
-                I_Anim_Character.SetInteger("Location", R_Int_LocationIndex);
+                ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned?  / 6: Healing PU / 7: FullReload //
+                ForciblyResetLocation();
+                UpdateAnimator();
             }
             public void OwnShootOver()
             {
