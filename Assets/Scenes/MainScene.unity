@@ -1114,7 +1114,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2734036733736303217, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
       propertyPath: m_fontColor.r
-      value: 0.11764706
+      value: 0.11633529
       objectReference: {fileID: 0}
     - target: {fileID: 2915434217224632345, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
       propertyPath: m_AnchorMax.y
@@ -1646,7 +1646,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5410220729557144678, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
       propertyPath: m_fontColor.b
-      value: 0.18039216
+      value: 0.18155028
       objectReference: {fileID: 0}
     - target: {fileID: 5443862231259376502, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
       propertyPath: m_AnchorMax.y

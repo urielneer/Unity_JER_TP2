@@ -1042,6 +1042,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 255868350784311867}
     - target: {fileID: 5461316656594389616, guid: d3c34f139bfaf0944adb165a95eefd07, type: 3}
+      propertyPath: _position
+      value: 
+      objectReference: {fileID: 2539457695210840903}
+    - target: {fileID: 5461316656594389616, guid: d3c34f139bfaf0944adb165a95eefd07, type: 3}
       propertyPath: _cillinder
       value: 
       objectReference: {fileID: 9094603341740400902}
@@ -1089,6 +1093,38 @@ PrefabInstance:
       propertyPath: m_EditorClassIdentifier
       value: Assembly-CSharp::PlayerCharacter
       objectReference: {fileID: 0}
+    - target: {fileID: 5461316656594389616, guid: d3c34f139bfaf0944adb165a95eefd07, type: 3}
+      propertyPath: _positionIndicators.Array.size
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5461316656594389616, guid: d3c34f139bfaf0944adb165a95eefd07, type: 3}
+      propertyPath: '_positionIndicators.Array.data[0]'
+      value: 
+      objectReference: {fileID: 21300000, guid: c1aa1f841bbc44b41b58f6288b3779f9, type: 3}
+    - target: {fileID: 5461316656594389616, guid: d3c34f139bfaf0944adb165a95eefd07, type: 3}
+      propertyPath: '_positionIndicators.Array.data[1]'
+      value: 
+      objectReference: {fileID: 21300000, guid: c68986d4dda08e04696e4fa475a03dda, type: 3}
+    - target: {fileID: 5461316656594389616, guid: d3c34f139bfaf0944adb165a95eefd07, type: 3}
+      propertyPath: '_positionIndicators.Array.data[2]'
+      value: 
+      objectReference: {fileID: 21300000, guid: 5bf0af4ce72a1d84db26def8108c1fe4, type: 3}
+    - target: {fileID: 5461316656594389616, guid: d3c34f139bfaf0944adb165a95eefd07, type: 3}
+      propertyPath: '_positionIndicators.Array.data[3]'
+      value: 
+      objectReference: {fileID: 21300000, guid: b966bdb82e90e7e49b48ed67777354fb, type: 3}
+    - target: {fileID: 5461316656594389616, guid: d3c34f139bfaf0944adb165a95eefd07, type: 3}
+      propertyPath: '_positionIndicators.Array.data[4]'
+      value: 
+      objectReference: {fileID: 21300000, guid: cacc77f899ec61d409d59d07e3feca80, type: 3}
+    - target: {fileID: 5461316656594389616, guid: d3c34f139bfaf0944adb165a95eefd07, type: 3}
+      propertyPath: '_positionIndicators.Array.data[5]'
+      value: 
+      objectReference: {fileID: 21300000, guid: 368b30d730a1dea429b8d97b72b109bc, type: 3}
+    - target: {fileID: 5461316656594389616, guid: d3c34f139bfaf0944adb165a95eefd07, type: 3}
+      propertyPath: '_positionIndicators.Array.data[6]'
+      value: 
+      objectReference: {fileID: 21300000, guid: 368b30d730a1dea429b8d97b72b109bc, type: 3}
     - target: {fileID: 6305434414845803740, guid: d3c34f139bfaf0944adb165a95eefd07, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 0
