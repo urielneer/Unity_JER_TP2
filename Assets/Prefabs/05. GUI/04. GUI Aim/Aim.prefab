@@ -88,3 +88,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b63a0304369e434b81ac05682e1cb8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  _cursor: {fileID: 0}
+  _canvas: {fileID: 0}
+  _bulletContainer: {fileID: 0}
+  _bullet: {fileID: 0}

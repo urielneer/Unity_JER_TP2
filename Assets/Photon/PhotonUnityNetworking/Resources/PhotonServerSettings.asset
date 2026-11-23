@@ -24,7 +24,7 @@ MonoBehaviour:
     Server: 
     Port: 0
     ProxyServer: 
-    Protocol: 1
+    Protocol: 0
     EnableProtocolFallback: 1
     AuthMode: 0
     EnableLobbyStatistics: 0
@@ -66,6 +66,17 @@ MonoBehaviour:
   - RPC_NotifyShootUpdate
   - RPC_ForceShootEnd
   - RPC_NotifyReloadUpdate
+  - RPC_ForceLocationStart
+  - RPC_NotifyDamageEnd
+  - RPC_NotifyMovementStart
+  - RPC_NotifyReloadEnd
+  - RPC_NotifyReloadStart
+  - RPC_NotifyShootEnd
+  - RPC_NotifyShootStart
+  - RPC_NotifyStunEnd
+  - RPC_NotifyStunStart
+  - RPC_NotifyWindhornEnd
+  - RPC_NotifyWindhornStart
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

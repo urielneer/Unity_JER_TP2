@@ -170,7 +170,7 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                     // Logic //
                         R_Int_LocationIndex = Int_Input;
                 
-                        ResetAnimBooleans(null, 2); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned?  / 6: Healing PU / 7: FullReload //
+                        ResetAnimBooleans(null, 2); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload //
                         UpdateAnimator();
                 }
                 public void ForceReloadAnimation(int Int_Input)
@@ -186,7 +186,7 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                     // Logic //
                         R_Int_LocationIndex = Int_Input;
                 
-                        ResetAnimBooleans(null, 3); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned?  / 6: Healing PU / 7: FullReload //
+                        ResetAnimBooleans(null, 3); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload //
                         UpdateAnimator();
                 }
                 public void ForceWindhornAnimation(int Int_Input)
@@ -202,7 +202,15 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                     // Logic //
                         R_Int_LocationIndex = Int_Input;
                 
-                        ResetAnimBooleans(null, 4); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned?  / 6: Healing PU / 7: FullReload //
+                        ResetAnimBooleans(null, 4); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload //
+                        UpdateAnimator();
+                }
+                public void ForceStunAnimation(int Int_Input)
+                {
+                    // Logic //
+                        R_Int_LocationIndex = Int_Input;
+                
+                        ResetAnimBooleans(null, 5); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload //
                         UpdateAnimator();
                 }
             #endregion ForceUpdate-Variables
@@ -225,7 +233,7 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                             R_Bool_WasMovementCTEnabled = false;
                             R_Flt_MovementCoyoteCounter = 0;
                             R_Bool_HasReachedLocation = true;
-                            ResetAnimBooleans(true, 1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned?  / 6: Healing PU / 7: FullReload //
+                            ResetAnimBooleans(true, 1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload //
                             R_Int_LocationIndex = (R_Vec2_OldLocation.x, R_Vec2_OldLocation.y) switch 
                                                   {
                                                       (-1.00f, +0.00f) => 0,   // Bottom Left Corner  //
@@ -268,7 +276,7 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                                     )
                                 },
                             }; 
-                            GetComponent<PhotonView>().RPC(nameof(RPC_NotifyDamageUpdate),RpcTarget.Others, Hsh_Keys);
+                            GetComponent<PhotonView>().RPC(nameof(RPC_NotifyDamageEnd),RpcTarget.Others, Hsh_Keys);
                         #endregion Network
                 }
             #endregion Combat
@@ -277,24 +285,29 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                 #endregion Regular
                 #region    RPC
                     [PunRPC]
-                    private void RPC_NotifyDamageUpdate(Hashtable Hsh_Input)
+                    private void RPC_NotifyDamageEnd(Hashtable Hsh_Input)
                     {
-                        ((PlayerCharacter) (MasterManager.Instance.CharacterManager.OwnPlayer)).NotifyDamageUpdate(Hsh_Input);
+                        ((PlayerCharacter) (MasterManager.Instance.CharacterManager.OwnPlayer)).NotifyDamageEnd(Hsh_Input);
                     }
                     [PunRPC]
-                    private void RPC_NotifyWindhornUpdate(Hashtable Hsh_Input)
+                    private void RPC_NotifyWindhornEnd()
                     {
-                        ((PlayerCharacter) (MasterManager.Instance.CharacterManager.OwnPlayer)).NotifyWindhornUpdate();
+                        ((PlayerCharacter) (MasterManager.Instance.CharacterManager.OwnPlayer)).NotifyWindhornEnd();
                     }
                     [PunRPC]
-                    private void RPC_NotifyShootUpdate()
+                    private void RPC_NotifyStunEnd()
                     {
-                        ((PlayerCharacter) (MasterManager.Instance.CharacterManager.OwnPlayer)).NotifyShootingUpdate();
+                        ((PlayerCharacter) (MasterManager.Instance.CharacterManager.OwnPlayer)).NotifyStunEnd();
                     }
                     [PunRPC]
-                    private void RPC_NotifyReloadUpdate(int Int_Input)
+                    private void RPC_NotifyShootEnd()
                     {
-                        ((PlayerCharacter) (MasterManager.Instance.CharacterManager.OwnPlayer)).NotifyReloadingUpdate(Int_Input);
+                        ((PlayerCharacter) (MasterManager.Instance.CharacterManager.OwnPlayer)).NotifyShootingEnd();
+                    }
+                    [PunRPC]
+                    private void RPC_NotifyReloadEnd(int Int_Input)
+                    {
+                        ((PlayerCharacter) (MasterManager.Instance.CharacterManager.OwnPlayer)).NotifyReloadingEnd(Int_Input);
                     }
                 #endregion RPC
             #endregion Network Methods
@@ -403,7 +416,7 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                 if (R_Bool_IsRelocating)
                 {
                     R_Bool_IsRelocating = false;
-                    ResetAnimBooleans(false, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned?  / 6: Healing PU / 7: FullReload //
+                    ResetAnimBooleans(false, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload //
                     UpdateAnimator();
                 }
                 else
@@ -423,76 +436,77 @@ public class EnemyCharacter : BasePlayer, IPunObservable
             }
             public void OtherDamageOver()
             {
-                ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned?  / 6: Healing PU / 7: FullReload //
+                ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload //
                 ForciblyResetLocation();
                 UpdateAnimator();
             }
             public void OtherShootOver()
             {
-                ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned?  / 6: Healing PU / 7: FullReload //
+                ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload //
                 ForciblyResetLocation();
                 UpdateAnimator();
 
-                GetComponent<PhotonView>().RPC(nameof(RPC_NotifyShootUpdate),RpcTarget.Others);
+                GetComponent<PhotonView>().RPC(nameof(RPC_NotifyShootEnd),RpcTarget.Others);
             }
             public void OtherReloadOver()
             {
-                ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned?  / 6: Healing PU / 7: FullReload //
+                ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload //
                 ForciblyResetLocation();
                 UpdateAnimator();
         
-                GetComponent<PhotonView>().RPC(nameof(RPC_NotifyReloadUpdate),RpcTarget.Others, 1);
+                GetComponent<PhotonView>().RPC(nameof(RPC_NotifyReloadEnd),RpcTarget.Others, 1);
             }
             public void OtherWindhornOver()
             {
-                ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned?  / 6: Healing PU / 7: FullReload //
+                ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload //
                 ForciblyResetLocation();
                 UpdateAnimator();
         
-                GetComponent<PhotonView>().RPC(nameof(RPC_NotifyWindhornUpdate),RpcTarget.Others);
+                GetComponent<PhotonView>().RPC(nameof(RPC_NotifyWindhornEnd),RpcTarget.Others);
             }
             public void OtherStunShowOver()
             {
-                ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned?  / 6: Healing PU / 7: FullReload //
-                ForciblyResetLocation();
-                UpdateAnimator();
 
             }
             public void OtherStunLoopOver()
             {
-                ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned?  / 6: Healing PU / 7: FullReload //
-                ForciblyResetLocation();
-                UpdateAnimator();
-        
-                //GetComponent<PhotonView>().RPC(nameof(RPC_NotifyReloadUpdate),RpcTarget.Others, 6);
-            }
-            public void OtherHealOver()
-            {
-                ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned?  / 6: Healing PU / 7: FullReload //
+                ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload //
                 ForciblyResetLocation();
                 UpdateAnimator();
 
+                GetComponent<PhotonView>().RPC(nameof(RPC_NotifyStunEnd),RpcTarget.Others);
             }
-            public void OtherFullReloadOver()
+            public void OtherHealOver()
             {
-                ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned?  / 6: Healing PU / 7: FullReload //
+                ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload //
                 ForciblyResetLocation();
                 UpdateAnimator();
         
-                GetComponent<PhotonView>().RPC(nameof(RPC_NotifyReloadUpdate),RpcTarget.Others, 6);
+                GetComponent<PhotonView>().RPC(nameof(RPC_NotifyStunEnd),RpcTarget.Others);
+            }
+            public void OtherFullReloadOver()
+            {
+                ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload //
+                ForciblyResetLocation();
+                UpdateAnimator();
+        
+                GetComponent<PhotonView>().RPC(nameof(RPC_NotifyReloadEnd),RpcTarget.Others, 6);
             }
         #endregion Events
         #region    Reusables
-            public void ResetAnimBooleans(bool? B_Input, int Int_Input) // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned?  / 6: Healing PU / 7: FullReload //
+            public void ResetAnimBooleans(bool? B_Input, int Int_Input) // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload //
             {
                 if (B_Input != null)
                     R_Bool_HasReachedLocation = (bool) B_Input;
         
                 R_Bool_IsHiding        = (Int_Input == 0) ? true : false;
+
                 R_Bool_IsDamaged       = (Int_Input == 1) ? true : false;
+
                 R_Bool_IsShooting      = (Int_Input == 2) ? true : false;
                 R_Bool_IsReloading     = ((Int_Input == 3) || (Int_Input == 7)) ? true : false;
                 R_Bool_IsWindhorning   = (Int_Input == 4) ? true : false;
+
                 R_Bool_IsStunned       = (Int_Input == 5) ? true : false;
         
                 R_Bool_IsHealing       = (Int_Input == 6) ? true : false;

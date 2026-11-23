@@ -5,6 +5,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using System.Linq;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 #region    ...
 #endregion ...
@@ -13,6 +14,9 @@ public class Aim : MonoBehaviour
 {
     #region    Variables
         #region    Menu
+            [Header(" Owner")]
+                [SerializeField] private PlayerCharacter _owner;
+                private PlayerCharacter I_PChar_Owner;
             [Header(" Cursor Move")]
                 [SerializeField] private RectTransform _cursor;
                 private RectTransform IO_RTfm_Cursor;
@@ -47,12 +51,21 @@ public class Aim : MonoBehaviour
                     I_Cvs_Scene = _canvas;
                     I_GObj_BulletContainer = _bulletContainer; 
                     I_Bllt_Prefab = _bullet;
+                    I_PChar_Owner = _owner;
             }
             #pragma warning disable CS1998
             public async void OnUpdate(float Flt_DT)
             #pragma warning restore CS1998
             {
-                IO_RTfm_Cursor.anchoredPosition = GetAimPosition();
+                if (!I_PChar_Owner.IsStunned)
+                {
+                    this.GetComponent<Image>().color = Color.white;
+                    IO_RTfm_Cursor.anchoredPosition = GetAimPosition();
+                }
+                else
+                {
+                    this.GetComponent<Image>().color = Color.black;
+                }
             }
         #endregion Override Methods
         #region    Custom Methods

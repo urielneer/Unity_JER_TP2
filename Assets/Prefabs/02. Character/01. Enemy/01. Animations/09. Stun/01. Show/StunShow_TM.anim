@@ -5454,7 +5454,7 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.55
+  - time: 0.53333336
     functionName: OtherStunShowOver
     data: 
     objectReferenceParameter: {fileID: 0}

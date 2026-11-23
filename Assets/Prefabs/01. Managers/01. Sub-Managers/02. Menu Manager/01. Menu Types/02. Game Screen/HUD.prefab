@@ -1107,6 +1107,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2045308683542394356, guid: d3c34f139bfaf0944adb165a95eefd07, type: 3}
   m_PrefabInstance: {fileID: 3266229362530979842}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7393086346260617842 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5461316656594389616, guid: d3c34f139bfaf0944adb165a95eefd07, type: 3}
+  m_PrefabInstance: {fileID: 3266229362530979842}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90de7663735a3d94bbeefc991c50df73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCharacter
 --- !u!1001 &4193250920033410940
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1814,6 +1825,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -180
       objectReference: {fileID: 0}
+    - target: {fileID: 8432233136965358540, guid: 7b7213569eff85c48ad48b458baa7fd2, type: 3}
+      propertyPath: _owner
+      value: 
+      objectReference: {fileID: 7393086346260617842}
     - target: {fileID: 8432233136965358540, guid: 7b7213569eff85c48ad48b458baa7fd2, type: 3}
       propertyPath: _bullet
       value: 
