@@ -78,6 +78,8 @@ MonoBehaviour:
   - RPC_NotifyWindhornEnd
   - RPC_NotifyWindhornStart
   - RPC_NotifyStunShowStart
+  - RPC_NotifyHealEnd
+  - RPC_NotifyHealStart
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

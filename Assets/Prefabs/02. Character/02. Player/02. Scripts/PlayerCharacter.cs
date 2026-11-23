@@ -339,6 +339,16 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                         ForciblyResetLocation();
                         UpdateAnimator();
                     }
+                    public void NotifyHealStart()
+                    {
+                        // Heal //
+                    }
+                    public void NotifyHealEnd()
+                    {
+                        ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload //
+                        ForciblyResetLocation();
+                        UpdateAnimator();
+                    }
                 #endregion Combat
             #endregion Mirror Methods
         #endregion Custom Methods

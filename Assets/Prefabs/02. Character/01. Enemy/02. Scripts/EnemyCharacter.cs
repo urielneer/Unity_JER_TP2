@@ -315,6 +315,16 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                     {
                         ((PlayerCharacter) (MasterManager.Instance.CharacterManager.OwnPlayer)).NotifyReloadingEnd(Int_Input);
                     }
+                    [PunRPC]
+                    private void RPC_NotifyHealStart()
+                    {
+                        ((PlayerCharacter) (MasterManager.Instance.CharacterManager.OwnPlayer)).NotifyHealStart();
+                    }
+                    [PunRPC]
+                    private void RPC_NotifyHealEnd()
+                    {
+                        ((PlayerCharacter) (MasterManager.Instance.CharacterManager.OwnPlayer)).NotifyHealEnd();
+                    }
                 #endregion RPC
             #endregion Network Methods
             #region    Mirror Methods
@@ -487,13 +497,17 @@ public class EnemyCharacter : BasePlayer, IPunObservable
 
                 GetComponent<PhotonView>().RPC(nameof(RPC_NotifyStunEnd),RpcTarget.Others);
             }
+            public void OtherHealStart()
+            {
+                GetComponent<PhotonView>().RPC(nameof(RPC_NotifyHealStart),RpcTarget.Others);
+            }
             public void OtherHealOver()
             {
                 ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload //
                 ForciblyResetLocation();
                 UpdateAnimator();
         
-                GetComponent<PhotonView>().RPC(nameof(RPC_NotifyStunEnd),RpcTarget.Others);
+                GetComponent<PhotonView>().RPC(nameof(RPC_NotifyHealEnd),RpcTarget.Others);
             }
             public void OtherFullReloadOver()
             {
