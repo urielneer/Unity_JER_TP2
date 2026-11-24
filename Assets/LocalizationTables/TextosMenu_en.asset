@@ -138,6 +138,38 @@ MonoBehaviour:
     m_Localized: 'You lost the duel.'
     m_Metadata:
       m_Items: []
+  - m_Id: 9300000000000
+    m_Localized: 'Enter a name for the room.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9300000004096
+    m_Localized: 'A room with that name already exists.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9300000008192
+    m_Localized: 'The room is full.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9300000012288
+    m_Localized: 'The match in that room has already started.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9300000016384
+    m_Localized: 'That room no longer exists.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9300000020480
+    m_Localized: 'Could not create the room ({0}).'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9300000024576
+    m_Localized: 'Could not join the room ({0}).'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9300000028672
+    m_Localized: 'Could not connect to the server ({0}). Retrying...'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

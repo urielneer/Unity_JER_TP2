@@ -135,6 +135,38 @@ MonoBehaviour:
     m_Key: Resultado_PerdisteDuelo
     m_Metadata:
       m_Items: []
+  - m_Id: 9300000000000
+    m_Key: Error_NombreSalaVacio
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9300000004096
+    m_Key: Error_SalaExiste
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9300000008192
+    m_Key: Error_SalaLlena
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9300000012288
+    m_Key: Error_SalaCerrada
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9300000016384
+    m_Key: Error_SalaNoExiste
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9300000020480
+    m_Key: Error_CrearSala
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9300000024576
+    m_Key: Error_UnirseSala
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9300000028672
+    m_Key: Error_SinConexion
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

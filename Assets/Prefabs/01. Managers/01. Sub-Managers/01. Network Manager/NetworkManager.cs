@@ -29,12 +29,15 @@ public class NetworkManager : BaseManager<NetworkManager>
                 [SerializeField] private int _maxReconnectAttempts = 8;
                 [Tooltip("Segundos entre intentos de reconexion")]
                 [SerializeField] private float _reconnectRetryDelay = 1.5f;
+                [Tooltip("Segundos entre intentos de conectar al servidor de Photon cuando no hay conexion (mientras se muestra el error)")]
+                [SerializeField] private float _connectRetryDelay = 5f;
         #endregion Connection Settings
         #region    Reconnection
             private ReconnectionHandler R_Ctm_RH_Reconnection;
             public INetworkReconnectionService Reconnection => R_Ctm_RH_Reconnection;
             private Coroutine R_Crtn_Reconnect;
-            private string R_Str_PendingError; // Error a mostrar cuando volvamos a llegar al Master //
+            private Coroutine R_Crtn_ConnectRetry;
+            private bool R_Bool_HasReachedMaster; // Distingue "no se pudo conectar" de "se perdio la conexion" //
         #endregion Reconnection
         #region    Manager-To-Manager Data
             private bool O_Bool_IsStatusOn = false;
@@ -107,10 +110,12 @@ public class NetworkManager : BaseManager<NetworkManager>
                             return;
                         }
                     // Desconexion pedida por el juego (cerrar la app, etc.) //
+                        bool Bool_HadConnection = R_Bool_HasReachedMaster;
+                        R_Bool_HasReachedMaster = false;
                         O_Bool_IsStatusOn = false;
                         if (E_Cause == DisconnectCause.DisconnectByClientLogic || E_Cause == DisconnectCause.ApplicationQuit) return;
-                    // Cualquier otro corte (menu, lobby): volver al titulo y reconectar al Master //
-                        GoToTitle(string.Format(ConnectionStrings.ConnectionLost, E_Cause));
+                    // Cualquier otro corte (menu, lobby, o no se pudo conectar al abrir el juego): error + reintento //
+                        GoToTitle(string.Format(Bool_HadConnection ? ConnectionStrings.ConnectionLost : ErrorStrings.CannotConnectFormat, E_Cause));
                 }
             #endregion Connection
             #region    Title Room
@@ -123,18 +128,12 @@ public class NetworkManager : BaseManager<NetworkManager>
                             return;
                         }
                     // PUN //
+                        R_Bool_HasReachedMaster = true;
+                        StopConnectRetry();
                         PhotonNetwork.JoinLobby();
                         PhotonNetwork.AutomaticallySyncScene = true;
-                    // Menu Manager Communication - Error pendiente o Titulo //
-                        if (!string.IsNullOrEmpty(R_Str_PendingError))
-                        {
-                            ShowError(R_Str_PendingError);
-                            R_Str_PendingError = null;
-                        }
-                        else
-                        {
-                            MasterManager.Instance.MenuManager.OpenMenu("TitleMenu");
-                        }
+                    // Menu Manager Communication - Si el jugador esta leyendo un error, no se lo saca: el boton del ErrorMenu lo lleva al menu //
+                        if (!IsErrorMenuOpen()) MasterManager.Instance.MenuManager.OpenMenu("TitleMenu");
                     Debug.Log("[Network Manager] Status: 'Joined Master'");
                 }
                 public override void OnJoinedLobby()
@@ -161,7 +160,7 @@ public class NetworkManager : BaseManager<NetworkManager>
                 {
                     bool Bool_WasReconnecting = R_Ctm_RH_Reconnection.IsReconnecting;
                     R_Ctm_RH_Reconnection.NotifyJoinRoomFailed(Shrt_ReturnCode, Str_Message);
-                    if (!Bool_WasReconnecting) ShowError(Str_Message);
+                    if (!Bool_WasReconnecting) ShowError(ErrorStrings.ForJoinRoom(Shrt_ReturnCode));
                     Debug.Log("[Network Manager] Status: 'Join Room Failed' (" + Shrt_ReturnCode + "): " + Str_Message);
                 }
                 public override void OnRoomListUpdate(List<RoomInfo> Lst_PUNRI_RoomList)
@@ -242,7 +241,7 @@ public class NetworkManager : BaseManager<NetworkManager>
             #region    Error Room
                 public override void OnCreateRoomFailed(short Shrt_ReturnCode, string Str_Message)
                 {
-                    ShowError(Str_Message);
+                    ShowError(ErrorStrings.ForCreateRoom(Shrt_ReturnCode));
                     Debug.Log("[Network Manager] Status: 'ERROR FOUND!: "+Str_Message+"'");
                 }
             #endregion Error Room
@@ -330,27 +329,61 @@ public class NetworkManager : BaseManager<NetworkManager>
                 // Menu Manager Communication //
                     MasterManager.Instance.MenuManager.OpenMenu("TitleMenu");
             }
-            // Vuelve al titulo mostrando un error. Si no hay conexion, reconecta al Master y el error se muestra al llegar //
+            // Vuelve al titulo mostrando un error. Si no hay conexion, el error queda visible y se reintenta conectar cada tanto //
             private void GoToTitle(string Str_Error)
             {
                 // Estado local //
                     MasterManager.Instance.GameManager.ShowCursor();
                     MasterManager.Instance.InputManager.DisableInputPlayerActions();
-                    bool Bool_AlreadyInMenu = SceneManager.GetActiveScene().buildIndex == MENU_SCENE_INDEX;
+                // IsStatusOn queda en true: el OnStartUp de la escena de menu no tiene que reconectar por su cuenta //
+                    O_Bool_IsStatusOn = true;
+                    ReturnToTitle();
                 // Seguimos conectados al Master: alcanza con volver al menu //
                     if (PhotonNetwork.IsConnectedAndReady)
                     {
-                        O_Bool_IsStatusOn = true;
-                        ReturnToTitle();
                         if (!PhotonNetwork.InLobby) PhotonNetwork.JoinLobby();
                         ShowError(Str_Error);
                         return;
                     }
-                // Sin conexion: el OnStartUp (de la escena nueva o el nuestro) reconecta //
-                    R_Str_PendingError = Str_Error;
-                    O_Bool_IsStatusOn = false;
-                    ReturnToTitle();
-                    if (Bool_AlreadyInMenu) OnStartUp();
+                // Sin conexion: error visible + reintento con espera (antes era un bucle inmediato de reconexion) //
+                    StopConnectRetry();
+                    R_Crtn_ConnectRetry = StartCoroutine(ConnectRetryRoutine(Str_Error));
+            }
+            private IEnumerator ConnectRetryRoutine(string Str_Error)
+            {
+                // Esperar a que la escena de menu este cargada para que el error no quede tapado //
+                    while (SceneManager.GetActiveScene().buildIndex != MENU_SCENE_INDEX) yield return null;
+                    yield return null;
+                    ShowError(Str_Error);
+                // Reintentar hasta llegar al Master (OnConnectedToMaster corta esta rutina) //
+                    WaitForSecondsRealtime Ctm_WFS_Delay = new WaitForSecondsRealtime(_connectRetryDelay);
+                    while (!PhotonNetwork.IsConnected)
+                    {
+                        yield return Ctm_WFS_Delay;
+                        if (PhotonNetwork.IsConnected) break;
+                        Debug.Log("[Network Manager] Status: 'Retrying Connection'");
+                        PhotonNetwork.ConnectUsingSettings();
+                        PhotonNetwork.NetworkingClient.LoadBalancingPeer.DisconnectTimeout = _disconnectTimeoutMs;
+                    }
+                    R_Crtn_ConnectRetry = null;
+            }
+            private void StopConnectRetry()
+            {
+                if (R_Crtn_ConnectRetry == null) return;
+                StopCoroutine(R_Crtn_ConnectRetry);
+                R_Crtn_ConnectRetry = null;
+            }
+            private bool IsErrorMenuOpen()
+            {
+                BaseMenuType Ctm_BMT_Current = MasterManager.Instance.MenuManager.CurrentMenu;
+                return Ctm_BMT_Current != null && Ctm_BMT_Current.MenuName == ERROR_MENU_NAME;
+            }
+            // Acciones de sala sin conexion: en vez de quedar trabado en "Cargando", se explica el problema //
+            private bool EnsureConnectedForRoomAction()
+            {
+                if (PhotonNetwork.IsConnectedAndReady) return true;
+                ShowError(string.Format(ErrorStrings.CannotConnectFormat, PhotonNetwork.NetworkClientState));
+                return false;
             }
             private void ShowError(string Str_Message)
             {
@@ -360,6 +393,8 @@ public class NetworkManager : BaseManager<NetworkManager>
             }
             public void JoinRoom(RoomInfo PUNRI_Input)
             {
+                // Error Exit //
+                    if (!EnsureConnectedForRoomAction()) return;
                 // Variables //
                     MenuTypeFindRoom Ctm_MTFR_Reference = (MasterManager.Instance.MenuManager.GetMenuReference("FindRoomMenu")).gameObject.GetComponent<MenuTypeFindRoom>();
                     MenuTypeWaitingRoom Ctm_MTWR_Reference = (MasterManager.Instance.MenuManager.GetMenuReference("WaitingRoom")).gameObject.GetComponent<MenuTypeWaitingRoom>();
@@ -390,11 +425,13 @@ public class NetworkManager : BaseManager<NetworkManager>
                         CleanupCacheOnLeave = true,
                         CustomRoomProperties = MatchConnectionMonitor.BuildResetProperties()
                     };
-                // Error Exit //
-                    if (string.IsNullOrEmpty(Ctm_MTCR_Reference.RoomName))
+                // Error Exit - Antes salia en silencio: ahora se avisa al jugador //
+                    if (string.IsNullOrWhiteSpace(Ctm_MTCR_Reference.RoomName))
                     {
+                        ShowError(ErrorStrings.EmptyRoomName);
                         return;
                     }
+                    if (!EnsureConnectedForRoomAction()) return;
                 // Map Manager Communication - Reset Bounds //
                     MasterManager.Instance.MapManager.SetBounds(Ctm_MTCR_Reference.MapWidth, Ctm_MTCR_Reference.MapHeight);
                 // Create Room //
