@@ -1,6 +1,7 @@
+using Photon.Pun;
 using UnityEngine;
 
-public class PowerUp : MonoBehaviour
+public class PowerUp : MonoBehaviourPunCallbacks
 {
     #region    Variables
         #region    Controls 
@@ -19,7 +20,7 @@ public class PowerUp : MonoBehaviour
     #endregion Variables
     #region    Methods
         #region    Unity Methods
-            protected void Awake()
+            protected void Start()
             {
                 OnStartUp();
             }
