@@ -553,7 +553,7 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                 // Actions? //
                     R_Bool_IsShooting      = (Int_Input == 2) ?
                                              true : false;
-                    R_Bool_IsReloading     = ((Int_Input == 3) || (Int_Input == 7)) ?
+                    R_Bool_IsReloading     = (Int_Input == 3) ?
                                              true : false;
                     R_Bool_IsWindhorning   = (Int_Input == 4) ?
                                              true : false;
