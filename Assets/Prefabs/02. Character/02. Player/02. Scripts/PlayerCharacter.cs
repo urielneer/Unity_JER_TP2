@@ -148,9 +148,10 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                     I_Aim_Own.OnStartUp();
             }
             #pragma warning disable CS1998
-            public async void OnUpdate(float Flt_DT)
+            public async override void OnUpdate(float Flt_DT)
             #pragma warning restore CS1998
             {
+                base.OnUpdate(Flt_DT);
                 #region    Movement
                     // Reduce "Coyote" Counter //
                         if (R_Bool_WasMovementCTEnabled)
@@ -245,14 +246,14 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                                 R_Bool_WasMovementCTEnabled = false;
                                 R_Flt_MovementCoyoteCounter = 0;
                                 R_Bool_IsRelocating = false;
-                                ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload //
+                                ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
                             // Position //
                                 int Int_Temp = ((EnemyCharacter)(MasterManager.Instance.CharacterManager.EnemyPlayer)).LocationIndex;
                                 O_Int_LocationIndex = (Int_Temp != 5) ?
                                                       Int_Temp :
                                                       2;
                             // Animation //
-                                ResetAnimBooleans(null, 5); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload //
+                                ResetAnimBooleans(null, 5); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
                                 ForciblyResetLocation();
                                 UpdateAnimator();
                             // Notify //
@@ -284,7 +285,7 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                             R_Flt_MovementCoyoteCounter = 0;
                             R_Bool_IsRelocating = false;
                         // Update Anim Values //
-                            ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload //
+                            ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
                             ForciblyResetLocation();
                         // Overwrite Values //
                             R_Bool_IsHiding = (bool) Hsh_Input[IsHiding_KEY];
@@ -295,19 +296,19 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                     }
                     public void NotifyShootingEnd()
                     {
-                        ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload //
+                        ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
                         ForciblyResetLocation();
                         UpdateAnimator();
                     }
                     public void NotifyWindhornEnd()
                     {
-                        ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload //
+                        ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
                         ForciblyResetLocation();
                         UpdateAnimator();
                     }
                     public void NotifyStunEnd()
                     {
-                        ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload //
+                        ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
                         ForciblyResetLocation();
                         UpdateAnimator();
                     }
@@ -319,7 +320,7 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                             R_Flt_MovementCoyoteCounter = 0;
                             R_Bool_IsRelocating = false;
                         // Update Anim Values //
-                            ResetAnimBooleans(true, 5); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload //
+                            ResetAnimBooleans(true, 5); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
                             ForciblyResetLocation();
                         // Force Move //
                             R_Vec2_StashedLocation = new Vector2();
@@ -335,7 +336,7 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                                                 I_Int_BulletCount + Int_Input : 
                                                 6;
                         I_Image_Cillinder.sprite = I_SpriteA1_Bullets[I_Int_BulletCount];
-                        ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload //
+                        ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
                         ForciblyResetLocation();
                         UpdateAnimator();
                     }
@@ -345,12 +346,28 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                     }
                     public void NotifyHealEnd()
                     {
-                        ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload //
+                        ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
                         ForciblyResetLocation();
                         UpdateAnimator();
                     }
                 #endregion Combat
             #endregion Mirror Methods
+        #endregion Custom Methods
+        #region Listener Methods
+            public void OnPowerUpHit(int Int_Index)
+            {
+                ResetAnimBooleans(
+                                    true,
+                                    (Int_Index) switch
+                                    {
+                                        0 => 6,   // Heal          //
+                                        1 => 7,   // Full Reload   //
+                                        _ => 6,   // Default: Heal //
+                                    }
+                                 ); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
+                ForciblyResetLocation();
+                UpdateAnimator();
+            }
         #endregion Custom Methods
         #region Listener Methods
             #region    Callee Methods
@@ -428,7 +445,7 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                             #endregion Should Proceed [?] 
                         // Logic //
                             // Animation //
-                                ResetAnimBooleans(true, 2); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload //
+                                ResetAnimBooleans(true, 2); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
                                 ForciblyResetLocation();
                                 UpdateAnimator();
                             // Spawn Bullet //
@@ -457,7 +474,7 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                             #endregion Should Proceed [?]
                         //  Logic //
                             // Animation //
-                                ResetAnimBooleans(true, 3); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload //
+                                ResetAnimBooleans(true, 3); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
                                 ForciblyResetLocation();
                                 UpdateAnimator();
                             // Trigger Mirror Animation //
@@ -480,7 +497,7 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                             #endregion Should Proceed [?]
                         // Logic //
                             // Animation //
-                                ResetAnimBooleans(true, 4); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload //
+                                ResetAnimBooleans(true, 4); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
                                 ForciblyResetLocation();
                                 UpdateAnimator();
                             // Trigger Mirror Animation //
@@ -509,7 +526,7 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                 if (R_Bool_IsRelocating)
                 {
                     R_Bool_IsRelocating = false;
-                    ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload //
+                    ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
                     UpdateAnimator();
                 }
                 else
@@ -529,19 +546,19 @@ public class PlayerCharacter : BasePlayer, IPunObservable
             }
             public void OwnDamageOver()
             {
-                ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload //
+                ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
                 ForciblyResetLocation();
                 UpdateAnimator();
             }
             public void OwnShootOver()
             {
-                ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload //
+                ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
                 ForciblyResetLocation();
                 UpdateAnimator();
             }
         #endregion Events
         #region    Reusables
-            public void ResetAnimBooleans(bool? B_Input, int Int_Input) // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload //
+            public void ResetAnimBooleans(bool? B_Input, int Int_Input) // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
             {
                 if (B_Input != null)
                     R_Bool_HasReachedLocation = (bool) B_Input;

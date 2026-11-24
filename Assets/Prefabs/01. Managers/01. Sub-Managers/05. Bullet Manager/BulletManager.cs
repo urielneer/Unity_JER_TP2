@@ -90,6 +90,7 @@ public class BulletManager : BaseManager<BulletManager>
                 #region    Spawn
                     // Spawn Bullet //
                         Bullet Ctm_Bllt_Own = (Instantiate(I_Ctm_Bllt_Prefab, Vec3_Pos, Quaternion.identity)).GetComponent<Bullet>();
+                        Ctm_Bllt_Own.SetCaster((PlayerCharacter) MasterManager.Instance.CharacterManager.OwnPlayer);
                         Ctm_Bllt_Own.transform.localScale = new Vector3(1,1,1);
                     // MapManager - Container //
                         Ctm_Bllt_Own.gameObject.transform.SetParent(I_Trfm_BulletContainer, true);

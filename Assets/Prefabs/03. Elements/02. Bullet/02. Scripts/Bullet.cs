@@ -11,9 +11,10 @@ public class Bullet : MonoBehaviour
             [SerializeField] private LayerMask _mask;
             private LayerMask I_LMsk_Target;
         [Space(10)]
-        [Header(" Damage Settings")]
+        [Header(" Game Settings")]
             bool R_Bool_ValidShot = true; 
             GameObject R_GObj_Target = null;
+            PlayerCharacter R_PChar_Caster = null;
     #endregion Variables
     #region    Methods
         #region    Override Methods
@@ -85,7 +86,10 @@ public class Bullet : MonoBehaviour
                 #endregion Damage
             }
         #endregion Override Methods
-        #region    Animation
+        #region    Spawn    
+            public void SetCaster(PlayerCharacter PChar_Input) {R_PChar_Caster = PChar_Input;}
+    #endregion Spawn
+    #region    Animation
             public void ImpactStart()
             {
                 // Has Hit Player ? //
@@ -93,6 +97,7 @@ public class Bullet : MonoBehaviour
                     {
                         if (R_GObj_Target.TryGetComponent<PowerUp>(out PowerUp Pup_Target))
                         {
+                            R_PChar_Caster.OnPowerUpHit(Pup_Target.PowerUpID);
 Debug.Log("PowerUpShot");
                         }
                         else
@@ -110,7 +115,9 @@ Debug.Log("ObstacleShot");
             {
                 // Self Destruct //
 /*?*/               ((PlayerCharacter)(MasterManager.Instance.CharacterManager.OwnPlayer)).ResetCanshootFlag();
+                    #pragma warning disable CS0162
                     Destroy(this.gameObject);
+                    #pragma warning restore CS0162
             }
         #endregion Animation
     #endregion Methods
