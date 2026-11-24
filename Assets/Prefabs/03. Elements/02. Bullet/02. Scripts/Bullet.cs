@@ -1,5 +1,6 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using Photon.Pun;
 
 public class Bullet : MonoBehaviour
 {
@@ -15,6 +16,9 @@ public class Bullet : MonoBehaviour
             bool R_Bool_ValidShot = true; 
             GameObject R_GObj_Target = null;
             PlayerCharacter R_PChar_Caster = null;
+        [Header(" Lag Compensation")]
+            double R_Dbl_ShotTime;    // PhotonNetwork.Time del disparo: es lo que compara el Master, no el orden de llegada //
+            bool R_Bool_HitReported;
     #endregion Variables
     #region    Methods
         #region    Override Methods
@@ -32,6 +36,9 @@ public class Bullet : MonoBehaviour
                 R_Bool_ValidShot = false; 
                 R_Bool_WassShotVerified = false;
                 R_GObj_Target = null;
+                // La bala se crea en el momento del disparo: ese es el timestamp de servidor del tiro //
+                R_Dbl_ShotTime = PhotonNetwork.Time;
+                R_Bool_HitReported = false;
             }
             #pragma warning disable CS1998
             public async void OnUpdate(float Flt_DT)
@@ -80,12 +87,22 @@ public class Bullet : MonoBehaviour
                                     R_GObj_Target = Col2D_Hit.gameObject;
                                     R_Bool_ValidShot = true; 
                                     R_Bool_WassShotVerified = true;
+                                    ReportHitToMaster();
                                     return;
                                 }
                             }
                 #endregion Damage
             }
         #endregion Override Methods
+        #region    Lag Compensation
+            // Se reporta en cuanto se detecta el impacto (no al animarlo): cuanto antes llega, mas margen tiene la ventana //
+            private void ReportHitToMaster()
+            {
+                if (R_Bool_HitReported) return;
+                R_Bool_HitReported = true;
+                MasterManager.Instance.GameManager.ReportHit(R_Dbl_ShotTime);
+            }
+        #endregion Lag Compensation
         #region    Spawn    
             public void SetCaster(PlayerCharacter PChar_Input) {R_PChar_Caster = PChar_Input;}
     #endregion Spawn
@@ -100,11 +117,8 @@ public class Bullet : MonoBehaviour
                             R_PChar_Caster.OnPowerUpHit(Pup_Target.PowerUpID);
 Debug.Log("PowerUpShot");
                         }
-                        else
-                        if (R_GObj_Target.transform.parent.gameObject.TryGetComponent<EnemyCharacter>(out EnemyCharacter EChar_Target))
-                        {
-                            EChar_Target.Damage();
-                        }
+                        // Impacto al rival: ya se reporto al Master al detectarlo (OnUpdate). //
+                        // El dano y su animacion llegan cuando el Master lo confirma (GameManager.RPC_HitConfirmed) //
                     }
                     else
                     {

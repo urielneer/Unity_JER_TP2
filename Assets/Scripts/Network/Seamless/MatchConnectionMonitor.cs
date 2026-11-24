@@ -96,13 +96,24 @@ public sealed class MatchConnectionMonitor
                 if (PhotonNetwork.Time < R_Dbl_Deadline) return;
                 DeclareAbandon(R_Int_PausedActor);
             }
+            // GDD: "Gana el jugador que deja la vida del rival en 0" - Lo llama el GameManager al ver Hp <= 0 //
+            public void DeclareKnockOut(int Int_LoserActor)
+            {
+                if (!PhotonNetwork.IsMasterClient || HasEnded) return;
+                DeclareWinnerAgainst(Int_LoserActor, MatchEndReason.KnockOut);
+            }
             private void DeclareAbandon(int Int_LoserActor)
             {
-                // Ganador: el primer jugador activo que no sea el que abandono //
+                DeclareWinnerAgainst(Int_LoserActor, MatchEndReason.Abandon);
+            }
+            private void DeclareWinnerAgainst(int Int_LoserActor, MatchEndReason E_Reason)
+            {
+                // Ganador: el primer jugador que no sea el perdedor (en abandono, ademas tiene que estar activo) //
                     int Int_Winner = 0;
                     foreach (Player PUNPl_Player in PhotonNetwork.PlayerList)
                     {
-                        if (PUNPl_Player.ActorNumber == Int_LoserActor || PUNPl_Player.IsInactive) continue;
+                        if (PUNPl_Player.ActorNumber == Int_LoserActor) continue;
+                        if (E_Reason == MatchEndReason.Abandon && PUNPl_Player.IsInactive) continue;
                         Int_Winner = PUNPl_Player.ActorNumber;
                         break;
                     }
@@ -114,13 +125,13 @@ public sealed class MatchConnectionMonitor
                         new Hashtable
                         {
                             { RoomPropertyKeys.MatchWinner,    Int_Winner },
-                            { RoomPropertyKeys.MatchEndReason, (int) MatchEndReason.Abandon },
+                            { RoomPropertyKeys.MatchEndReason, (int) E_Reason },
                             { RoomPropertyKeys.PausedActor,    0 },
                             { RoomPropertyKeys.PauseDeadline,  0d },
                         },
                         new Hashtable { { RoomPropertyKeys.MatchWinner, 0 } }
                     );
-                    Debug.Log("[Match Monitor] Victoria por abandono para el Actor " + Int_Winner);
+                    Debug.Log("[Match Monitor] Victoria (" + E_Reason + ") para el Actor " + Int_Winner);
             }
         #endregion Authority (Solo MasterClient)
         #region    Replication (Todos los clientes)

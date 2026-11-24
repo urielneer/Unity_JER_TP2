@@ -5,4 +5,6 @@ public static class ResultStrings
     public static string Defeat         => GameLocalization.Get("Resultado_Derrota",     "DERROTA");
     public static string NewRoundFormat => GameLocalization.Get("Resultado_NuevaRonda",  "Nueva ronda en {0}...");
     public static string Restarting     => GameLocalization.Get("Resultado_Reiniciando", "Reiniciando...");
+    public static string WinDuel        => GameLocalization.Get("Resultado_GanasteDuelo",  "Ganaste el duelo.");
+    public static string LoseDuel       => GameLocalization.Get("Resultado_PerdisteDuelo", "Perdiste el duelo.");
 }

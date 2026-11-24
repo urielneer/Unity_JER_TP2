@@ -23,6 +23,13 @@ public class GameManager : BaseManager<GameManager>
             [SerializeField] private float _returnToMenuDelay = 4f;
             private MatchConnectionMonitor R_Ctm_MCM_Monitor;
             private Coroutine R_Crtn_ReturnToMenu;
+        [Header(" Lag Compensation")]
+            [Tooltip("Segundos (tiempo de servidor) que el Master espera despues de un disparo antes de resolver. Tiene que cubrir la latencia de ida del jugador mas lento")]
+            [SerializeField] private float _hitResolutionWindow = 0.25f;
+            [Tooltip("Maximo de segundos que se acepta 'retroceder' un disparo. Evita que un timestamp viejo o manipulado gane siempre")]
+            [SerializeField] private float _maxShotRewind = 1f;
+            private const double FUTURE_SHOT_TOLERANCE = 0.05d; // Un disparo no puede ser posterior a su propio envio //
+            private ShotArbiter R_Ctm_SA_Arbiter;
         #region    Dummy[Header("UI Settings")]
             [SerializeField] private TextMeshProUGUI _timerText;
             [SerializeField] private Image _image;
@@ -50,9 +57,18 @@ public class GameManager : BaseManager<GameManager>
                     R_Ctm_MCM_Monitor.OnPauseStarted += HandlePauseStarted;
                     R_Ctm_MCM_Monitor.OnPauseEnded   += HandlePauseEnded;
                     R_Ctm_MCM_Monitor.OnMatchEnded   += HandleMatchEnded;
+                // Lag Compensation - El arbitro solo trabaja en el Master, pero existe en todos (puede cambiar el Master) //
+                    R_Ctm_SA_Arbiter = new ShotArbiter(_hitResolutionWindow);
+                    R_Ctm_SA_Arbiter.OnShotConfirmed += HandleShotConfirmed;
+                    R_Ctm_SA_Arbiter.OnShotAnnulled  += HandleShotAnnulled;
             }
             private void OnDestroy()
             {
+                if (R_Ctm_SA_Arbiter != null)
+                {
+                    R_Ctm_SA_Arbiter.OnShotConfirmed -= HandleShotConfirmed;
+                    R_Ctm_SA_Arbiter.OnShotAnnulled  -= HandleShotAnnulled;
+                }
                 if (R_Ctm_MCM_Monitor == null) return;
                 R_Ctm_MCM_Monitor.OnPauseStarted -= HandlePauseStarted;
                 R_Ctm_MCM_Monitor.OnPauseEnded   -= HandlePauseEnded;
@@ -96,6 +112,8 @@ public class GameManager : BaseManager<GameManager>
                             TimerUpdate();
                             // Autoridad del Master: vencimiento de la espera por reconexion //
                                 R_Ctm_MCM_Monitor?.Tick();
+                            // Autoridad del Master: resolucion de impactos al cerrar la ventana //
+                                if (PhotonNetwork.IsMasterClient) R_Ctm_SA_Arbiter?.Tick(PhotonNetwork.Time);
                         break;
                     }
             }
@@ -291,7 +309,12 @@ public class GameManager : BaseManager<GameManager>
                     public void OnPlayerInactive(Player PUNPl_Player)  { R_Ctm_MCM_Monitor.HandlePlayerInactive(PUNPl_Player); }
                     public void OnPlayerReturned(Player PUNPl_Player)  { R_Ctm_MCM_Monitor.HandlePlayerReturned(PUNPl_Player); }
                     public void OnPlayerGone(Player PUNPl_Player)      { R_Ctm_MCM_Monitor.HandlePlayerGone(PUNPl_Player); }
-                    public void OnMasterSwitched()                     { R_Ctm_MCM_Monitor.HandleMasterSwitched(); }
+                    public void OnMasterSwitched()
+                    {
+                        // Los impactos pendientes del Master anterior se pierden: no se pueden validar sin sus reportes //
+                            R_Ctm_SA_Arbiter.Clear();
+                            R_Ctm_MCM_Monitor.HandleMasterSwitched();
+                    }
                     public void OnLocalPlayerRejoined()
                     {
                         // El estado de combate vuelve a publicarse (vida / balas / Windhorn) por si algo quedo a medias //
@@ -327,16 +350,37 @@ public class GameManager : BaseManager<GameManager>
                         // Estado local //
                             ConnectionStatusOverlay.Hide();
                             MasterManager.Instance.InputManager.DisableInputPlayerActions();
+                            R_Ctm_SA_Arbiter.Clear();
+                            if (R_Crtn_ReturnToMenu != null) { StopCoroutine(R_Crtn_ReturnToMenu); R_Crtn_ReturnToMenu = null; }
                         // Pantalla de resultado //
                             bool Bool_IWon = Int_Winner == PhotonNetwork.LocalPlayer.ActorNumber;
-                            string Str_Reason = (E_Reason == MatchEndReason.Abandon)
-                                                ? (Bool_IWon ? ConnectionStrings.WinByAbandon : ConnectionStrings.LoseByAbandon)
-                                                : string.Empty;
-                            GameResultScreen.Show(Bool_IWon, Str_Reason, _returnToMenuDelay, ConnectionStrings.BackToMenuFormat);
-                        // Abandono: el rival no vuelve, se sale de la sala al terminar la cuenta //
-                            if (E_Reason != MatchEndReason.Abandon) return;
-                            if (R_Crtn_ReturnToMenu != null) StopCoroutine(R_Crtn_ReturnToMenu);
-                            R_Crtn_ReturnToMenu = StartCoroutine(ReturnToMenuRoutine());
+                            switch (E_Reason)
+                            {
+                                // Abandono: el rival no vuelve, se sale de la sala al terminar la cuenta //
+                                case MatchEndReason.Abandon:
+                                    GameResultScreen.Show(Bool_IWon, Bool_IWon ? ConnectionStrings.WinByAbandon : ConnectionStrings.LoseByAbandon,
+                                                          _returnToMenuDelay, ConnectionStrings.BackToMenuFormat);
+                                    R_Crtn_ReturnToMenu = StartCoroutine(ReturnToMenuRoutine());
+                                break;
+                                // Duelo ganado: los dos siguen en la sala, el Master arranca una ronda nueva //
+                                case MatchEndReason.KnockOut:
+                                    GameResultScreen.Show(Bool_IWon, Bool_IWon ? ResultStrings.WinDuel : ResultStrings.LoseDuel, _returnToMenuDelay);
+                                    if (PhotonNetwork.IsMasterClient) R_Crtn_ReturnToMenu = StartCoroutine(NewRoundRoutine());
+                                break;
+                                default:
+                                    GameResultScreen.Show(Bool_IWon, string.Empty, _returnToMenuDelay);
+                                break;
+                            }
+                    }
+                    private System.Collections.IEnumerator NewRoundRoutine()
+                    {
+                        yield return new WaitForSecondsRealtime(_returnToMenuDelay);
+                        R_Crtn_ReturnToMenu = null;
+                        if (!NetworkManager.IsInMatchScene || !PhotonNetwork.IsMasterClient || !PhotonNetwork.InRoom) yield break;
+                        // Estado de partida limpio ANTES de recargar: sino la ronda nueva arrancaria "terminada" //
+                            PhotonNetwork.CurrentRoom.SetCustomProperties(MatchConnectionMonitor.BuildResetProperties());
+                        // Reinicio limpio en dos pasos (menu -> nivel), ya implementado en GameResultScreen //
+                            GameResultScreen.RequestCleanRestart(1.5f);
                     }
                     private System.Collections.IEnumerator ReturnToMenuRoutine()
                     {
@@ -348,6 +392,89 @@ public class GameManager : BaseManager<GameManager>
                     }
                 #endregion Monitor Events
             #endregion Match Connection
+            #region    Lag Compensation
+                #region    Tirador
+                    // Lo llama la bala al detectar que toco al rival. Dbl_ShotTime = PhotonNetwork.Time del disparo //
+                    public void ReportHit(double Dbl_ShotTime)
+                    {
+                        // Sin red (probando la escena sola): se aplica directo //
+                            if (!PhotonNetwork.InRoom)
+                            {
+                                ((EnemyCharacter) MasterManager.Instance.CharacterManager.EnemyPlayer).Damage();
+                                return;
+                            }
+                        photonView.RPC(nameof(RPC_ReportHit), RpcTarget.MasterClient, Dbl_ShotTime);
+                    }
+                #endregion Tirador
+                #region    Master
+                    [PunRPC]
+                    private void RPC_ReportHit(double Dbl_ShotTime, PhotonMessageInfo PUNMI_Info)
+                    {
+                        // Validacion //
+                            if (!PhotonNetwork.IsMasterClient || !NetworkManager.IsInMatchScene) return;
+                            if (R_Ctm_MCM_Monitor.HasEnded || R_Ctm_MCM_Monitor.IsPaused) return;
+                            int Int_Shooter = PUNMI_Info.Sender.ActorNumber; // Se usa el emisor real, no un parametro del cliente //
+                            int Int_Victim = FindOpponentOf(Int_Shooter);
+                            if (Int_Victim == 0) return;
+                        // Timestamp acotado: no puede ser posterior a su envio ni retroceder mas de _maxShotRewind //
+                            double Dbl_Sent = PUNMI_Info.SentServerTime;
+                            double Dbl_Clamped = System.Math.Max(Dbl_Sent - _maxShotRewind, System.Math.Min(Dbl_ShotTime, Dbl_Sent + FUTURE_SHOT_TOLERANCE));
+                            if (Dbl_Clamped != Dbl_ShotTime)
+                                Debug.LogWarning("[Lag Comp] Timestamp de Actor " + Int_Shooter + " fuera de rango (" + Dbl_ShotTime.ToString("F3") + "), se usa " + Dbl_Clamped.ToString("F3"));
+                        // A la cola del arbitro //
+                            R_Ctm_SA_Arbiter.Report(new ShotReport(Int_Shooter, Int_Victim, Dbl_Clamped), PhotonNetwork.Time);
+                            Debug.Log("[Lag Comp] Impacto reportado por Actor " + Int_Shooter + " (disparo t=" + Dbl_Clamped.ToString("F3") +
+                                      ", llego " + ((PhotonNetwork.Time - Dbl_Clamped) * 1000d).ToString("F0") + " ms despues)");
+                    }
+                    private void HandleShotConfirmed(ShotReport Ctm_SR_Shot)
+                    {
+                        // El Master decide el dano (asi un cambio de balance por Live Ops es consistente para los dos) //
+                            int Int_Damage = MasterManager.Instance.CharacterManager.Balance.DamagePerHit;
+                            photonView.RPC(nameof(RPC_HitConfirmed), RpcTarget.All, Ctm_SR_Shot.ShooterActor, Ctm_SR_Shot.VictimActor, Int_Damage);
+                            Debug.Log("[Lag Comp] Impacto CONFIRMADO: Actor " + Ctm_SR_Shot.ShooterActor + " -> Actor " + Ctm_SR_Shot.VictimActor + " (t=" + Ctm_SR_Shot.ShotTime.ToString("F3") + ")");
+                    }
+                    private void HandleShotAnnulled(ShotReport Ctm_SR_Shot, ShotAnnulReason E_Reason)
+                    {
+                        Player PUNPl_Shooter = PhotonNetwork.CurrentRoom != null ? PhotonNetwork.CurrentRoom.GetPlayer(Ctm_SR_Shot.ShooterActor) : null;
+                        if (PUNPl_Shooter != null) photonView.RPC(nameof(RPC_HitAnnulled), PUNPl_Shooter, (int) E_Reason);
+                        Debug.Log("[Lag Comp] Impacto ANULADO (" + E_Reason + "): Actor " + Ctm_SR_Shot.ShooterActor + " (t=" + Ctm_SR_Shot.ShotTime.ToString("F3") + ")");
+                    }
+                    private static int FindOpponentOf(int Int_Actor)
+                    {
+                        foreach (Player PUNPl_Player in PhotonNetwork.PlayerList)
+                        {
+                            if (PUNPl_Player.ActorNumber != Int_Actor) return PUNPl_Player.ActorNumber;
+                        }
+                        return 0;
+                    }
+                    // GDD: "Gana el jugador que deja la vida del rival en 0" - La vida la publica el dueno, el Master la observa //
+                    public override void OnPlayerPropertiesUpdate(Player PUNPl_Target, Hashtable Hsh_Changed)
+                    {
+                        if (!NetworkManager.IsInMatchScene || !PhotonNetwork.IsMasterClient || R_Ctm_MCM_Monitor == null) return;
+                        if (!Hsh_Changed.ContainsKey(PlayerPropertyKeys.Health)) return;
+                        if (PlayerCombatState.TryReadHealth(PUNPl_Target, out int Int_Health) && Int_Health <= 0)
+                            R_Ctm_MCM_Monitor.DeclareKnockOut(PUNPl_Target.ActorNumber);
+                    }
+                #endregion Master
+                #region    Todos los clientes
+                    [PunRPC]
+                    private void RPC_HitConfirmed(int Int_Shooter, int Int_Victim, int Int_Damage)
+                    {
+                        int Int_Local = PhotonNetwork.LocalPlayer.ActorNumber;
+                        // Victima: descuenta su propia vida (y la publica en sus Player Custom Properties) //
+                            if (Int_Local == Int_Victim)
+                                ((PlayerCharacter) MasterManager.Instance.CharacterManager.OwnPlayer).ReceiveDamage(Int_Damage);
+                        // Tirador: animacion de dano en su copia del rival (que ademas sincroniza la animacion de la victima) //
+                            if (Int_Local == Int_Shooter)
+                                ((EnemyCharacter) MasterManager.Instance.CharacterManager.EnemyPlayer).Damage();
+                    }
+                    [PunRPC]
+                    private void RPC_HitAnnulled(int Int_Reason)
+                    {
+                        Debug.Log("[Lag Comp] Tu impacto no conto: " + (ShotAnnulReason) Int_Reason);
+                    }
+                #endregion Todos los clientes
+            #endregion Lag Compensation
             #region    PowerUp
             #endregion PowerUp
         #endregion Custom Methods
