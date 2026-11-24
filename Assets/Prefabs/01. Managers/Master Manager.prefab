@@ -141,6 +141,7 @@ MonoBehaviour:
   _menuManager: {fileID: 1658897487353472861}
   _inputManager: {fileID: 403907098182333870}
   _audioManager: {fileID: 7315535074881684969}
+  _liveOpsManager: {fileID: 1440414557081518582}
 --- !u!1001 &737258540386085277
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -425,6 +426,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 65d797f0740f7404dbcff6efc6ced8de, type: 3}
+--- !u!114 &1440414557081518582 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3546073247474522663, guid: 65d797f0740f7404dbcff6efc6ced8de, type: 3}
+  m_PrefabInstance: {fileID: 2507185289975913425}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f46969691de3fe4483c015d4398bf43, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LiveOpsManager
 --- !u!4 &7207438158065794797 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5102219308394751292, guid: 65d797f0740f7404dbcff6efc6ced8de, type: 3}

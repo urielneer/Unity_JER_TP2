@@ -42,6 +42,10 @@ public class MasterManager : BaseManager<MasterManager>
                 [SerializeField] private AudioManager _audioManager;
                 private AudioManager I_Ctm_AMgr_AudioManager;
                 public AudioManager AudioManager => I_Ctm_AMgr_AudioManager;
+            // LIVE OPS //
+                [SerializeField] private LiveOpsManager _liveOpsManager;
+                private LiveOpsManager I_Ctm_LOMgr_LiveOpsManager;
+                public LiveOpsManager LiveOpsManager => I_Ctm_LOMgr_LiveOpsManager;
         #endregion Sub-Managers
         #region    Flags
             TaskCompletionSource<bool> R_Bool_StartupAwait; 
@@ -69,26 +73,28 @@ public class MasterManager : BaseManager<MasterManager>
                 // "Fuse" Managers //
                     if (_instance != null && _instance != this)
                     { 
-                        if (_mapManager     != null) _instance._mapManager =           (MapManager) UpdateSubManager(_instance._mapManager, _mapManager, _mapManager.gameObject);
-                        if (_charManager    != null) _instance._charManager =    (CharacterManager) UpdateSubManager(_instance._charManager, _charManager, _charManager.gameObject);
-                        if (_gameManager    != null) _instance._gameManager =         (GameManager) UpdateSubManager(_instance._gameManager, _gameManager, _gameManager.gameObject);
-                        if (_menuManager    != null) _instance._menuManager =         (MenuManager) UpdateSubManager(_instance._menuManager, _menuManager, _menuManager.gameObject);
-                        if (_bulletManager  != null) _instance._bulletManager =     (BulletManager) UpdateSubManager(_instance._bulletManager, _bulletManager, _bulletManager.gameObject);
-                        if (_networkManager != null) _instance._networkManager =   (NetworkManager) UpdateSubManager(_instance._networkManager, _networkManager, _networkManager.gameObject);
-                        if (_inputManager   != null) _instance._inputManager = (CustomInputManager) UpdateSubManager(_instance._inputManager, _inputManager, _inputManager.gameObject);
-                        if (_audioManager   != null) _instance._audioManager =       (AudioManager) UpdateSubManager(_instance._audioManager, _audioManager, _audioManager.gameObject);
+                        if (_mapManager     != null) _instance._mapManager     =         (MapManager) UpdateSubManager(_instance._mapManager    , _mapManager    , _mapManager.gameObject    );
+                        if (_charManager    != null) _instance._charManager    =   (CharacterManager) UpdateSubManager(_instance._charManager   , _charManager   , _charManager.gameObject   );
+                        if (_gameManager    != null) _instance._gameManager    =        (GameManager) UpdateSubManager(_instance._gameManager   , _gameManager   , _gameManager.gameObject   );
+                        if (_menuManager    != null) _instance._menuManager    =        (MenuManager) UpdateSubManager(_instance._menuManager   , _menuManager   , _menuManager.gameObject   );
+                        if (_bulletManager  != null) _instance._bulletManager  =      (BulletManager) UpdateSubManager(_instance._bulletManager , _bulletManager , _bulletManager.gameObject );
+                        if (_networkManager != null) _instance._networkManager =     (NetworkManager) UpdateSubManager(_instance._networkManager, _networkManager, _networkManager.gameObject);
+                        if (_inputManager   != null) _instance._inputManager   = (CustomInputManager) UpdateSubManager(_instance._inputManager  , _inputManager  , _inputManager.gameObject  );
+                        if (_audioManager   != null) _instance._audioManager   =       (AudioManager) UpdateSubManager(_instance._audioManager  , _audioManager  , _audioManager.gameObject  );
+                        if (_liveOpsManager != null) _instance._liveOpsManager =     (LiveOpsManager) UpdateSubManager(_instance._liveOpsManager, _liveOpsManager, _liveOpsManager.gameObject);
                     }
                 // Resume Base //
                     base.Awake();
                 // Variables //
-                    I_Ctm_MpMgr_MapManager = _mapManager;         
-                    I_Ctm_CMgr_CharManager = _charManager;       
-                    I_Ctm_GMgr_GameManager = _gameManager;       
-                    I_Ctm_MnMgr_MenuManager = _menuManager;       
-                    I_Ctm_BMgr_BulletManager = _bulletManager;   
-                    I_Ctm_NMgr_NetworkManager = _networkManager;
-                    I_Ctm_IMgr_InputManager = _inputManager;
-                    I_Ctm_AMgr_AudioManager = _audioManager;
+                    I_Ctm_MpMgr_MapManager     = _mapManager;         
+                    I_Ctm_CMgr_CharManager     = _charManager;       
+                    I_Ctm_GMgr_GameManager     = _gameManager;       
+                    I_Ctm_MnMgr_MenuManager    = _menuManager;       
+                    I_Ctm_BMgr_BulletManager   = _bulletManager;   
+                    I_Ctm_NMgr_NetworkManager  = _networkManager;
+                    I_Ctm_IMgr_InputManager    = _inputManager;
+                    I_Ctm_AMgr_AudioManager    = _audioManager;
+                    I_Ctm_LOMgr_LiveOpsManager = _liveOpsManager;
             }
             private void Start()
             {
@@ -115,10 +121,11 @@ public class MasterManager : BaseManager<MasterManager>
                     base.OnStartUp();
                 // Start Up Sub-Managers //
                     // Start //
-                        if (I_Ctm_AMgr_AudioManager   != null) I_Ctm_AMgr_AudioManager.OnStartUp();   // Setup Audio //
-                        if (I_Ctm_IMgr_InputManager   != null) I_Ctm_IMgr_InputManager.OnStartUp();   // Set Key Actions //
-                        if (I_Ctm_MnMgr_MenuManager   != null) I_Ctm_MnMgr_MenuManager.OnStartUp();   // Set Menu Up //
-                        if (I_Ctm_NMgr_NetworkManager != null) I_Ctm_NMgr_NetworkManager.OnStartUp(); // Set Nework status On (If It's Off) //
+                        if (I_Ctm_AMgr_AudioManager    != null) I_Ctm_AMgr_AudioManager.OnStartUp();   // Setup Audio //
+                        if (I_Ctm_IMgr_InputManager    != null) I_Ctm_IMgr_InputManager.OnStartUp();   // Set Key Actions //
+                        if (I_Ctm_MnMgr_MenuManager    != null) I_Ctm_MnMgr_MenuManager.OnStartUp();   // Set Menu Up //
+                        if (I_Ctm_NMgr_NetworkManager  != null) I_Ctm_NMgr_NetworkManager.OnStartUp(); // Set Nework status On (If It's Off) //
+                        if (I_Ctm_LOMgr_LiveOpsManager != null) I_Ctm_LOMgr_LiveOpsManager.OnStartUp(); // Import Live Ops Values? //
 //-//                        if (I_Ctm_MpMgr_MapManager    != null) I_Ctm_MpMgr_MapManager.OnStartUp();    // Create/Load Map //
                     // Await - Resume Startup //
 //-//                         R_Bool_StartupCompleted = await R_Bool_StartupAwait.Task;
