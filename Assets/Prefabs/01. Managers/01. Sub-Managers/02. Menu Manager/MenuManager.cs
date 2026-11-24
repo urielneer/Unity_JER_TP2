@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class MenuManager : BaseManager<CharacterManager>
+public class MenuManager : BaseManager<MenuManager> // Antes BaseManager<CharacterManager>: compartia el singleton //
 {
     #region    Variables
         #region    Menu

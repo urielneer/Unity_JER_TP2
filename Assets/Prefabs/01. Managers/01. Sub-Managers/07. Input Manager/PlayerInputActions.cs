@@ -163,6 +163,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": ""Press"",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""PushToTalk"",
+                    ""type"": ""Button"",
+                    ""id"": ""4c08d2b6-ce0b-4093-aac3-f54464d2d097"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -229,6 +238,17 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Debug"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a40c3999-7da8-4614-ad7f-44c517c16a68"",
+                    ""path"": ""<Keyboard>/v"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""PushToTalk"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -363,6 +383,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_Pause = m_Player.FindAction("Pause", throwIfNotFound: true);
         m_Player_Chat = m_Player.FindAction("Chat", throwIfNotFound: true);
         m_Player_Debug = m_Player.FindAction("Debug", throwIfNotFound: true);
+        m_Player_PushToTalk = m_Player.FindAction("PushToTalk", throwIfNotFound: true);
         // Chat
         m_Chat = asset.FindActionMap("Chat", throwIfNotFound: true);
         m_Chat_Submit = m_Chat.FindAction("Submit", throwIfNotFound: true);
@@ -455,6 +476,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Pause;
     private readonly InputAction m_Player_Chat;
     private readonly InputAction m_Player_Debug;
+    private readonly InputAction m_Player_PushToTalk;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -498,6 +520,10 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/Debug".
         /// </summary>
         public InputAction @Debug => m_Wrapper.m_Player_Debug;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/PushToTalk".
+        /// </summary>
+        public InputAction @PushToTalk => m_Wrapper.m_Player_PushToTalk;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -548,6 +574,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Debug.started += instance.OnDebug;
             @Debug.performed += instance.OnDebug;
             @Debug.canceled += instance.OnDebug;
+            @PushToTalk.started += instance.OnPushToTalk;
+            @PushToTalk.performed += instance.OnPushToTalk;
+            @PushToTalk.canceled += instance.OnPushToTalk;
         }
 
         /// <summary>
@@ -583,6 +612,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Debug.started -= instance.OnDebug;
             @Debug.performed -= instance.OnDebug;
             @Debug.canceled -= instance.OnDebug;
+            @PushToTalk.started -= instance.OnPushToTalk;
+            @PushToTalk.performed -= instance.OnPushToTalk;
+            @PushToTalk.canceled -= instance.OnPushToTalk;
         }
 
         /// <summary>
@@ -775,6 +807,13 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnDebug(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "PushToTalk" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnPushToTalk(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Chat" which allows adding and removing callbacks.

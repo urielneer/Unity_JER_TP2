@@ -16,7 +16,7 @@ MonoBehaviour:
     AppIdRealtime: fa32514e-1dda-4995-ba13-5c22741e501e
     AppIdFusion: 
     AppIdChat: 
-    AppIdVoice: 
+    AppIdVoice: 4eddf633-a5b2-4921-8e53-bd57dfd4c02b
     AppIdVideo: 
     AppVersion: 
     UseNameServer: 1
@@ -81,6 +81,9 @@ MonoBehaviour:
   - RPC_NotifyHealEnd
   - RPC_NotifyHealStart
   - RPC_NotifyFullReloadStart
+  - CantHearYou
+  - ChangeColour
+  - HeresWhy
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

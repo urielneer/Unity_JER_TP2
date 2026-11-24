@@ -77,6 +77,15 @@
                     "processors": "",
                     "interactions": "Press",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "PushToTalk",
+                    "type": "Button",
+                    "id": "4c08d2b6-ce0b-4093-aac3-f54464d2d097",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -143,6 +152,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Debug",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a40c3999-7da8-4614-ad7f-44c517c16a68",
+                    "path": "<Keyboard>/v",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PushToTalk",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

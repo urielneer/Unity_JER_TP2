@@ -150,68 +150,6 @@ MonoBehaviour:
   _uiText: {fileID: 19549269}
   _tableKey: TextosMenu
   _entryKey: BotonTerminado
---- !u!1 &75946801 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8254689702058174318, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
-  m_PrefabInstance: {fileID: 1865021574}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &75946804 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2425343494525545943, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
-  m_PrefabInstance: {fileID: 1865021574}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 75946801}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
---- !u!114 &75946806
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 75946801}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c01ca33d56751ee4ba7a0eccc6947b46, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LocalizedTextUI
-  _uiText: {fileID: 75946804}
-  _tableKey: TextosMenu
-  _entryKey: BotonPausa
---- !u!1 &419884009 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3526075586614227835, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
-  m_PrefabInstance: {fileID: 1865021574}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &419884011 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6641792008885203813, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
-  m_PrefabInstance: {fileID: 1865021574}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 419884009}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
---- !u!114 &419884013
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 419884009}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c01ca33d56751ee4ba7a0eccc6947b46, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LocalizedTextUI
-  _uiText: {fileID: 419884011}
-  _tableKey: TextosMenu
-  _entryKey: BotonSalir
 --- !u!1001 &63365092
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -357,11 +295,73 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9b9a2fe4df2f77e44b0dc3642068a5b5, type: 3}
+--- !u!1 &75946801 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8254689702058174318, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
+  m_PrefabInstance: {fileID: 1865021574}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &75946804 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2425343494525545943, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
+  m_PrefabInstance: {fileID: 1865021574}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 75946801}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!114 &75946806
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 75946801}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c01ca33d56751ee4ba7a0eccc6947b46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocalizedTextUI
+  _uiText: {fileID: 75946804}
+  _tableKey: TextosMenu
+  _entryKey: BotonPausa
 --- !u!224 &192696764 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5474690238300603056, guid: 9b9a2fe4df2f77e44b0dc3642068a5b5, type: 3}
   m_PrefabInstance: {fileID: 1995026003}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &419884009 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3526075586614227835, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
+  m_PrefabInstance: {fileID: 1865021574}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &419884011 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6641792008885203813, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
+  m_PrefabInstance: {fileID: 1865021574}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 419884009}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!114 &419884013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 419884009}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c01ca33d56751ee4ba7a0eccc6947b46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocalizedTextUI
+  _uiText: {fileID: 419884011}
+  _tableKey: TextosMenu
+  _entryKey: BotonSalir
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -499,6 +499,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!224 &526663960 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 5474690238300603056, guid: 9b9a2fe4df2f77e44b0dc3642068a5b5, type: 3}
+  m_PrefabInstance: {fileID: 63365092}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &586651136 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1743727122646179551, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
@@ -561,16 +566,321 @@ MonoBehaviour:
   _uiText: {fileID: 619283464}
   _tableKey: TextosMenu
   _entryKey: BotonQuit
---- !u!224 &526663960 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 5474690238300603056, guid: 9b9a2fe4df2f77e44b0dc3642068a5b5, type: 3}
-  m_PrefabInstance: {fileID: 63365092}
+--- !u!1 &627957346 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2651655580844814558, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
+  m_PrefabInstance: {fileID: 1865021574}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &627957348 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5192600925421695168, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
+  m_PrefabInstance: {fileID: 1865021574}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 627957346}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!114 &627957350
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 627957346}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c01ca33d56751ee4ba7a0eccc6947b46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocalizedTextUI
+  _uiText: {fileID: 627957348}
+  _tableKey: TextosMenu
+  _entryKey: BotonUnirse
+--- !u!1 &763958606 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 117644018296947901, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
+  m_PrefabInstance: {fileID: 1865021574}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &763958609 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5946991342561611268, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
+  m_PrefabInstance: {fileID: 1865021574}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 763958606}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!114 &763958611
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 763958606}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c01ca33d56751ee4ba7a0eccc6947b46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocalizedTextUI
+  _uiText: {fileID: 763958609}
+  _tableKey: TextosMenu
+  _entryKey: BotonEspera
 --- !u!224 &858685945 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 609103144630282765, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
   m_PrefabInstance: {fileID: 1865021574}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &919699725 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5072562174385487355, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
+  m_PrefabInstance: {fileID: 1865021574}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &919699727 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4221379986398691064, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
+  m_PrefabInstance: {fileID: 1865021574}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919699725}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!114 &919699729
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919699725}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c01ca33d56751ee4ba7a0eccc6947b46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocalizedTextUI
+  _uiText: {fileID: 919699727}
+  _tableKey: TextosMenu
+  _entryKey: BotonCargando
+--- !u!1 &927946061 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7587365397965525675, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
+  m_PrefabInstance: {fileID: 1865021574}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &927946063 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 398846834331833013, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
+  m_PrefabInstance: {fileID: 1865021574}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 927946061}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!114 &927946065
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 927946061}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c01ca33d56751ee4ba7a0eccc6947b46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocalizedTextUI
+  _uiText: {fileID: 927946063}
+  _tableKey: TextosMenu
+  _entryKey: BotonVolver
+--- !u!1 &985060615 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9167655469816461914, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
+  m_PrefabInstance: {fileID: 1865021574}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &985060617 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1439269137877809732, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
+  m_PrefabInstance: {fileID: 1865021574}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 985060615}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!114 &985060619
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 985060615}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c01ca33d56751ee4ba7a0eccc6947b46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocalizedTextUI
+  _uiText: {fileID: 985060617}
+  _tableKey: TextosMenu
+  _entryKey: BotonQuit
+--- !u!1 &1070502678 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4680650625296821409, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
+  m_PrefabInstance: {fileID: 1865021574}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1070502680 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3185807753674681535, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
+  m_PrefabInstance: {fileID: 1865021574}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1070502678}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!114 &1070502682
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1070502678}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c01ca33d56751ee4ba7a0eccc6947b46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocalizedTextUI
+  _uiText: {fileID: 1070502680}
+  _tableKey: TextosMenu
+  _entryKey: BotonJugar
+--- !u!1 &1104060913 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 994547293856909025, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
+  m_PrefabInstance: {fileID: 1865021574}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1104060916 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6839656099517664344, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
+  m_PrefabInstance: {fileID: 1865021574}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1104060913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!114 &1104060918
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1104060913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c01ca33d56751ee4ba7a0eccc6947b46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocalizedTextUI
+  _uiText: {fileID: 1104060916}
+  _tableKey: TextosMenu
+  _entryKey: BotonScore
+--- !u!1 &1320457261 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1206849785735786240, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
+  m_PrefabInstance: {fileID: 1865021574}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1320457263 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8970280714427281182, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
+  m_PrefabInstance: {fileID: 1865021574}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1320457261}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!114 &1320457265
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1320457261}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c01ca33d56751ee4ba7a0eccc6947b46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocalizedTextUI
+  _uiText: {fileID: 1320457263}
+  _tableKey: TextosMenu
+  _entryKey: BotonReturn
+--- !u!1 &1471753895 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6007184009410347641, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
+  m_PrefabInstance: {fileID: 1865021574}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1471753897 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4584259471345156711, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
+  m_PrefabInstance: {fileID: 1865021574}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1471753895}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!114 &1471753899
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1471753895}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c01ca33d56751ee4ba7a0eccc6947b46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocalizedTextUI
+  _uiText: {fileID: 1471753897}
+  _tableKey: TextosMenu
+  _entryKey: BotonSalir
+--- !u!1 &1783636789 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4381008925629360526, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
+  m_PrefabInstance: {fileID: 1865021574}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1783636791 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5768893265126631824, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
+  m_PrefabInstance: {fileID: 1865021574}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1783636789}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!114 &1783636793
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1783636789}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c01ca33d56751ee4ba7a0eccc6947b46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocalizedTextUI
+  _uiText: {fileID: 1783636791}
+  _tableKey: TextosMenu
+  _entryKey: BotonCrear
 --- !u!1001 &1865021574
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2977,9 +3287,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 526663960}
     m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 5231499250819282825, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1298502792}
     - targetCorrespondingSourceObject: {fileID: 5072562174385487355, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
       insertIndex: -1
       addedObject: {fileID: 919699729}
@@ -3032,6 +3339,37 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1104060918}
   m_SourcePrefab: {fileID: 100100000, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
+--- !u!1 &1971299464 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9104694629311463703, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
+  m_PrefabInstance: {fileID: 1865021574}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1971299466 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1340135567546138889, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
+  m_PrefabInstance: {fileID: 1865021574}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1971299464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!114 &1971299468
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1971299464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c01ca33d56751ee4ba7a0eccc6947b46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocalizedTextUI
+  _uiText: {fileID: 1971299466}
+  _tableKey: TextosMenu
+  _entryKey: BotonVolver
 --- !u!1001 &1995026003
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3173,364 +3511,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9b9a2fe4df2f77e44b0dc3642068a5b5, type: 3}
---- !u!1 &627957346 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2651655580844814558, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
-  m_PrefabInstance: {fileID: 1865021574}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &627957348 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5192600925421695168, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
-  m_PrefabInstance: {fileID: 1865021574}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 627957346}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
---- !u!114 &627957350
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 627957346}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c01ca33d56751ee4ba7a0eccc6947b46, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LocalizedTextUI
-  _uiText: {fileID: 627957348}
-  _tableKey: TextosMenu
-  _entryKey: BotonUnirse
---- !u!1 &763958606 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 117644018296947901, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
-  m_PrefabInstance: {fileID: 1865021574}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &763958609 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5946991342561611268, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
-  m_PrefabInstance: {fileID: 1865021574}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 763958606}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
---- !u!114 &763958611
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 763958606}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c01ca33d56751ee4ba7a0eccc6947b46, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LocalizedTextUI
-  _uiText: {fileID: 763958609}
-  _tableKey: TextosMenu
-  _entryKey: BotonEspera
---- !u!1 &919699725 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5072562174385487355, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
-  m_PrefabInstance: {fileID: 1865021574}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &919699727 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4221379986398691064, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
-  m_PrefabInstance: {fileID: 1865021574}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 919699725}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
---- !u!114 &919699729
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 919699725}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c01ca33d56751ee4ba7a0eccc6947b46, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LocalizedTextUI
-  _uiText: {fileID: 919699727}
-  _tableKey: TextosMenu
-  _entryKey: BotonCargando
---- !u!1 &927946061 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7587365397965525675, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
-  m_PrefabInstance: {fileID: 1865021574}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &927946063 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 398846834331833013, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
-  m_PrefabInstance: {fileID: 1865021574}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 927946061}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
---- !u!114 &927946065
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 927946061}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c01ca33d56751ee4ba7a0eccc6947b46, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LocalizedTextUI
-  _uiText: {fileID: 927946063}
-  _tableKey: TextosMenu
-  _entryKey: BotonVolver
---- !u!1 &985060615 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 9167655469816461914, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
-  m_PrefabInstance: {fileID: 1865021574}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &985060617 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1439269137877809732, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
-  m_PrefabInstance: {fileID: 1865021574}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 985060615}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
---- !u!114 &985060619
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 985060615}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c01ca33d56751ee4ba7a0eccc6947b46, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LocalizedTextUI
-  _uiText: {fileID: 985060617}
-  _tableKey: TextosMenu
-  _entryKey: BotonQuit
---- !u!1 &1070502678 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4680650625296821409, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
-  m_PrefabInstance: {fileID: 1865021574}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1070502680 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3185807753674681535, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
-  m_PrefabInstance: {fileID: 1865021574}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1070502678}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
---- !u!114 &1070502682
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1070502678}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c01ca33d56751ee4ba7a0eccc6947b46, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LocalizedTextUI
-  _uiText: {fileID: 1070502680}
-  _tableKey: TextosMenu
-  _entryKey: BotonJugar
---- !u!1 &1104060913 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 994547293856909025, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
-  m_PrefabInstance: {fileID: 1865021574}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1104060916 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6839656099517664344, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
-  m_PrefabInstance: {fileID: 1865021574}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1104060913}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
---- !u!114 &1104060918
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1104060913}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c01ca33d56751ee4ba7a0eccc6947b46, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LocalizedTextUI
-  _uiText: {fileID: 1104060916}
-  _tableKey: TextosMenu
-  _entryKey: BotonScore
---- !u!1 &1298502788 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5231499250819282825, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
-  m_PrefabInstance: {fileID: 1865021574}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1298502792
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1298502788}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 547a96fe6612b7c4c986063e4a3e188f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: PhotonUnityNetworking.Utilities::PhotonSeamlessReconnection
---- !u!1 &1320457261 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1206849785735786240, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
-  m_PrefabInstance: {fileID: 1865021574}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1320457263 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8970280714427281182, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
-  m_PrefabInstance: {fileID: 1865021574}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1320457261}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
---- !u!114 &1320457265
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1320457261}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c01ca33d56751ee4ba7a0eccc6947b46, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LocalizedTextUI
-  _uiText: {fileID: 1320457263}
-  _tableKey: TextosMenu
-  _entryKey: BotonReturn
---- !u!1 &1471753895 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6007184009410347641, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
-  m_PrefabInstance: {fileID: 1865021574}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1471753897 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4584259471345156711, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
-  m_PrefabInstance: {fileID: 1865021574}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1471753895}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
---- !u!114 &1471753899
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1471753895}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c01ca33d56751ee4ba7a0eccc6947b46, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LocalizedTextUI
-  _uiText: {fileID: 1471753897}
-  _tableKey: TextosMenu
-  _entryKey: BotonSalir
---- !u!1 &1783636789 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4381008925629360526, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
-  m_PrefabInstance: {fileID: 1865021574}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1783636791 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5768893265126631824, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
-  m_PrefabInstance: {fileID: 1865021574}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1783636789}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
---- !u!114 &1783636793
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1783636789}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c01ca33d56751ee4ba7a0eccc6947b46, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LocalizedTextUI
-  _uiText: {fileID: 1783636791}
-  _tableKey: TextosMenu
-  _entryKey: BotonCrear
---- !u!1 &1971299464 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 9104694629311463703, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
-  m_PrefabInstance: {fileID: 1865021574}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1971299466 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1340135567546138889, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}
-  m_PrefabInstance: {fileID: 1865021574}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1971299464}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
---- !u!114 &1971299468
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1971299464}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c01ca33d56751ee4ba7a0eccc6947b46, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LocalizedTextUI
-  _uiText: {fileID: 1971299466}
-  _tableKey: TextosMenu
-  _entryKey: BotonVolver
 --- !u!1 &1999823642 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1262614079037938528, guid: 917223d98f354a0419d6f0ca1a92cbe7, type: 3}

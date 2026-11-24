@@ -7,7 +7,7 @@ using Photon.Realtime;
 using static CustomExtension.ArrayExtensions;
 using System;
 
-public class CustomInputManager : BaseManager<CharacterManager>
+public class CustomInputManager : BaseManager<CustomInputManager> // Antes BaseManager<CharacterManager>: compartia el singleton //
 {
     #region    Variables
         private PlayerInputActions O_IAct_PIA_Controller;
@@ -43,6 +43,9 @@ public class CustomInputManager : BaseManager<CharacterManager>
             }
             public void DisableInputPlayerActions()
             {
+                // Sin controles no se puede seguir hablando (ej: abrir el chat o la pausa con la V apretada) //
+                    if (MasterManager.Instance != null && MasterManager.Instance.AudioManager != null)
+                        MasterManager.Instance.AudioManager.SetPushToTalk(false);
                 O_IAct_PIA_Controller.Player.Disable();
                 O_IAct_PIA_Controller.Chat.Enable();
                 MasterManager.Instance.GameManager.ShowCursor();
@@ -86,6 +89,11 @@ public class CustomInputManager : BaseManager<CharacterManager>
                             // Debug //
                                 IAA_Player.Debug.performed -= OnDebugKeyPressed;
                                 IAA_Player.Debug.performed += OnDebugKeyPressed;
+                            // Push-To-Talk (mantener V) //
+                                IAA_Player.PushToTalk.performed -= OnPushToTalkPressed;
+                                IAA_Player.PushToTalk.performed += OnPushToTalkPressed;
+                                IAA_Player.PushToTalk.canceled -= OnPushToTalkReleased;
+                                IAA_Player.PushToTalk.canceled += OnPushToTalkReleased;
                         // Chat //
                             // Submit //
                                 IAA_Chat.Submit.performed -= OnSubmitChatMessage;
@@ -145,6 +153,14 @@ public class CustomInputManager : BaseManager<CharacterManager>
                             // Action //
                                 //MasterManager.Instance.GameManager.ShootDummy();
                                 ((PlayerCharacter) MasterManager.Instance.CharacterManager.OwnPlayer).OnStartedShooting();
+                        }
+                        public void OnPushToTalkPressed(InputAction.CallbackContext IACbC_Context)
+                        {
+                            MasterManager.Instance.AudioManager.SetPushToTalk(true);
+                        }
+                        public void OnPushToTalkReleased(InputAction.CallbackContext IACbC_Context)
+                        {
+                            MasterManager.Instance.AudioManager.SetPushToTalk(false);
                         }
                         public void OnReloadKeyPressed(InputAction.CallbackContext IACbC_Context)
                         {
