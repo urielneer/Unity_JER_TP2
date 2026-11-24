@@ -12,5 +12,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Cowboy.unity
     guid: 21c3f970fd2670e4ebf75084e21307f3
   m_configObjects:
+    com.unity.addressableassets: {fileID: 11400000, guid: f619cba6044d3a24d9d2724c86f73d49, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
+    com.unity.localization.settings: {fileID: 11400000, guid: 62191cf31a519454eb8fbecb65aacc5e, type: 2}
   m_UseUCBPForAssetBundles: 0
