@@ -1,4 +1,6 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using static CustomExtension.ArrayExtensions;
 using Photon.Pun;
@@ -10,13 +12,34 @@ using System.Linq;
 
 public class NetworkManager : BaseManager<NetworkManager>
 {
+    #region    Constants
+        public const int   MENU_SCENE_INDEX   = 0;
+        public const int   MATCH_SCENE_INDEX  = 1;
+        public const byte  ROOM_MAX_PLAYERS   = 2;      // GDD: duelos 1v1 //
+        public const int   PLAYER_TTL_MS      = 30000;  // GDD: 30 s para volver antes de perder por abandono //
+        public const float PLAYER_TTL_SECONDS = PLAYER_TTL_MS / 1000f;
+        private const string ERROR_MENU_NAME  = "ErrorMenu";
+    #endregion Constants
     #region    Variables
-        #region    Menu
-            
-        #endregion Menu
+        #region    Connection Settings
+            [Header(" Connection Settings")]
+                [Tooltip("Milisegundos sin respuesta del servidor antes de considerar la conexion perdida")]
+                [SerializeField] private int _disconnectTimeoutMs = 5000;
+                [Tooltip("Intentos x espera deben cubrir lo que tarda el servidor en detectar el corte (~10 s)")]
+                [SerializeField] private int _maxReconnectAttempts = 8;
+                [Tooltip("Segundos entre intentos de reconexion")]
+                [SerializeField] private float _reconnectRetryDelay = 1.5f;
+        #endregion Connection Settings
+        #region    Reconnection
+            private ReconnectionHandler R_Ctm_RH_Reconnection;
+            public INetworkReconnectionService Reconnection => R_Ctm_RH_Reconnection;
+            private Coroutine R_Crtn_Reconnect;
+            private string R_Str_PendingError; // Error a mostrar cuando volvamos a llegar al Master //
+        #endregion Reconnection
         #region    Manager-To-Manager Data
             private bool O_Bool_IsStatusOn = false;
             public bool IsStatusOn => O_Bool_IsStatusOn;
+            public static bool IsInMatchScene => SceneManager.GetActiveScene().buildIndex == MATCH_SCENE_INDEX;
         #endregion Manager-To-Manager Data
     #endregion Variables
     #region    Methods
@@ -25,7 +48,19 @@ public class NetworkManager : BaseManager<NetworkManager>
             {
                 // Singleton Operations //
                     base.Awake();
+                    if (_instance != this) return;
                 // Variables //
+                    R_Ctm_RH_Reconnection = new ReconnectionHandler(_maxReconnectAttempts, _reconnectRetryDelay);
+                    R_Ctm_RH_Reconnection.OnReconnectionAttempt += HandleReconnectionAttempt;
+                    R_Ctm_RH_Reconnection.OnReconnectionSuccess += HandleReconnectionSuccess;
+                    R_Ctm_RH_Reconnection.OnReconnectionFailed  += HandleReconnectionFailed;
+            }
+            private void OnDestroy()
+            {
+                if (R_Ctm_RH_Reconnection == null) return;
+                R_Ctm_RH_Reconnection.OnReconnectionAttempt -= HandleReconnectionAttempt;
+                R_Ctm_RH_Reconnection.OnReconnectionSuccess -= HandleReconnectionSuccess;
+                R_Ctm_RH_Reconnection.OnReconnectionFailed  -= HandleReconnectionFailed;
             }
         #endregion Unity Methods
         #region    Override Methods
@@ -43,21 +78,63 @@ public class NetworkManager : BaseManager<NetworkManager>
                         PhotonNetwork.ConnectUsingSettings();
                         PhotonNetwork.SendRate = 30;
                         PhotonNetwork.SerializationRate = 30;
-                        PhotonNetwork.NetworkingClient.LoadBalancingPeer.DisconnectTimeout = 2000;
+                        PhotonNetwork.NetworkingClient.LoadBalancingPeer.DisconnectTimeout = _disconnectTimeoutMs;
                         O_Bool_IsStatusOn = true;
                         Debug.Log("[Network Manager] Status: 'On'");
                 }
             }
         #endregion Override Methods
         #region    PUN Methods
+            #region    Connection
+                public override void OnDisconnected(DisconnectCause E_Cause)
+                {
+                    Debug.Log("[Network Manager] Status: 'Disconnected' (" + E_Cause + ")");
+                    // Corte recuperable estando en una sala: reconexion seamless //
+                        if (R_Ctm_RH_Reconnection.ShouldReconnect(E_Cause))
+                        {
+                            if (!R_Ctm_RH_Reconnection.IsReconnecting)
+                            {
+                                ConnectionStatusOverlay.Show(ConnectionStrings.LostTitle, ConnectionStrings.Reconnecting);
+                                if (IsInMatchScene) MasterManager.Instance.InputManager.DisableInputPlayerActions();
+                            }
+                            ScheduleReconnectAttempt();
+                            return;
+                        }
+                    // Corte no recuperable en medio de una reconexion //
+                        if (R_Ctm_RH_Reconnection.IsReconnecting)
+                        {
+                            R_Ctm_RH_Reconnection.Abort();
+                            return;
+                        }
+                    // Desconexion pedida por el juego (cerrar la app, etc.) //
+                        O_Bool_IsStatusOn = false;
+                        if (E_Cause == DisconnectCause.DisconnectByClientLogic || E_Cause == DisconnectCause.ApplicationQuit) return;
+                    // Cualquier otro corte (menu, lobby): volver al titulo y reconectar al Master //
+                        GoToTitle(string.Format(ConnectionStrings.ConnectionLost, E_Cause));
+                }
+            #endregion Connection
             #region    Title Room
                 public override void OnConnectedToMaster()
                 {
+                    // Reconexion en curso: reingresar a la sala sin pasar por el menu //
+                        if (R_Ctm_RH_Reconnection.HasPendingRejoin)
+                        {
+                            ScheduleRejoinFromMaster();
+                            return;
+                        }
                     // PUN //
                         PhotonNetwork.JoinLobby();
                         PhotonNetwork.AutomaticallySyncScene = true;
-                    // Menu Manager Communication - Change to Loading //
-                        MasterManager.Instance.MenuManager.OpenMenu("TitleMenu");
+                    // Menu Manager Communication - Error pendiente o Titulo //
+                        if (!string.IsNullOrEmpty(R_Str_PendingError))
+                        {
+                            ShowError(R_Str_PendingError);
+                            R_Str_PendingError = null;
+                        }
+                        else
+                        {
+                            MasterManager.Instance.MenuManager.OpenMenu("TitleMenu");
+                        }
                     Debug.Log("[Network Manager] Status: 'Joined Master'");
                 }
                 public override void OnJoinedLobby()
@@ -68,6 +145,10 @@ public class NetworkManager : BaseManager<NetworkManager>
             #region    Find Room
                 public override void OnJoinedRoom()
                 {
+                    // Reconexion - Si volvimos en medio de la partida, no se toca el menu (seamless) //
+                        bool Bool_WasReconnecting = R_Ctm_RH_Reconnection.IsReconnecting;
+                        R_Ctm_RH_Reconnection.NotifyJoinedRoom();
+                        if (Bool_WasReconnecting && IsInMatchScene) return;
                     // Menu Manager Communication //
                         // Variables //
                             MenuTypeWaitingRoom Ctm_MTWR_Reference = (MasterManager.Instance.MenuManager.GetMenuReference("WaitingRoom")).gameObject.GetComponent<MenuTypeWaitingRoom>();
@@ -75,6 +156,13 @@ public class NetworkManager : BaseManager<NetworkManager>
                             Ctm_MTWR_Reference.SetUpRoom();
                             Ctm_MTWR_Reference.JoinRoom();
                     Debug.Log("[Network Manager] Status: 'Joined room'");
+                }
+                public override void OnJoinRoomFailed(short Shrt_ReturnCode, string Str_Message)
+                {
+                    bool Bool_WasReconnecting = R_Ctm_RH_Reconnection.IsReconnecting;
+                    R_Ctm_RH_Reconnection.NotifyJoinRoomFailed(Shrt_ReturnCode, Str_Message);
+                    if (!Bool_WasReconnecting) ShowError(Str_Message);
+                    Debug.Log("[Network Manager] Status: 'Join Room Failed' (" + Shrt_ReturnCode + "): " + Str_Message);
                 }
                 public override void OnRoomListUpdate(List<RoomInfo> Lst_PUNRI_RoomList)
                 { 
@@ -85,21 +173,35 @@ public class NetworkManager : BaseManager<NetworkManager>
                     Debug.Log("[Network Manager] Status: 'Updated List'");
                 }
             #endregion Find Room
-            #region    Waiting Room
+            #region    Waiting Room / Match
                 public override void OnPlayerEnteredRoom(Player PUNPl_NewPlayer)
                 {
-                    Debug.Log("[Network Manager] Status: 'Player Entered Room'");
+                    // Game Manager Communication - Un jugador volvio a la partida //
+                        if (IsInMatchScene && PUNPl_NewPlayer.HasRejoined)
+                            MasterManager.Instance.GameManager.OnPlayerReturned(PUNPl_NewPlayer);
+                    Debug.Log("[Network Manager] Status: 'Player Entered Room' (Actor " + PUNPl_NewPlayer.ActorNumber + ", rejoin: " + PUNPl_NewPlayer.HasRejoined + ")");
                 }
                 public override void OnPlayerLeftRoom(Player PUNPl_OtherPlayer) // ANYONE LEAVES THE ROOM //
                 {
-                    // Variables //
+                    // En partida: inactivo (puede volver) o ido de verdad (abandono) //
+                        if (IsInMatchScene)
+                        {
+                            if (PUNPl_OtherPlayer.IsInactive) MasterManager.Instance.GameManager.OnPlayerInactive(PUNPl_OtherPlayer);
+                            else                              MasterManager.Instance.GameManager.OnPlayerGone(PUNPl_OtherPlayer);
+                            Debug.Log("[Network Manager] Status: 'Player Left Match' (Actor " + PUNPl_OtherPlayer.ActorNumber + ", inactivo: " + PUNPl_OtherPlayer.IsInactive + ")");
+                            return;
+                        }
+                    // En la sala de espera //
                         MenuTypeWaitingRoom Ctm_MTWR_Reference = (MasterManager.Instance.MenuManager.GetMenuReference("WaitingRoom")).gameObject.GetComponent<MenuTypeWaitingRoom>();
-                    // Menu Manager Communication //
-                        // Update Room //
-                            Ctm_MTWR_Reference.SetUpRoom();
-                    // Si se fue el Vigilante, elegir otro y reiniciar //
+                        Ctm_MTWR_Reference.SetUpRoom();
                         ReassignVigilantIfNeeded(PUNPl_OtherPlayer);
                     Debug.Log("[Network Manager] Status: 'Player Left Room'");
+                }
+                public override void OnMasterClientSwitched(Player PUNPl_NewMaster)
+                {
+                    // GDD: si se cae el Master, el que queda retoma la autoridad leyendo el estado de la Room //
+                        if (IsInMatchScene) MasterManager.Instance.GameManager.OnMasterSwitched();
+                    Debug.Log("[Network Manager] Status: 'Master Switched' (Actor " + PUNPl_NewMaster.ActorNumber + ")");
                 }
                 private void ReassignVigilantIfNeeded(Player PUNPl_Gone)
                 {
@@ -118,43 +220,89 @@ public class NetworkManager : BaseManager<NetworkManager>
                             break;
                         }
                         if (PUNPl_New == null) return;
-                    // Publicar nuevo Vigilante //
+                    // Publicar nuevo Vigilante - Ya NO se reinicia la partida: eso rompia la migracion de Master //
                         PhotonNetwork.CurrentRoom.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "VigilantActor", PUNPl_New.ActorNumber } });
-                        Debug.Log("[Network Manager] Vigilante se fue. Nuevo Vigilante: Actor " + PUNPl_New.ActorNumber + ". Reiniciando partida.");
-                    // Reiniciar la ronda para todos //
-                        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex == 1)
-                            PhotonNetwork.LoadLevel(1);
+                        Debug.Log("[Network Manager] Vigilante se fue. Nuevo Vigilante: Actor " + PUNPl_New.ActorNumber);
                 }
                 public override void OnLeftRoom() // CURRENT PLAYER LEAVES THE ROOM //
                 {
+                    // PUN llama a OnLeftRoom ANTES que a OnDisconnected cuando se corta la conexion //
+                    // Si no fue una salida pedida, se espera a OnDisconnected para reconectar (no se vuelve al menu) //
+                        if (R_Ctm_RH_Reconnection.IsUnexpectedRoomExit)
+                        {
+                            Debug.Log("[Network Manager] Status: 'Left Room' por desconexion - Esperando reconexion");
+                            return;
+                        }
                     Debug.Log("[Network Manager] Status: 'Left Room'");
                     // Volver al menu principal //
                         MasterManager.Instance.GameManager.ShowCursor();
                         ReturnToTitle();
                 }
-            #endregion Waiting Room
+            #endregion Waiting Room / Match
             #region    Error Room
                 public override void OnCreateRoomFailed(short Shrt_ReturnCode, string Str_Message)
                 {
-                    // Menu Manager Communication - Change to Loading //
-                        MasterManager.Instance.MenuManager.OpenMenu("ErrorMenu"); 
-                        (MasterManager.Instance.MenuManager.GetMenuReference("CreateRoomMenu")).gameObject.GetComponent<MenuTypeError>().PrintError(Str_Message);
+                    ShowError(Str_Message);
                     Debug.Log("[Network Manager] Status: 'ERROR FOUND!: "+Str_Message+"'");
                 }
             #endregion Error Room
         #endregion PUN Methods
+        #region    Reconnection Methods
+            private void ScheduleReconnectAttempt()
+            {
+                if (R_Crtn_Reconnect != null) StopCoroutine(R_Crtn_Reconnect);
+                R_Crtn_Reconnect = StartCoroutine(ReconnectAttemptRoutine());
+            }
+            private IEnumerator ReconnectAttemptRoutine()
+            {
+                // Espera corta: deja que el peer termine de cerrarse antes de reintentar //
+                    yield return new WaitForSecondsRealtime(R_Ctm_RH_Reconnection.RetryDelay);
+                    R_Crtn_Reconnect = null;
+                // Si Photon no acepto el pedido, se agenda otro (el handler corta al llegar al maximo) //
+                    if (!R_Ctm_RH_Reconnection.TryNextAttempt() && R_Ctm_RH_Reconnection.IsReconnecting)
+                        ScheduleReconnectAttempt();
+            }
+            private void ScheduleRejoinFromMaster()
+            {
+                if (R_Crtn_Reconnect != null) StopCoroutine(R_Crtn_Reconnect);
+                R_Crtn_Reconnect = StartCoroutine(RejoinFromMasterRoutine());
+            }
+            private IEnumerator RejoinFromMasterRoutine()
+            {
+                // Espera para darle tiempo al servidor a marcarnos como inactivos (evita otro "ActiveJoiner") //
+                    yield return new WaitForSecondsRealtime(R_Ctm_RH_Reconnection.RetryDelay);
+                    R_Crtn_Reconnect = null;
+                    R_Ctm_RH_Reconnection.TryConsumePendingRejoin();
+            }
+            private void HandleReconnectionAttempt(int Int_Attempt, int Int_Max)
+            {
+                ConnectionStatusOverlay.Show(ConnectionStrings.LostTitle, string.Format(ConnectionStrings.LostBodyFormat, Int_Attempt, Int_Max));
+            }
+            private void HandleReconnectionSuccess()
+            {
+                ConnectionStatusOverlay.Hide();
+                if (IsInMatchScene) MasterManager.Instance.GameManager.OnLocalPlayerRejoined();
+            }
+            private void HandleReconnectionFailed()
+            {
+                if (R_Crtn_Reconnect != null) { StopCoroutine(R_Crtn_Reconnect); R_Crtn_Reconnect = null; }
+                GoToTitle(ConnectionStrings.ReconnectFailed);
+            }
+        #endregion Reconnection Methods
         #region    Custom Methods
             public void StartGame()
             {
+                // Estado de partida limpio (pausa / ganador) antes de cargar el nivel //
+                    PhotonNetwork.CurrentRoom.SetCustomProperties(MatchConnectionMonitor.BuildResetProperties());
                 // PUN //
-                    PhotonNetwork.LoadLevel(1);
+                    PhotonNetwork.LoadLevel(MATCH_SCENE_INDEX);
                 // Lock Room Mid Game //
                     PhotonNetwork.CurrentRoom.IsOpen = false;
             }
             public void EndGame()
             {
                 // PUN //
-                    PhotonNetwork.LoadLevel(0);
+                    PhotonNetwork.LoadLevel(MENU_SCENE_INDEX);
                 // Lock Room Mid Game //
                     PhotonNetwork.CurrentRoom.IsOpen = true;
             }
@@ -166,19 +314,49 @@ public class NetworkManager : BaseManager<NetworkManager>
                     MasterManager.Instance.InputManager.DisableInputPlayerActions();
                 // Limpiar HUD / Scoreboard / lista de la sala - Tiene que ser ANTES de salir, usa un RPC //
                     if (PhotonNetwork.InRoom) MasterManager.Instance.GameManager.LeftRoom();
-                // Salir - El regreso al menu lo hace OnLeftRoom() //
-                    if (PhotonNetwork.InRoom) PhotonNetwork.LeaveRoom();
+                // Salir - becomeInactive = false: con PlayerTtl, sino el lugar queda reservado 30 s //
+                    R_Ctm_RH_Reconnection.MarkIntentionalLeave();
+                    if (PhotonNetwork.InRoom) PhotonNetwork.LeaveRoom(false);
                     else                      ReturnToTitle();
             }
             private void ReturnToTitle()
             {
-                // Sacar la pantalla de resultado si quedo abierta //
+                // Sacar las pantallas superpuestas si quedaron abiertas //
                     GameResultScreen.Hide();
+                    ConnectionStatusOverlay.Hide();
                 // Volver a la escena de menu //
-                    if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex != 0)
-                        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+                    if (SceneManager.GetActiveScene().buildIndex != MENU_SCENE_INDEX)
+                        SceneManager.LoadScene(MENU_SCENE_INDEX);
                 // Menu Manager Communication //
                     MasterManager.Instance.MenuManager.OpenMenu("TitleMenu");
+            }
+            // Vuelve al titulo mostrando un error. Si no hay conexion, reconecta al Master y el error se muestra al llegar //
+            private void GoToTitle(string Str_Error)
+            {
+                // Estado local //
+                    MasterManager.Instance.GameManager.ShowCursor();
+                    MasterManager.Instance.InputManager.DisableInputPlayerActions();
+                    bool Bool_AlreadyInMenu = SceneManager.GetActiveScene().buildIndex == MENU_SCENE_INDEX;
+                // Seguimos conectados al Master: alcanza con volver al menu //
+                    if (PhotonNetwork.IsConnectedAndReady)
+                    {
+                        O_Bool_IsStatusOn = true;
+                        ReturnToTitle();
+                        if (!PhotonNetwork.InLobby) PhotonNetwork.JoinLobby();
+                        ShowError(Str_Error);
+                        return;
+                    }
+                // Sin conexion: el OnStartUp (de la escena nueva o el nuestro) reconecta //
+                    R_Str_PendingError = Str_Error;
+                    O_Bool_IsStatusOn = false;
+                    ReturnToTitle();
+                    if (Bool_AlreadyInMenu) OnStartUp();
+            }
+            private void ShowError(string Str_Message)
+            {
+                MasterManager.Instance.MenuManager.OpenMenu(ERROR_MENU_NAME);
+                BaseMenuType Ctm_BMT_Error = MasterManager.Instance.MenuManager.GetMenuReference(ERROR_MENU_NAME);
+                if (Ctm_BMT_Error != null) Ctm_BMT_Error.GetComponent<MenuTypeError>().PrintError(Str_Message);
             }
             public void JoinRoom(RoomInfo PUNRI_Input)
             {
@@ -204,11 +382,13 @@ public class NetworkManager : BaseManager<NetworkManager>
                     Ctm_MTCR_Reference.UpdateRoomData();
                     RoomOptions PUNRO_Settings = new RoomOptions
                     {
-                        MaxPlayers = Ctm_MTCR_Reference.RoomSize,
+                        MaxPlayers = ROOM_MAX_PLAYERS,        // GDD: siempre 2 (el campo RoomSize del menu ya no aplica) //
                         IsVisible = true,
                         IsOpen = true,
-                        EmptyRoomTtl = 0,
-                        CleanupCacheOnLeave = true
+                        PlayerTtl = PLAYER_TTL_MS,            // Seamless reconnection: el jugador queda "inactivo" y puede volver //
+                        EmptyRoomTtl = PLAYER_TTL_MS,         // Si se caen todos, la sala sobrevive para que puedan volver //
+                        CleanupCacheOnLeave = true,
+                        CustomRoomProperties = MatchConnectionMonitor.BuildResetProperties()
                     };
                 // Error Exit //
                     if (string.IsNullOrEmpty(Ctm_MTCR_Reference.RoomName))
@@ -241,8 +421,9 @@ public class NetworkManager : BaseManager<NetworkManager>
                     // Remove Room //
                         Ctm_MTFR_Reference.ClearRoomList();
                         Ctm_MTWR_Reference.ClearPlayerList();
-                // Network anager - Leave //
-                    PhotonNetwork.LeaveRoom();
+                // Network Manager - Leave (becomeInactive = false: salida definitiva) //
+                    R_Ctm_RH_Reconnection.MarkIntentionalLeave();
+                    PhotonNetwork.LeaveRoom(false);
                 // Menu Manager Communication // 
                     // Clear All //
                         Ctm_MTFR_Reference.RemoveRoomFromList();

@@ -89,7 +89,7 @@ public class Menu_ScoreBoard : BaseMenuElement
                     // Force Update Other Client's Scoreboard Prefab //
                         GetObjectList(out object[] Obj_A1_List);
                         if (Obj_A1_List != null) return;
-                        GetComponent<PhotonView>().RPC(nameof(RPC_ForceUpdateListToClients),RpcTarget.All, Obj_A1_List); // ¿Por que object? PORQUE NO PARABA DE DAR FAIL Y ME VOLVIO LOCO!!!1! <3 //
+                        GetComponent<PhotonView>().RPC(nameof(RPC_ForceUpdateListToClients),RpcTarget.All, Obj_A1_List); // ï¿½Por que object? PORQUE NO PARABA DE DAR FAIL Y ME VOLVIO LOCO!!!1! <3 //
                 }
                 [PunRPC]
                 private void RPC_NotifyDeathToMaster(string Str_Player)
@@ -100,7 +100,7 @@ public class Menu_ScoreBoard : BaseMenuElement
                     // Force Update Other Client's Scoreboard Prefab //
                         GetObjectList(out object[] Obj_A1_List);
                         if (Obj_A1_List != null) return;
-                        GetComponent<PhotonView>().RPC(nameof(RPC_ForceUpdateListToClients), RpcTarget.All, Obj_A1_List); // ¿Por que object? PORQUE NO PARABA DE DAR FAIL Y ME VOLVIO LOCO!!!1! <3 //
+                        GetComponent<PhotonView>().RPC(nameof(RPC_ForceUpdateListToClients), RpcTarget.All, Obj_A1_List); // ï¿½Por que object? PORQUE NO PARABA DE DAR FAIL Y ME VOLVIO LOCO!!!1! <3 //
                 }
                 [PunRPC]
                 private void RPC_NotifyPingToMaster(object CtmS_SCSD_Data)
@@ -111,18 +111,20 @@ public class Menu_ScoreBoard : BaseMenuElement
                     // Force Update Other Client's Scoreboard Prefab //
                         GetObjectList(out object[] Obj_A1_List);
                         if (Obj_A1_List != null) return;
-                        GetComponent<PhotonView>().RPC(nameof(RPC_ForceUpdateListToClients),RpcTarget.All, Obj_A1_List); // ¿Por que object? PORQUE NO PARABA DE DAR FAIL Y ME VOLVIO LOCO!!!1! <3 //
+                        GetComponent<PhotonView>().RPC(nameof(RPC_ForceUpdateListToClients),RpcTarget.All, Obj_A1_List); // ï¿½Por que object? PORQUE NO PARABA DE DAR FAIL Y ME VOLVIO LOCO!!!1! <3 //
                 }
                 [PunRPC]
                 private void RPC_RemoveSelfFromMaster(string Str_Player)
                 {
-                    // Remove //
-                        (I_Ctm_MLCSB_Container.FindTroughName(Str_Player)).RemoveElement();
+                    // Remove - El jugador puede no estar en la lista (este scoreboard no se usa en Cowboy) //
+                        var Ctm_Element = I_Ctm_MLCSB_Container.FindTroughName(Str_Player);
+                        if (Ctm_Element == null) return;
+                        Ctm_Element.RemoveElement();
                         I_Ctm_MLCSB_Container.Rearrange();
                     // Force Update Other Client's Scoreboard Prefab //
                         GetObjectList(out object[] Obj_A1_List);
                         if (Obj_A1_List != null) return;
-                        GetComponent<PhotonView>().RPC(nameof(RPC_ForceUpdateListToClients),RpcTarget.All, Obj_A1_List); // ¿Por que object? PORQUE NO PARABA DE DAR FAIL Y ME VOLVIO LOCO!!!1! <3 //
+                        GetComponent<PhotonView>().RPC(nameof(RPC_ForceUpdateListToClients),RpcTarget.All, Obj_A1_List); // ï¿½Por que object? PORQUE NO PARABA DE DAR FAIL Y ME VOLVIO LOCO!!!1! <3 //
                 }
                 [PunRPC]
                 private void RPC_ForceUpdateListToClients(Transform[] Trns_A1_List)

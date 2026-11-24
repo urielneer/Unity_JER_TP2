@@ -1,15 +1,40 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Photon.Pun;
+using Photon.Realtime;
 
-public class NetworkLagSimulatorController : MonoBehaviour, INetworkLagSimulatorService
+public class NetworkLagSimulatorController : MonoBehaviourPunCallbacks, INetworkLagSimulatorService
 {
-    [Header("Configuraci髇 de Red Simulada")]
+    [Header("Configuraci贸n de Red Simulada")]
     [SerializeField] private bool _enableSimulation = false;
     [SerializeField] private int _simulatedPing = 150;
     [SerializeField] private int _simulatedJitter = 30;
     [SerializeField] private int _packetLossPercentage = 0;
 
+    [Header("Debug - Corte de conexi贸n (solo Editor / Development Build)")]
+    [Tooltip("Corta la conexi贸n para probar la reconexi贸n seamless")]
+    [SerializeField] private Key _simulateConnectionLossKey = Key.F9;
+
     private void Start()
+    {
+        ApplySimulationState();
+    }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+    private void Update()
+    {
+        Keyboard keyboard = Keyboard.current;
+        if (keyboard == null || !keyboard[_simulateConnectionLossKey].wasPressedThisFrame) return;
+        if (!PhotonNetwork.IsConnected) return;
+
+        // Pierde el 100% de los paquetes: Photon detecta un ClientTimeout como en un corte real //
+        Debug.LogWarning("[LagSimulator] Simulando corte de conexi贸n (" + _simulateConnectionLossKey + ")");
+        PhotonNetwork.NetworkingClient.SimulateConnectionLoss(true);
+    }
+#endif
+
+    // Al desconectarse se restaura la configuraci贸n elegida: sino la reconexi贸n tambi茅n perder铆a todos los paquetes //
+    public override void OnDisconnected(DisconnectCause cause)
     {
         ApplySimulationState();
     }
@@ -39,7 +64,7 @@ public class NetworkLagSimulatorController : MonoBehaviour, INetworkLagSimulator
         {
             var peer = PhotonNetwork.NetworkingClient.LoadBalancingPeer;
 
-            // Activamos o desactivamos la simulaci髇 en el peer de bajo nivel de Photon
+            // Activamos o desactivamos la simulaci贸n en el peer de bajo nivel de Photon
             peer.IsSimulationEnabled = _enableSimulation;
 
             if (_enableSimulation)
@@ -52,11 +77,11 @@ public class NetworkLagSimulatorController : MonoBehaviour, INetworkLagSimulator
                 peer.NetworkSimulationSettings.IncomingLossPercentage = _packetLossPercentage;
                 peer.NetworkSimulationSettings.OutgoingLossPercentage = _packetLossPercentage;
 
-                Debug.Log($"[LagSimulator] Simulaci髇 ACTIVA -> Ping: {_simulatedPing}ms | Jitter: {_simulatedJitter}ms | P閞dida: {_packetLossPercentage}%");
+                Debug.Log($"[LagSimulator] Simulaci贸n ACTIVA -> Ping: {_simulatedPing}ms | Jitter: {_simulatedJitter}ms | P茅rdida: {_packetLossPercentage}%");
             }
             else
             {
-                Debug.Log("[LagSimulator] Simulaci髇 DESACTIVADA. Red limpia.");
+                Debug.Log("[LagSimulator] Simulaci贸n DESACTIVADA. Red limpia.");
             }
         }
     }

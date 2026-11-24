@@ -18,6 +18,11 @@ public class GameManager : BaseManager<GameManager>
             [SerializeField] private float _respawnCooldown;
             float IO_Flt_RespawnCooldown;
             public float RespawnCooldown => IO_Flt_RespawnCooldown;
+        [Header(" Match Connection Settings")]
+            [Tooltip("Segundos que se muestra el resultado antes de volver al menu cuando el rival abandona")]
+            [SerializeField] private float _returnToMenuDelay = 4f;
+            private MatchConnectionMonitor R_Ctm_MCM_Monitor;
+            private Coroutine R_Crtn_ReturnToMenu;
         #region    Dummy[Header("UI Settings")]
             [SerializeField] private TextMeshProUGUI _timerText;
             [SerializeField] private Image _image;
@@ -39,6 +44,19 @@ public class GameManager : BaseManager<GameManager>
                     base.Awake();
                 // Variables //
                     IO_Flt_RespawnCooldown = _respawnCooldown;
+                // Match Connection - Solo la instancia que sobrevive (singleton) //
+                    if (_instance != this) return;
+                    R_Ctm_MCM_Monitor = new MatchConnectionMonitor(NetworkManager.PLAYER_TTL_SECONDS);
+                    R_Ctm_MCM_Monitor.OnPauseStarted += HandlePauseStarted;
+                    R_Ctm_MCM_Monitor.OnPauseEnded   += HandlePauseEnded;
+                    R_Ctm_MCM_Monitor.OnMatchEnded   += HandleMatchEnded;
+            }
+            private void OnDestroy()
+            {
+                if (R_Ctm_MCM_Monitor == null) return;
+                R_Ctm_MCM_Monitor.OnPauseStarted -= HandlePauseStarted;
+                R_Ctm_MCM_Monitor.OnPauseEnded   -= HandlePauseEnded;
+                R_Ctm_MCM_Monitor.OnMatchEnded   -= HandleMatchEnded;
             }
         #endregion Unity Methods
         #region    Override Methods
@@ -59,6 +77,8 @@ public class GameManager : BaseManager<GameManager>
                             _elapsedTime = 0f;
                             _currentSeconds = 0;
                             O_Bool_CanShoot = false;
+                            // Estado de conexion de la partida (pausa / ganador) //
+                                R_Ctm_MCM_Monitor?.SyncFromRoom();
                         break;
                     }
             }
@@ -74,6 +94,8 @@ public class GameManager : BaseManager<GameManager>
                         break;
                         case 1: // Level //   
                             TimerUpdate();
+                            // Autoridad del Master: vencimiento de la espera por reconexion //
+                                R_Ctm_MCM_Monitor?.Tick();
                         break;
                     }
             }
@@ -264,6 +286,65 @@ public class GameManager : BaseManager<GameManager>
                     //Cursor.lockState = CursorLockMode.Locked;
                 }
             #endregion Networking
+            #region    Match Connection
+                #region    Network Manager Communication
+                    public void OnPlayerInactive(Player PUNPl_Player)  { R_Ctm_MCM_Monitor.HandlePlayerInactive(PUNPl_Player); }
+                    public void OnPlayerReturned(Player PUNPl_Player)  { R_Ctm_MCM_Monitor.HandlePlayerReturned(PUNPl_Player); }
+                    public void OnPlayerGone(Player PUNPl_Player)      { R_Ctm_MCM_Monitor.HandlePlayerGone(PUNPl_Player); }
+                    public void OnMasterSwitched()                     { R_Ctm_MCM_Monitor.HandleMasterSwitched(); }
+                    public void OnLocalPlayerRejoined()
+                    {
+                        // Se relee todo desde la Room: si mientras estabamos afuera termino la partida o hay pausa, se dispara el evento //
+                            R_Ctm_MCM_Monitor.SyncFromRoom();
+                            if (!R_Ctm_MCM_Monitor.HasEnded && !R_Ctm_MCM_Monitor.IsPaused)
+                                MasterManager.Instance.InputManager.EnableInputPlayerActions();
+                        Debug.Log("[Game Manager] Status: 'Local Player Rejoined'");
+                    }
+                #endregion Network Manager Communication
+                #region    PUN
+                    public override void OnRoomPropertiesUpdate(Hashtable Hsh_Changed)
+                    {
+                        if (!NetworkManager.IsInMatchScene || R_Ctm_MCM_Monitor == null) return;
+                        R_Ctm_MCM_Monitor.ApplyRoomProperties(Hsh_Changed);
+                    }
+                #endregion PUN
+                #region    Monitor Events
+                    private void HandlePauseStarted(int Int_Actor, double Dbl_Deadline)
+                    {
+                        MasterManager.Instance.InputManager.DisableInputPlayerActions();
+                        ConnectionStatusOverlay.ShowCountdown(ConnectionStrings.OpponentTitle, ConnectionStrings.OpponentBodyFmt, Dbl_Deadline);
+                    }
+                    private void HandlePauseEnded()
+                    {
+                        ConnectionStatusOverlay.Hide();
+                        MasterManager.Instance.InputManager.EnableInputPlayerActions();
+                    }
+                    private void HandleMatchEnded(int Int_Winner, MatchEndReason E_Reason)
+                    {
+                        // Estado local //
+                            ConnectionStatusOverlay.Hide();
+                            MasterManager.Instance.InputManager.DisableInputPlayerActions();
+                        // Pantalla de resultado //
+                            bool Bool_IWon = Int_Winner == PhotonNetwork.LocalPlayer.ActorNumber;
+                            string Str_Reason = (E_Reason == MatchEndReason.Abandon)
+                                                ? (Bool_IWon ? ConnectionStrings.WinByAbandon : ConnectionStrings.LoseByAbandon)
+                                                : string.Empty;
+                            GameResultScreen.Show(Bool_IWon, Str_Reason, _returnToMenuDelay, ConnectionStrings.BackToMenuFormat);
+                        // Abandono: el rival no vuelve, se sale de la sala al terminar la cuenta //
+                            if (E_Reason != MatchEndReason.Abandon) return;
+                            if (R_Crtn_ReturnToMenu != null) StopCoroutine(R_Crtn_ReturnToMenu);
+                            R_Crtn_ReturnToMenu = StartCoroutine(ReturnToMenuRoutine());
+                    }
+                    private System.Collections.IEnumerator ReturnToMenuRoutine()
+                    {
+                        yield return new WaitForSecondsRealtime(_returnToMenuDelay);
+                        R_Crtn_ReturnToMenu = null;
+                        // Si el jugador ya salio por su cuenta, no se hace nada //
+                            if (!NetworkManager.IsInMatchScene) yield break;
+                            MasterManager.Instance.NetworkManager.LeaveGame();
+                    }
+                #endregion Monitor Events
+            #endregion Match Connection
             #region    PowerUp
             #endregion PowerUp
         #endregion Custom Methods
