@@ -117,6 +117,8 @@ public class Menu_ScoreBoard : BaseMenuElement
                 private void RPC_RemoveSelfFromMaster(string Str_Player)
                 {
                     // Remove - El jugador puede no estar en la lista (este scoreboard no se usa en Cowboy) //
+                    // Si el objeto nunca se activo, Awake no corrio y el contenedor es null //
+                        if (I_Ctm_MLCSB_Container == null) return;
                         var Ctm_Element = I_Ctm_MLCSB_Container.FindTroughName(Str_Player);
                         if (Ctm_Element == null) return;
                         Ctm_Element.RemoveElement();
