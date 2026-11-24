@@ -370,13 +370,18 @@ public class PlayerCharacter : BasePlayer, IPunObservable
         #region Listener Methods
             public void OnPowerUpHit(int Int_Index)
             {
-        Debug.Log("PU: " + Int_Index);
                 switch (Int_Index)
                 {
                     case 0:
+                        ResetAnimBooleans(true, 6); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
+                        ForciblyResetLocation();
+                        UpdateAnimator();
                         GetComponent<PhotonView>().RPC(nameof(RPC_NotifyHealStart),RpcTarget.Others, O_Int_LocationIndex);
                     return;
                     case 1:
+                        ResetAnimBooleans(true, 7); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
+                        ForciblyResetLocation();
+                        UpdateAnimator();
                         GetComponent<PhotonView>().RPC(nameof(RPC_NotifyFullReloadStart),RpcTarget.Others, O_Int_LocationIndex);
                     return;
                 }
@@ -580,7 +585,7 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                 // Actions? //
                     R_Bool_IsShooting      = (Int_Input == 2) ?
                                              true : false;
-                    R_Bool_IsReloading     = ((Int_Input == 3) || (Int_Input == 7)) ?
+                    R_Bool_IsReloading     = (Int_Input == 3) ?
                                              true : false;
                     R_Bool_IsWindhorning   = (Int_Input == 4) ?
                                              true : false;
