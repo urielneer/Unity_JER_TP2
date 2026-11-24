@@ -1,8 +1,14 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Photon.Pun;
+using Photon.Pun.UtilityScripts;
 using Photon.Realtime;
 
+// Photon Lag Simulator (GDD: "Todos estos casos se prueban con el Photon Lag Simulator") //
+// - Valores por Inspector: se aplican al iniciar Y en vivo al editarlos con el juego corriendo (OnValidate). //
+// - Ventana en pantalla de PUN (PhotonLagSimulationGui) con RTT real y sliders: F8 la muestra / oculta. //
+// - F9 simula un corte total para probar la reconexion seamless. //
+// Las herramientas de debug solo existen en el Editor y en Development Builds. //
 public class NetworkLagSimulatorController : MonoBehaviourPunCallbacks, INetworkLagSimulatorService
 {
     [Header("Configuración de Red Simulada")]
@@ -11,25 +17,48 @@ public class NetworkLagSimulatorController : MonoBehaviourPunCallbacks, INetwork
     [SerializeField] private int _simulatedJitter = 30;
     [SerializeField] private int _packetLossPercentage = 0;
 
-    [Header("Debug - Corte de conexión (solo Editor / Development Build)")]
+    [Header("Debug (solo Editor / Development Build)")]
+    [Tooltip("Muestra / oculta la ventana de simulación de PUN (RTT, lag, jitter, pérdida)")]
+    [SerializeField] private Key _toggleWindowKey = Key.F8;
+    [Tooltip("Arrancar con la ventana visible")]
+    [SerializeField] private bool _showWindowOnStart = false;
     [Tooltip("Corta la conexión para probar la reconexión seamless")]
     [SerializeField] private Key _simulateConnectionLossKey = Key.F9;
+
+    private PhotonLagSimulationGui _window;
 
     private void Start()
     {
         ApplySimulationState();
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        // Ventana de PUN creada por código: no hace falta tocar la escena ni el prefab //
+        _window = gameObject.GetComponent<PhotonLagSimulationGui>();
+        if (_window == null) _window = gameObject.AddComponent<PhotonLagSimulationGui>();
+        _window.Visible = _showWindowOnStart;
+#endif
+    }
+
+    // Cambios en el Inspector con el juego corriendo: se aplican al instante //
+    private void OnValidate()
+    {
+        if (Application.isPlaying) ApplySimulationState();
     }
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
     private void Update()
     {
         Keyboard keyboard = Keyboard.current;
-        if (keyboard == null || !keyboard[_simulateConnectionLossKey].wasPressedThisFrame) return;
-        if (!PhotonNetwork.IsConnected) return;
+        if (keyboard == null) return;
 
-        // Pierde el 100% de los paquetes: Photon detecta un ClientTimeout como en un corte real //
-        Debug.LogWarning("[LagSimulator] Simulando corte de conexión (" + _simulateConnectionLossKey + ")");
-        PhotonNetwork.NetworkingClient.SimulateConnectionLoss(true);
+        if (_window != null && keyboard[_toggleWindowKey].wasPressedThisFrame)
+            _window.Visible = !_window.Visible;
+
+        if (keyboard[_simulateConnectionLossKey].wasPressedThisFrame && PhotonNetwork.IsConnected)
+        {
+            // Pierde el 100% de los paquetes: Photon detecta un ClientTimeout como en un corte real //
+            Debug.LogWarning("[LagSimulator] Simulando corte de conexión (" + _simulateConnectionLossKey + ")");
+            PhotonNetwork.NetworkingClient.SimulateConnectionLoss(true);
+        }
     }
 #endif
 
