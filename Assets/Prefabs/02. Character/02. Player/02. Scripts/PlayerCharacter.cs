@@ -216,9 +216,7 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                 }
             #endregion Bool-Resseters
             #region    Network Methods
-                #region    Regular
-                #endregion Regular
-                #region    RPC
+                #region    Send Notification
                     [PunRPC]
                     private void RPC_NotifyMovementStart(Hashtable Hsh_Input)
                     {
@@ -268,294 +266,303 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                             ((EnemyCharacter) (MasterManager.Instance.CharacterManager.EnemyPlayer)).ForceStunAnimation(O_Int_LocationIndex);
                     }
                     [PunRPC]
+                    private void RPC_NotifyHealStart(int Int_Input)
+                    {
+                        // Mirror Animation //
+                            ((EnemyCharacter) (MasterManager.Instance.CharacterManager.EnemyPlayer)).ForceHealAnimation(O_Int_LocationIndex);
+                    }
+                    [PunRPC]
+                    private void RPC_NotifyFullReloadStart(int Int_Input)
+                    {
+                        // Mirror Animation //
+                            ((EnemyCharacter) (MasterManager.Instance.CharacterManager.EnemyPlayer)).ForceFullReloadAnimation(O_Int_LocationIndex);
+                    }
+                    [PunRPC]
                     private void RPC_ForceLocationStart(Vector2 Vec2_Input)
                     {
                         // Mirror Animation //
                             ((EnemyCharacter) (MasterManager.Instance.CharacterManager.EnemyPlayer)).ForceUpdateLocation(Vec2_Input);
                     }
-                #endregion RPC
+                #endregion Send Notification
             #endregion Network Methods
             #region    Mirror Methods
-                #region    Combat
-                    public void NotifyDamageEnd(Hashtable Hsh_Input)
-                    {
-                        // Clear Values //
-                            R_Vec2_StashedLocation = new Vector2();
-                            R_Bool_WasMovementCTEnabled = false;
-                            R_Flt_MovementCoyoteCounter = 0;
-                            R_Bool_IsRelocating = false;
-                        // Update Anim Values //
+                #region    Recieve Notification
+                    #region    Start
+                        public void NotifyStunShowStart(int Int_Input)
+                        {
+                            // Clear Values //
+                                R_Vec2_StashedLocation = new Vector2();
+                                R_Bool_WasMovementCTEnabled = false;
+                                R_Flt_MovementCoyoteCounter = 0;
+                                R_Bool_IsRelocating = false;
+                            // Update Anim Values //
+                                ResetAnimBooleans(true, 5); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
+                                ForciblyResetLocation();
+                            // Force Move //
+                                R_Vec2_StashedLocation = new Vector2();
+                                ForceRepositioning(Int_Input);
+                            // Overwrite Values //
+                                R_Bool_IsHiding = false; // ???? //
+                            // Animator //
+                                UpdateAnimator();
+                        }
+                        public void NotifyHealStart()
+                        {
+                            // Heal //
+                        }
+                    #endregion Start
+                    #region    End
+                        public void NotifyDamageEnd(Hashtable Hsh_Input)
+                        {
+                            // Clear Values //
+                                R_Vec2_StashedLocation = new Vector2();
+                                R_Bool_WasMovementCTEnabled = false;
+                                R_Flt_MovementCoyoteCounter = 0;
+                                R_Bool_IsRelocating = false;
+                            // Update Anim Values //
+                                ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
+                                ForciblyResetLocation();
+                            // Overwrite Values //
+                                R_Bool_IsHiding = (bool) Hsh_Input[IsHiding_KEY];
+                                R_Bool_WasDamaged = (bool)Hsh_Input[IsDamaged_KEY];
+                                R_Bool_IsShooting = (bool)Hsh_Input[IsShooting_KEY];
+                            // Animator //
+                                UpdateAnimator();
+                        }
+                        public void NotifyShootingEnd()
+                        {
                             ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
                             ForciblyResetLocation();
-                        // Overwrite Values //
-                            R_Bool_IsHiding = (bool) Hsh_Input[IsHiding_KEY];
-                            R_Bool_WasDamaged = (bool)Hsh_Input[IsDamaged_KEY];
-                            R_Bool_IsShooting = (bool)Hsh_Input[IsShooting_KEY];
-                        // Animator //
                             UpdateAnimator();
-                    }
-                    public void NotifyShootingEnd()
-                    {
-                        ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
-                        ForciblyResetLocation();
-                        UpdateAnimator();
-                    }
-                    public void NotifyWindhornEnd()
-                    {
-                        ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
-                        ForciblyResetLocation();
-                        UpdateAnimator();
-                    }
-                    public void NotifyStunEnd()
-                    {
-                        ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
-                        ForciblyResetLocation();
-                        UpdateAnimator();
-                    }
-                    public void NotifyStunShowStart(int Int_Input)
-                    {
-                        // Clear Values //
-                            R_Vec2_StashedLocation = new Vector2();
-                            R_Bool_WasMovementCTEnabled = false;
-                            R_Flt_MovementCoyoteCounter = 0;
-                            R_Bool_IsRelocating = false;
-                        // Update Anim Values //
-                            ResetAnimBooleans(true, 5); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
+                        }
+                        public void NotifyWindhornEnd()
+                        {
+                            ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
                             ForciblyResetLocation();
-                        // Force Move //
-                            R_Vec2_StashedLocation = new Vector2();
-                            ForceRepositioning(Int_Input);
-                        // Overwrite Values //
-                            R_Bool_IsHiding = false; // ???? //
-                        // Animator //
                             UpdateAnimator();
-                    }
-                    public void NotifyReloadingEnd(int Int_Input)
-                    {
-                        I_Int_BulletCount = (I_Int_BulletCount + Int_Input <= 6) ?
-                                                I_Int_BulletCount + Int_Input : 
-                                                6;
-                        I_Image_Cillinder.sprite = I_SpriteA1_Bullets[I_Int_BulletCount];
-                        ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
-                        ForciblyResetLocation();
-                        UpdateAnimator();
-                    }
-                    public void NotifyHealStart()
-                    {
-                        // Heal //
-                    }
-                    public void NotifyHealEnd()
-                    {
-                        ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
-                        ForciblyResetLocation();
-                        UpdateAnimator();
-                    }
+                        }
+                        public void NotifyStunEnd()
+                        {
+                            ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
+                            ForciblyResetLocation();
+                            UpdateAnimator();
+                        }
+                        public void NotifyReloadingEnd(int Int_Input)
+                        {
+                            I_Int_BulletCount = (I_Int_BulletCount + Int_Input <= 6) ?
+                                                    I_Int_BulletCount + Int_Input : 
+                                                    6;
+                            I_Image_Cillinder.sprite = I_SpriteA1_Bullets[I_Int_BulletCount];
+                            ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
+                            ForciblyResetLocation();
+                            UpdateAnimator();
+                        }        
+                        public void NotifyHealEnd()
+                        {
+                            ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
+                            ForciblyResetLocation();
+                            UpdateAnimator();
+                        }        
+                    #endregion End
                 #endregion Combat
             #endregion Mirror Methods
         #endregion Custom Methods
         #region Listener Methods
             public void OnPowerUpHit(int Int_Index)
             {
-                ResetAnimBooleans(
-                                    true,
-                                    (Int_Index) switch
-                                    {
-                                        0 => 6,   // Heal          //
-                                        1 => 7,   // Full Reload   //
-                                        _ => 6,   // Default: Heal //
-                                    }
-                                 ); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
-                ForciblyResetLocation();
-                UpdateAnimator();
+        Debug.Log("PU: " + Int_Index);
+                switch (Int_Index)
+                {
+                    case 0:
+                        GetComponent<PhotonView>().RPC(nameof(RPC_NotifyHealStart),RpcTarget.Others, O_Int_LocationIndex);
+                    return;
+                    case 1:
+                        GetComponent<PhotonView>().RPC(nameof(RPC_NotifyFullReloadStart),RpcTarget.Others, O_Int_LocationIndex);
+                    return;
+                }
             }
         #endregion Custom Methods
         #region Listener Methods
             #region    Callee Methods
-                #region   OnStarted
-                    public void OnStartedMoving(Vector2 Vec2_Input)
-                    {
-                        // Valdidation //
-                            #region    Should Proceed [?]
-                                if 
-                                (
+                public void OnStartedMoving(Vector2 Vec2_Input)
+                {
+                    // Valdidation //
+                        #region    Should Proceed [?]
+                            if 
+                            (
 //                                    R_Bool_IsShootOutTime || // Stop If Shootout Time //
-                                    R_Bool_WasKilled      || // Stop If Dead //
-                                    R_Bool_WasDamaged     || // Stop If Damaged //
-                                    O_Bool_IsStunned      || // Stop If Afected By A Windhorn //
-                                    R_Bool_IsReloading    || // Stop If Reloading //
-                                    R_Bool_IsShooting        // Stop If Shooting //
-                                )
-                                return;
-                            #endregion Should Proceed [?] 
-                        // Logic //
-                            if (R_Bool_HasReachedLocation)
-                            {
-                                // Get New Location //
-                                    int Int_PotentialLocation = (Vec2_Input.x, Vec2_Input.y) switch 
-                                                                {
-                                                                    (-1.00f, +0.00f) => 0,   // Bottom Left Corner  //
-                                                                    (-0.71f, +0.71f) => 1,   // Top Left Corner     //
-                                                                    (+0.00f, +1.00f) => 2,   // Top Middle Corner   //
-                                                                    (+0.71f, +0.71f) => 3,   // Top Right Corner    //
-                                                                    (+1.00f, +0.00f) => 4,   // Bottom Right Corner //
-                                                                    _                => 5,   // Bottom (Hide)       //
-                                                                };
-                                // Is Moving to a diferent location ? //
-                                    if (O_Int_LocationIndex != Int_PotentialLocation)
-                                    {
-                                        ForceRepositioning(Int_PotentialLocation);
-                                    }
-                            }
-                            else
-                            {   
-                                // Coyote Relocation //
-                                    int Int_Temp = (Vec2_Input.x, Vec2_Input.y) switch 
-                                                   {
-                                                        (-1.00f, +0.00f) => 0,   // Bottom Left Corner  //
-                                                        (-0.71f, +0.71f) => 1,   // Top Left Corner     //
-                                                        (+0.00f, +1.00f) => 2,   // Top Middle Corner   //
-                                                        (+0.71f, +0.71f) => 3,   // Top Right Corner    //
-                                                        (+1.00f, +0.00f) => 4,   // Bottom Right Corner //
-                                                        _                => 5,   // Bottom (Hide)       //
-                                                   };
-                                    if (Int_Temp != O_Int_LocationIndex)
-                                    {
-                                        R_Bool_WasMovementCTEnabled = true;
-                                        R_Flt_MovementCoyoteCounter = I_Flt_MovementCoyoteTime;
-                                        R_Vec2_StashedLocation = Vec2_Input;
-                                    }
-                            }
-                    }
-                    public void OnStartedShooting() 
-                    {   
-                        // Valdidation //
-                            #region    Should Proceed [?]
-                                if 
-                                (
-                                    !R_Bool_IsShootOutTime || // Stop If Outside Of Shootout Time //
-                                    R_Bool_IsHiding        || // Stop If Hiding //
-                                    R_Bool_WasKilled       || // Stop If Dead //
-                                    R_Bool_WasDamaged      || // Stop If Damaged //
-                                    O_Bool_IsStunned       || // Stop If Afected By A Windhorn //
-                                    R_Bool_IsReloading     || // Stop If Reloading //
-                                    !O_Bool_CanShoot       || // Stop If Not Allowed To Shoot //
-                                    I_Int_BulletCount < 1     // Stop If Cillinder Is Empty //
-                                )
-                                return;
-                            #endregion Should Proceed [?] 
-                        // Logic //
-                            // Animation //
-                                ResetAnimBooleans(true, 2); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
-                                ForciblyResetLocation();
-                                UpdateAnimator();
-                            // Spawn Bullet //
-                                I_Aim_Own.SpawnBullet();
-                                O_Bool_CanShoot = false;
-                            // Reduce Bullets //
-                                I_Int_BulletCount--;
-                                I_Image_Cillinder.sprite = I_SpriteA1_Bullets[I_Int_BulletCount];
-                            // Trigger Mirror Animation //
-                                GetComponent<PhotonView>().RPC(nameof(RPC_NotifyShootStart),RpcTarget.Others, O_Int_LocationIndex);
-                    }
-                    public void OnStartedReloading() 
-                    {
-                        // Valdidation //
-                            #region    Should Proceed [?]
-                                if 
-                                (
-                                    !R_Bool_IsShootOutTime || // Stop If Outside Of Shootout Time //
-                                    R_Bool_WasKilled       || // Stop If Dead //
-                                    R_Bool_WasDamaged      || // Stop If Damaged //
-                                    O_Bool_IsStunned       || // Stop If Afected By A Windhorn //
-                                    R_Bool_IsShooting      || // Stop If Shooting //
-                                    I_Int_BulletCount > 5     // Stop If Cillinder Is Full //
-                                )
-                                return;
-                            #endregion Should Proceed [?]
-                        //  Logic //
-                            // Animation //
-                                ResetAnimBooleans(true, 3); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
-                                ForciblyResetLocation();
-                                UpdateAnimator();
-                            // Trigger Mirror Animation //
-                                GetComponent<PhotonView>().RPC(nameof(RPC_NotifyReloadStart),RpcTarget.Others, O_Int_LocationIndex);
+                                R_Bool_WasKilled      || // Stop If Dead //
+                                R_Bool_WasDamaged     || // Stop If Damaged //
+                                O_Bool_IsStunned      || // Stop If Afected By A Windhorn //
+                                R_Bool_IsReloading    || // Stop If Reloading //
+                                R_Bool_IsShooting        // Stop If Shooting //
+                            )
+                            return;
+                        #endregion Should Proceed [?] 
+                    // Logic //
+                        if (R_Bool_HasReachedLocation)
+                        {
+                            // Get New Location //
+                                int Int_PotentialLocation = (Vec2_Input.x, Vec2_Input.y) switch 
+                                                            {
+                                                                (-1.00f, +0.00f) => 0,   // Bottom Left Corner  //
+                                                                (-0.71f, +0.71f) => 1,   // Top Left Corner     //
+                                                                (+0.00f, +1.00f) => 2,   // Top Middle Corner   //
+                                                                (+0.71f, +0.71f) => 3,   // Top Right Corner    //
+                                                                (+1.00f, +0.00f) => 4,   // Bottom Right Corner //
+                                                                _                => 5,   // Bottom (Hide)       //
+                                                            };
+                            // Is Moving to a diferent location ? //
+                                if (O_Int_LocationIndex != Int_PotentialLocation)
+                                {
+                                    ForceRepositioning(Int_PotentialLocation);
+                                }
+                        }
+                        else
+                        {   
+                            // Coyote Relocation //
+                                int Int_Temp = (Vec2_Input.x, Vec2_Input.y) switch 
+                                                {
+                                                    (-1.00f, +0.00f) => 0,   // Bottom Left Corner  //
+                                                    (-0.71f, +0.71f) => 1,   // Top Left Corner     //
+                                                    (+0.00f, +1.00f) => 2,   // Top Middle Corner   //
+                                                    (+0.71f, +0.71f) => 3,   // Top Right Corner    //
+                                                    (+1.00f, +0.00f) => 4,   // Bottom Right Corner //
+                                                    _                => 5,   // Bottom (Hide)       //
+                                                };
+                                if (Int_Temp != O_Int_LocationIndex)
+                                {
+                                    R_Bool_WasMovementCTEnabled = true;
+                                    R_Flt_MovementCoyoteCounter = I_Flt_MovementCoyoteTime;
+                                    R_Vec2_StashedLocation = Vec2_Input;
+                                }
+                        }
+                }
+                public void OnStartedShooting() 
+                {   
+                    // Valdidation //
+                        #region    Should Proceed [?]
+                            if 
+                            (
+                                !R_Bool_IsShootOutTime || // Stop If Outside Of Shootout Time //
+                                R_Bool_IsHiding        || // Stop If Hiding //
+                                R_Bool_WasKilled       || // Stop If Dead //
+                                R_Bool_WasDamaged      || // Stop If Damaged //
+                                O_Bool_IsStunned       || // Stop If Afected By A Windhorn //
+                                R_Bool_IsReloading     || // Stop If Reloading //
+                                !O_Bool_CanShoot       || // Stop If Not Allowed To Shoot //
+                                I_Int_BulletCount < 1     // Stop If Cillinder Is Empty //
+                            )
+                            return;
+                        #endregion Should Proceed [?] 
+                    // Logic //
+                        // Animation //
+                            ResetAnimBooleans(true, 2); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
+                            ForciblyResetLocation();
+                            UpdateAnimator();
+                        // Spawn Bullet //
+                            I_Aim_Own.SpawnBullet();
+                            O_Bool_CanShoot = false;
+                        // Reduce Bullets //
+                            I_Int_BulletCount--;
+                            I_Image_Cillinder.sprite = I_SpriteA1_Bullets[I_Int_BulletCount];
+                        // Trigger Mirror Animation //
+                            GetComponent<PhotonView>().RPC(nameof(RPC_NotifyShootStart),RpcTarget.Others, O_Int_LocationIndex);
+                }
+                public void OnStartedReloading() 
+                {
+                    // Valdidation //
+                        #region    Should Proceed [?]
+                            if 
+                            (
+                                !R_Bool_IsShootOutTime || // Stop If Outside Of Shootout Time //
+                                R_Bool_WasKilled       || // Stop If Dead //
+                                R_Bool_WasDamaged      || // Stop If Damaged //
+                                O_Bool_IsStunned       || // Stop If Afected By A Windhorn //
+                                R_Bool_IsShooting      || // Stop If Shooting //
+                                I_Int_BulletCount > 5     // Stop If Cillinder Is Full //
+                            )
+                            return;
+                        #endregion Should Proceed [?]
+                    //  Logic //
+                        // Animation //
+                            ResetAnimBooleans(true, 3); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
+                            ForciblyResetLocation();
+                            UpdateAnimator();
+                        // Trigger Mirror Animation //
+                            GetComponent<PhotonView>().RPC(nameof(RPC_NotifyReloadStart),RpcTarget.Others, O_Int_LocationIndex);
 
-                    }
-                    public void OnStartedWindhorn() 
-                    {
-                        // Valdidation //
-                            #region    Should Proceed [?]
-                                if
-                                (
-                                    R_Bool_IsHiding        || // Stop If Hiding //
-                                    R_Bool_WasKilled       || // Stop If Dead //
-                                    R_Bool_WasDamaged      || // Stop If Damaged //
-                                    O_Bool_IsStunned       || // Stop If Afected By A Windhorn //
-                                    R_Bool_IsReloading        // Stop If Reloading //
-                                )
-                                return;
-                            #endregion Should Proceed [?]
-                        // Logic //
-                            // Animation //
-                                ResetAnimBooleans(true, 4); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
-                                ForciblyResetLocation();
-                                UpdateAnimator();
-                            // Trigger Mirror Animation //
-                                GetComponent<PhotonView>().RPC(nameof(RPC_NotifyWindhornStart),RpcTarget.Others, O_Int_LocationIndex);
-                    }
-                #endregion OnStarted
-                #region    OnStopped
-                    public void OnStoppedMoving(Vector2 Vec2_Input) 
-                    {
-
-                    }
-                #endregion OnStopped
+                }
+                public void OnStartedWindhorn() 
+                {
+                    // Valdidation //
+                        #region    Should Proceed [?]
+                            if
+                            (
+                                R_Bool_IsHiding        || // Stop If Hiding //
+                                R_Bool_WasKilled       || // Stop If Dead //
+                                R_Bool_WasDamaged      || // Stop If Damaged //
+                                O_Bool_IsStunned       || // Stop If Afected By A Windhorn //
+                                R_Bool_IsReloading        // Stop If Reloading //
+                            )
+                            return;
+                        #endregion Should Proceed [?]
+                    // Logic //
+                        // Animation //
+                            ResetAnimBooleans(true, 4); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
+                            ForciblyResetLocation();
+                            UpdateAnimator();
+                        // Trigger Mirror Animation //
+                            GetComponent<PhotonView>().RPC(nameof(RPC_NotifyWindhornStart),RpcTarget.Others, O_Int_LocationIndex);
+                }
             #endregion Callee Methods
         #endregion Listener Methods
-        #region    Coroutines Methods
-        #endregion Coroutines Methods
     #endregion Methods    
     #region    Animation
         #region    Events
-            public void OwnHideStart()
-            {
-
-            }
-            public void OwnHideOver()
-            {
-                if (R_Bool_IsRelocating)
+            #region    Start
+                public void OwnHideStart()
                 {
-                    R_Bool_IsRelocating = false;
+
+                }
+                public void OwnShowStart()
+                {
+
+                }
+            #endregion Start
+            #region    End
+                public void OwnHideOver()
+                {
+                    if (R_Bool_IsRelocating)
+                    {
+                        R_Bool_IsRelocating = false;
+                        ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
+                        UpdateAnimator();
+                    }
+                    else
+                    {
+                        if (!R_Bool_HasReachedLocation && (O_Int_LocationIndex == 5))
+                            R_Bool_HasReachedLocation = true;
+                    }
+                }
+                public void OwnShowOver()
+                {
+                    if (!R_Bool_HasReachedLocation)
+                         R_Bool_HasReachedLocation = true;
+                }
+                public void OwnDamageOver()
+                {
                     ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
+                    ForciblyResetLocation();
                     UpdateAnimator();
                 }
-                else
+                public void OwnShootOver()
                 {
-                    if (!R_Bool_HasReachedLocation && (O_Int_LocationIndex == 5))
-                        R_Bool_HasReachedLocation = true;
+                    ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
+                    ForciblyResetLocation();
+                    UpdateAnimator();
                 }
-            }
-            public void OwnShowStart()
-            {
-
-            }
-            public void OwnShowOver()
-            {
-                if (!R_Bool_HasReachedLocation)
-                     R_Bool_HasReachedLocation = true;
-            }
-            public void OwnDamageOver()
-            {
-                ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
-                ForciblyResetLocation();
-                UpdateAnimator();
-            }
-            public void OwnShootOver()
-            {
-                ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
-                ForciblyResetLocation();
-                UpdateAnimator();
-            }
+            #endregion End
         #endregion Events
         #region    Reusables
             public void ResetAnimBooleans(bool? B_Input, int Int_Input) // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //

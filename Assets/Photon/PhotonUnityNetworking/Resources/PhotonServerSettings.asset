@@ -80,6 +80,7 @@ MonoBehaviour:
   - RPC_NotifyStunShowStart
   - RPC_NotifyHealEnd
   - RPC_NotifyHealStart
+  - RPC_NotifyFullReloadStart
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0
