@@ -42,8 +42,9 @@ public class PlayerCharacter : BasePlayer, IPunObservable
             [Space(10)]
             [Header(" Combat Settings")]
                 // Runtime //
-                    [SerializeField] private int _bulletCount;
-                    private int I_Int_BulletCount;
+                    // Vida, balas y Windhorn viven en el PlayerCombatState (y se replican en las Player Custom Properties) //
+                    private PlayerCombatState R_Ctm_PCS_State;
+                    public PlayerCombatState CombatState => R_Ctm_PCS_State;
                     [SerializeField] private Aim _aim;
                     Aim I_Aim_Own;
                     private bool O_Bool_CanShoot;
@@ -110,10 +111,15 @@ public class PlayerCharacter : BasePlayer, IPunObservable
             #pragma warning restore CS1998
             {
                 // Variables //
-                    I_Int_BulletCount = _bulletCount;
                     I_SpriteA1_Bullets = _bullets;
                     I_Image_Cillinder = _cillinder;
-                    I_Image_Cillinder.sprite = I_SpriteA1_Bullets[I_Int_BulletCount];
+                // Estado de combate - Se crea una sola vez y se reinicia en cada partida //
+                    if (R_Ctm_PCS_State == null)
+                    {
+                        R_Ctm_PCS_State = new PlayerCombatState(GetBalance());
+                        R_Ctm_PCS_State.OnBulletsChanged += OnBulletsChanged;
+                        R_Ctm_PCS_State.OnDied += OnDied;
+                    }
         
                     O_Int_LocationIndex = 2;
                     I_SpriteA1_PositionIndicators = _positionIndicators;
@@ -144,6 +150,8 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                     R_Bool_WasDamaged = false;
                     O_Bool_IsStunned = false;
                     R_Bool_WasKilled = false;
+                // Partida nueva: vida llena, tambor inicial y Windhorn vacia (publica las Player Custom Properties) //
+                    R_Ctm_PCS_State.ResetForNewMatch(GetBalance());
                 // Children StartUp //
                     I_Aim_Own.OnStartUp();
             }
@@ -152,6 +160,10 @@ public class PlayerCharacter : BasePlayer, IPunObservable
             #pragma warning restore CS1998
             {
                 base.OnUpdate(Flt_DT);
+                #region    Windhorn
+                    // GDD: la barra se carga con el tiempo //
+                        R_Ctm_PCS_State.TickHorn(Flt_DT);
+                #endregion Windhorn
                 #region    Movement
                     // Reduce "Coyote" Counter //
                         if (R_Bool_WasMovementCTEnabled)
@@ -215,6 +227,24 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                     O_Bool_CanShoot = true;
                 }
             #endregion Bool-Resseters
+            #region    Combat State
+                private static DuelBalance GetBalance()
+                {
+                    // Puede no existir todavia en el Awake de la escena: el estado usa valores por defecto y se reinicia en OnStartUp //
+                    if (MasterManager.Instance == null || MasterManager.Instance.CharacterManager == null) return null;
+                    return MasterManager.Instance.CharacterManager.Balance;
+                }
+                private void OnBulletsChanged(int Int_Bullets, int Int_Max)
+                {
+                    if (I_Image_Cillinder == null || I_SpriteA1_Bullets == null || I_SpriteA1_Bullets.Length == 0) return;
+                    I_Image_Cillinder.sprite = I_SpriteA1_Bullets[Mathf.Clamp(Int_Bullets, 0, I_SpriteA1_Bullets.Length - 1)];
+                }
+                private void OnDied()
+                {
+                    // Bloquea todas las acciones (las validaciones ya miran R_Bool_WasKilled) //
+                    R_Bool_WasKilled = true;
+                }
+            #endregion Combat State
             #region    Network Methods
                 #region    Send Notification
                     [PunRPC]
@@ -329,6 +359,11 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                             // Animator //
                                 UpdateAnimator();
                         }
+                        // Dano confirmado - El dueno del personaje descuenta su propia vida (GDD: Player Custom Properties) //
+                        public void ReceiveDamage(int Int_Amount)
+                        {
+                            R_Ctm_PCS_State.ApplyDamage(Int_Amount);
+                        }
                         public void NotifyShootingEnd()
                         {
                             ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
@@ -349,10 +384,8 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                         }
                         public void NotifyReloadingEnd(int Int_Input)
                         {
-                            I_Int_BulletCount = (I_Int_BulletCount + Int_Input <= 6) ?
-                                                    I_Int_BulletCount + Int_Input : 
-                                                    6;
-                            I_Image_Cillinder.sprite = I_SpriteA1_Bullets[I_Int_BulletCount];
+                            // 1 = recarga normal / 6 = Power-Up de Recarga Completa (el estado recorta al maximo del tambor) //
+                                R_Ctm_PCS_State.AddBullets(Int_Input);
                             ResetAnimBooleans(true, -1); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
                             ForciblyResetLocation();
                             UpdateAnimator();
@@ -373,6 +406,8 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                 switch (Int_Index)
                 {
                     case 0:
+                        // Power-Up de Salud - Nunca supera la vida maxima (lo recorta el estado) //
+                            R_Ctm_PCS_State.Heal(R_Ctm_PCS_State.Balance.HealAmount);
                         ResetAnimBooleans(true, 6); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
                         ForciblyResetLocation();
                         UpdateAnimator();
@@ -456,7 +491,7 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                                 O_Bool_IsStunned       || // Stop If Afected By A Windhorn //
                                 R_Bool_IsReloading     || // Stop If Reloading //
                                 !O_Bool_CanShoot       || // Stop If Not Allowed To Shoot //
-                                I_Int_BulletCount < 1     // Stop If Cillinder Is Empty //
+                                !R_Ctm_PCS_State.HasBullets // Stop If Cillinder Is Empty //
                             )
                             return;
                         #endregion Should Proceed [?] 
@@ -468,9 +503,8 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                         // Spawn Bullet //
                             I_Aim_Own.SpawnBullet();
                             O_Bool_CanShoot = false;
-                        // Reduce Bullets //
-                            I_Int_BulletCount--;
-                            I_Image_Cillinder.sprite = I_SpriteA1_Bullets[I_Int_BulletCount];
+                        // Reduce Bullets - El tambor del HUD se actualiza por evento (OnBulletsChanged) //
+                            R_Ctm_PCS_State.TryConsumeBullet();
                         // Trigger Mirror Animation //
                             GetComponent<PhotonView>().RPC(nameof(RPC_NotifyShootStart),RpcTarget.Others, O_Int_LocationIndex);
                 }
@@ -485,7 +519,7 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                                 R_Bool_WasDamaged      || // Stop If Damaged //
                                 O_Bool_IsStunned       || // Stop If Afected By A Windhorn //
                                 R_Bool_IsShooting      || // Stop If Shooting //
-                                I_Int_BulletCount > 5     // Stop If Cillinder Is Full //
+                                R_Ctm_PCS_State.IsCylinderFull // Stop If Cillinder Is Full //
                             )
                             return;
                         #endregion Should Proceed [?]
@@ -508,11 +542,14 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                                 R_Bool_WasKilled       || // Stop If Dead //
                                 R_Bool_WasDamaged      || // Stop If Damaged //
                                 O_Bool_IsStunned       || // Stop If Afected By A Windhorn //
-                                R_Bool_IsReloading        // Stop If Reloading //
+                                R_Bool_IsReloading     || // Stop If Reloading //
+                                !R_Ctm_PCS_State.IsHornReady // GDD: solo con la barra cargada //
                             )
                             return;
                         #endregion Should Proceed [?]
                     // Logic //
+                        // Consumir la carga (vuelve a 0 y se publica) //
+                            R_Ctm_PCS_State.TryConsumeHorn();
                         // Animation //
                             ResetAnimBooleans(true, 4); // -1: None / 0: IsHidden? / 1: IsDamaged? / 2: IsShooting? / 3: IsReloading? / 4: IsWindhorning? / 5: IsStunned? / 6: Healing PU / 7: FullReload PU //
                             ForciblyResetLocation();

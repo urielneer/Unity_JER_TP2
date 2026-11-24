@@ -14,9 +14,11 @@ public class CharacterManager : BaseManager<CharacterManager>
 {
     #region    Variables
         [Header(" All Character Settings")]
-            [SerializeField] float _maxHealth;
-            float IO_Flt_MaxHealth;
-            public float MaxHealth => IO_Flt_MaxHealth;
+            [Tooltip("Vida, dano, tambor y Windhorn. Live Ops va a poder pisar estos valores en tiempo de ejecucion")]
+            [SerializeField] private DuelBalance _balance = new DuelBalance();
+            private DuelBalance R_Ctm_DB_Balance;
+            public DuelBalance Balance => R_Ctm_DB_Balance;
+            public float MaxHealth => R_Ctm_DB_Balance.MaxHealth;
         [Header(" Manager Settings")]
             [SerializeField] private float _shootCooldown;
             float IO_Flt_ShootCooldown;
@@ -43,7 +45,7 @@ public class CharacterManager : BaseManager<CharacterManager>
                 // Singleton Operations //
                     base.Awake();
                 // Variables //
-                    IO_Flt_MaxHealth = _maxHealth;
+                    R_Ctm_DB_Balance = _balance.Clone(); // Copia: los cambios en runtime no tocan el prefab //
                     IO_Flt_ShootCooldown = _shootCooldown;
 
                     IO_Ctm_BP_OwnPlayer = _ownPlayer;
@@ -67,6 +69,9 @@ public class CharacterManager : BaseManager<CharacterManager>
                         case 1: // Level //
                             ((PlayerCharacter)  IO_Ctm_BP_OwnPlayer).OnStartUp();
                             ((EnemyCharacter) IO_Ctm_BP_EnemyPlayer).OnStartUp();
+                            // HUD - Observa el estado de combate del jugador local //
+                                MenuTypeHUD Ctm_MTH_HUD = GetHUD();
+                                if (Ctm_MTH_HUD != null) Ctm_MTH_HUD.Bind(((PlayerCharacter) IO_Ctm_BP_OwnPlayer).CombatState);
                         break;
                     }
             }

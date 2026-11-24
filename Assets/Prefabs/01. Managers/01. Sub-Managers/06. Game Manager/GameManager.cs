@@ -294,6 +294,9 @@ public class GameManager : BaseManager<GameManager>
                     public void OnMasterSwitched()                     { R_Ctm_MCM_Monitor.HandleMasterSwitched(); }
                     public void OnLocalPlayerRejoined()
                     {
+                        // El estado de combate vuelve a publicarse (vida / balas / Windhorn) por si algo quedo a medias //
+                            if (MasterManager.Instance.CharacterManager.OwnPlayer is PlayerCharacter Ctm_PC_Own && Ctm_PC_Own.CombatState != null)
+                                Ctm_PC_Own.CombatState.PublishAll();
                         // Se relee todo desde la Room: si mientras estabamos afuera termino la partida o hay pausa, se dispara el evento //
                             R_Ctm_MCM_Monitor.SyncFromRoom();
                             if (!R_Ctm_MCM_Monitor.HasEnded && !R_Ctm_MCM_Monitor.IsPaused)
