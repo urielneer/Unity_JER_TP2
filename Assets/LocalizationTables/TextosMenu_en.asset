@@ -66,6 +66,70 @@ MonoBehaviour:
     m_Localized: Return
     m_Metadata:
       m_Items: []
+  - m_Id: 9100000000000
+    m_Localized: 'CONNECTION LOST'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000004096
+    m_Localized: 'Reconnecting...'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000008192
+    m_Localized: 'Reconnecting... (attempt {0} of {1})'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000012288
+    m_Localized: 'OPPONENT DISCONNECTED'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000016384
+    m_Localized: 'Waiting for them to reconnect: {0} s'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000020480
+    m_Localized: 'Could not reconnect to the match.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000024576
+    m_Localized: 'Lost connection to the server ({0}).'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000028672
+    m_Localized: 'VICTORY'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000032768
+    m_Localized: 'DEFEAT'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000036864
+    m_Localized: 'Your opponent left the match.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000040960
+    m_Localized: 'You left the match.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000045056
+    m_Localized: 'Returning to menu in {0}...'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000049152
+    m_Localized: 'New round in {0}...'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000053248
+    m_Localized: 'Restarting...'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000057344
+    m_Localized: 'SPEAKING...'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000061440
+    m_Localized: 'OPPONENT SPEAKING'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

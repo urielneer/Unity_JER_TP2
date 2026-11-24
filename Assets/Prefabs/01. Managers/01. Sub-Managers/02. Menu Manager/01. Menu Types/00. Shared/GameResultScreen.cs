@@ -18,8 +18,7 @@ public class GameResultScreen : MonoBehaviour
         private Label R_Lbl_Subtitle;
         private Label R_Lbl_Countdown;
         private Coroutine R_Crtn_Countdown;
-        private const string DEFAULT_COUNTDOWN_FORMAT = "Nueva ronda en {0}...";
-        private string R_Str_CountdownFormat = DEFAULT_COUNTDOWN_FORMAT;
+        private string R_Str_CountdownFormat; // Textos traducidos: ver ResultStrings //
         // Colores - Victoria en verde, Derrota en rojo. Asi las dos pantallas no se confunden //
         private static readonly Color Clr_WinBack     = new Color(0.03f, 0.13f, 0.08f, 0.94f);
         private static readonly Color Clr_WinBanner   = new Color(0.10f, 0.42f, 0.24f, 1.00f);
@@ -51,7 +50,7 @@ public class GameResultScreen : MonoBehaviour
             // Str_CountdownFormat es opcional: recibe los segundos en {0} (por defecto "Nueva ronda en {0}...") //
             public static void Show(bool Bool_IWon, string Str_Reason, float Flt_RestartSeconds, string Str_CountdownFormat = null)
             {
-                GetInstance().Display(Bool_IWon, Str_Reason, Flt_RestartSeconds, Str_CountdownFormat ?? DEFAULT_COUNTDOWN_FORMAT);
+                GetInstance().Display(Bool_IWon, Str_Reason, Flt_RestartSeconds, Str_CountdownFormat ?? ResultStrings.NewRoundFormat);
             }
             public static void Hide()
             {
@@ -120,7 +119,7 @@ public class GameResultScreen : MonoBehaviour
                     R_Img_Banner.color     = Bool_IWon ? Clr_WinBanner : Clr_LoseBanner;
                     R_Lbl_Title.SetColor(Bool_IWon ? Clr_WinTitle : Clr_LoseTitle);
                 // Textos //
-                    R_Lbl_Title.SetText(Bool_IWon ? "VICTORIA" : "DERROTA");
+                    R_Lbl_Title.SetText(Bool_IWon ? ResultStrings.Victory : ResultStrings.Defeat);
                     R_Lbl_Subtitle.SetText(Str_Reason);
                     R_Lbl_Subtitle.SetColor(Clr_Body);
                     R_Lbl_Countdown.SetColor(Clr_Faded);
@@ -143,7 +142,7 @@ public class GameResultScreen : MonoBehaviour
                     yield return new WaitForSecondsRealtime(0.25f);
                     Flt_Remaining -= 0.25f;
                 }
-                R_Lbl_Countdown.SetText("Reiniciando...");
+                R_Lbl_Countdown.SetText(ResultStrings.Restarting);
                 R_Crtn_Countdown = null;
             }
         #endregion Display

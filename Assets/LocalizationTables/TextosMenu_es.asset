@@ -66,6 +66,70 @@ MonoBehaviour:
     m_Localized: Volver
     m_Metadata:
       m_Items: []
+  - m_Id: 9100000000000
+    m_Localized: 'CONEXIÓN PERDIDA'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000004096
+    m_Localized: 'Reconectando...'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000008192
+    m_Localized: 'Reconectando... (intento {0} de {1})'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000012288
+    m_Localized: 'RIVAL DESCONECTADO'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000016384
+    m_Localized: 'Esperando su reconexión: {0} s'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000020480
+    m_Localized: 'No se pudo reconectar a la partida.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000024576
+    m_Localized: 'Se perdió la conexión con el servidor ({0}).'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000028672
+    m_Localized: 'VICTORIA'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000032768
+    m_Localized: 'DERROTA'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000036864
+    m_Localized: 'Tu rival abandonó la partida.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000040960
+    m_Localized: 'Abandonaste la partida.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000045056
+    m_Localized: 'Volviendo al menú en {0}...'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000049152
+    m_Localized: 'Nueva ronda en {0}...'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000053248
+    m_Localized: 'Reiniciando...'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000057344
+    m_Localized: 'HABLANDO...'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9100000061440
+    m_Localized: 'RIVAL HABLANDO'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

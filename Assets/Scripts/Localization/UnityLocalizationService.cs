@@ -1,54 +1,99 @@
 using System;
 using UnityEngine;
-using UnityEngine.Localization.Settings;
 using UnityEngine.Localization;
+using UnityEngine.Localization.Settings;
 
-public class UnityLocalizationService : ILocalizationService
+// Implementacion con el paquete Unity Localization //
+// Hay UNA sola instancia (ver GameLocalization): antes cada LocalizedTextUI creaba la suya y se suscribia //
+// al evento estatico SelectedLocaleChanged sin desuscribirse nunca //
+public sealed class UnityLocalizationService : ILocalizationService, IDisposable
 {
-    public event Action OnLanguageChanged;
-
-    public UnityLocalizationService()
-    {
-        LocalizationSettings.SelectedLocaleChanged += OnLocaleChanged;
-    }
-
-    private void OnLocaleChanged(Locale newLocale)
-    {
-        OnLanguageChanged?.Invoke();
-    }
-
-    public string GetLocalizedValue(string tableKey, string entryKey)
-    {
-        try
+    #region    Constants
+        private const string LANGUAGE_PREF_KEY = "CowboyProject.Language";
+    #endregion Constants
+    #region    Events
+        public event Action OnLanguageChanged;
+    #endregion Events
+    #region    Properties
+        public string CurrentLanguageCode
         {
-            // Búsqueda inmediata para evitar que devuelva corchetes en el arranque
-            var localizedString = LocalizationSettings.StringDatabase.GetLocalizedString(tableKey, entryKey);
-
-            if (!string.IsNullOrEmpty(localizedString))
+            get
             {
-                return localizedString;
+                if (!LocalizationSettings.InitializationOperation.IsDone) return null;
+                Locale Lcl_Selected = LocalizationSettings.SelectedLocale;
+                return Lcl_Selected != null ? Lcl_Selected.Identifier.Code : null;
             }
         }
-        catch (Exception ex)
-        {
-            Debug.LogWarning($"[Localization] Error al buscar la clave {entryKey}: {ex.Message}");
-        }
-
-        return $"[{entryKey}]";
-    }
-
-    public void SetLanguage(string localeCode)
-    {
-        var locales = LocalizationSettings.AvailableLocales.Locales;
-        for (int i = 0; i < locales.Count; i++)
-        {
-            if (locales[i].Identifier.Code == localeCode)
+    #endregion Properties
+    #region    Methods
+        #region    Constructor / Dispose
+            public UnityLocalizationService()
             {
-                LocalizationSettings.SelectedLocale = locales[i];
-                Debug.Log($"[Localization] Idioma cambiado a: {localeCode}");
-                return;
+                LocalizationSettings.SelectedLocaleChanged += OnLocaleChanged;
+                // Idioma elegido por el jugador en una sesion anterior //
+                    if (LocalizationSettings.InitializationOperation.IsDone) ApplySavedLanguage();
+                    else LocalizationSettings.InitializationOperation.Completed += Op_Handle => ApplySavedLanguage();
             }
-        }
-        Debug.LogWarning($"[Localization] No se encontró el idioma con código: {localeCode}");
-    }
+            public void Dispose()
+            {
+                LocalizationSettings.SelectedLocaleChanged -= OnLocaleChanged;
+            }
+        #endregion Constructor / Dispose
+        #region    API
+            public string GetLocalizedValue(string tableKey, string entryKey)
+            {
+                return GetLocalizedValue(tableKey, entryKey, "[" + entryKey + "]");
+            }
+            public string GetLocalizedValue(string tableKey, string entryKey, string fallback)
+            {
+                try
+                {
+                    string Str_Localized = LocalizationSettings.StringDatabase.GetLocalizedString(tableKey, entryKey);
+                    if (!string.IsNullOrEmpty(Str_Localized)) return Str_Localized;
+                }
+                catch (Exception Exc_Error)
+                {
+                    Debug.LogWarning("[Localization] Error al buscar la clave '" + entryKey + "': " + Exc_Error.Message);
+                }
+                return fallback;
+            }
+            public void SetLanguage(string localeCode)
+            {
+                Locale Lcl_Target = FindLocale(localeCode);
+                if (Lcl_Target == null)
+                {
+                    Debug.LogWarning("[Localization] No se encontro el idioma con codigo: " + localeCode);
+                    return;
+                }
+                PlayerPrefs.SetString(LANGUAGE_PREF_KEY, localeCode);
+                PlayerPrefs.Save();
+                if (LocalizationSettings.SelectedLocale == Lcl_Target) return;
+                LocalizationSettings.SelectedLocale = Lcl_Target;
+                Debug.Log("[Localization] Idioma cambiado a: " + localeCode);
+            }
+        #endregion API
+        #region    Internals
+            private void ApplySavedLanguage()
+            {
+                if (!PlayerPrefs.HasKey(LANGUAGE_PREF_KEY)) return;
+                Locale Lcl_Saved = FindLocale(PlayerPrefs.GetString(LANGUAGE_PREF_KEY));
+                if (Lcl_Saved != null && LocalizationSettings.SelectedLocale != Lcl_Saved)
+                    LocalizationSettings.SelectedLocale = Lcl_Saved;
+            }
+            private static Locale FindLocale(string Str_Code)
+            {
+                if (string.IsNullOrEmpty(Str_Code)) return null;
+                var Lst_Locales = LocalizationSettings.AvailableLocales.Locales;
+                for (int Int_Index = 0; Int_Index < Lst_Locales.Count; Int_Index++)
+                {
+                    if (Lst_Locales[Int_Index].Identifier.Code == Str_Code) return Lst_Locales[Int_Index];
+                }
+                return null;
+            }
+            private void OnLocaleChanged(Locale Lcl_New)
+            {
+                OnLanguageChanged?.Invoke();
+            }
+        #endregion Internals
+    #endregion Methods
 }

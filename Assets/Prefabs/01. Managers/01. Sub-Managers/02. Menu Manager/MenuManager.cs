@@ -4,6 +4,9 @@ using UnityEngine.UI;
 
 public class MenuManager : BaseManager<MenuManager> // Antes BaseManager<CharacterManager>: compartia el singleton //
 {
+    #region    Constants
+        private const string TITLE_MENU_NAME = "TitleMenu";
+    #endregion Constants
     #region    Variables
         #region    Menu
             [SerializeField] private BaseMenuType[] _BaseMenuType;
@@ -80,6 +83,8 @@ public class MenuManager : BaseManager<MenuManager> // Antes BaseManager<Charact
                 }
                 Ctm_MEmt_Menu.Open();
                 O_Ctm_Memt_Current = Ctm_MEmt_Menu;
+                // Selector de idioma - Solo en la pantalla de titulo //
+                    LanguageSelector.SetVisible(Ctm_MEmt_Menu.MenuName == TITLE_MENU_NAME);
             }
             public void CloseMenu(BaseMenuType Ctm_MEmt_Menu)
             {

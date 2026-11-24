@@ -17,6 +17,8 @@ public class VoiceActivityIndicator : MonoBehaviour
         private Canvas R_Cnv_Root;
         private GameObject R_GObj_Local;
         private GameObject R_GObj_Remote;
+        private RuntimeUIFactory.Label R_Lbl_Local;
+        private RuntimeUIFactory.Label R_Lbl_Remote;
     #endregion Variables
     #region    Methods
         #region    API
@@ -30,6 +32,9 @@ public class VoiceActivityIndicator : MonoBehaviour
         #region    Internals
             private void Apply(bool Bool_Local, bool Bool_Remote)
             {
+                // Textos en el idioma actual (solo se llama cuando cambia el estado, no todos los frames) //
+                    if (Bool_Local)  R_Lbl_Local.SetText(VoiceStrings.LocalSpeaking);
+                    if (Bool_Remote) R_Lbl_Remote.SetText(VoiceStrings.RemoteSpeaking);
                 R_GObj_Local.SetActive(Bool_Local);
                 R_GObj_Remote.SetActive(Bool_Remote);
                 R_Cnv_Root.gameObject.SetActive(Bool_Local || Bool_Remote);
@@ -46,12 +51,12 @@ public class VoiceActivityIndicator : MonoBehaviour
             private void Build()
             {
                 R_Cnv_Root = RuntimeUIFactory.CreateOverlayCanvas(this.transform, SORTING_ORDER);
-                R_GObj_Local  = CreateTag("LocalSpeaking",  VoiceStrings.LocalSpeaking,  Clr_Local,  new Vector2(0f, 0f));
-                R_GObj_Remote = CreateTag("RemoteSpeaking", VoiceStrings.RemoteSpeaking, Clr_Remote, new Vector2(0f, 1f));
+                R_GObj_Local  = CreateTag("LocalSpeaking",  Clr_Local,  new Vector2(0f, 0f), out R_Lbl_Local);
+                R_GObj_Remote = CreateTag("RemoteSpeaking", Clr_Remote, new Vector2(0f, 1f), out R_Lbl_Remote);
                 R_Cnv_Root.gameObject.SetActive(false);
             }
             // Vec2_Corner: (0,0) abajo a la izquierda / (0,1) arriba a la izquierda //
-            private GameObject CreateTag(string Str_Name, string Str_Text, Color Clr_Text, Vector2 Vec2_Corner)
+            private GameObject CreateTag(string Str_Name, Color Clr_Text, Vector2 Vec2_Corner, out RuntimeUIFactory.Label Ctm_Lbl_Out)
             {
                 // Fondo //
                     UnityEngine.UI.Image Img_Back = RuntimeUIFactory.CreateImage(R_Cnv_Root.transform, Str_Name, Clr_Back);
@@ -62,10 +67,9 @@ public class VoiceActivityIndicator : MonoBehaviour
                     Rct_Back.sizeDelta = Vec2_TagSize;
                     Rct_Back.anchoredPosition = new Vector2(Vec2_Margin.x, Vec2_Corner.y > 0.5f ? -Vec2_Margin.y : Vec2_Margin.y);
                 // Texto //
-                    RuntimeUIFactory.Label Ctm_Lbl_Text = RuntimeUIFactory.CreateLabel(Rct_Back, "Text", 32, true);
-                    Ctm_Lbl_Text.SetText(Str_Text);
-                    Ctm_Lbl_Text.SetColor(Clr_Text);
-                    RuntimeUIFactory.Stretch(Ctm_Lbl_Text.Rect);
+                    Ctm_Lbl_Out = RuntimeUIFactory.CreateLabel(Rct_Back, "Text", 32, true);
+                    Ctm_Lbl_Out.SetColor(Clr_Text);
+                    RuntimeUIFactory.Stretch(Ctm_Lbl_Out.Rect);
                     Img_Back.gameObject.SetActive(false);
                 return Img_Back.gameObject;
             }

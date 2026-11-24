@@ -1,39 +1,29 @@
 using UnityEngine;
 using TMPro;
 
+// Texto de UI que se traduce solo y se actualiza al cambiar de idioma //
 public class LocalizedTextUI : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI _uiText;
-    [SerializeField] private string _tableKey = "TextosMenu"; 
-    [SerializeField] private string _entryKey;  
+    [SerializeField] private string _tableKey = GameLocalization.MAIN_TABLE;
+    [SerializeField] private string _entryKey;
 
-    private ILocalizationService _localizationService;
-
-    private void Start()
+    // Suscripcion solo mientras el objeto esta activo: los menus se prenden y apagan todo el tiempo //
+    private void OnEnable()
     {
-        // Instanciamos el servicio de localización que armamos
-        _localizationService = new UnityLocalizationService();
-
-        // Actualizamos el texto en pantalla al iniciar
+        GameLocalization.Service.OnLanguageChanged += UpdateText;
         UpdateText();
-
-        // Nos suscribimos por si el usuario cambia de idioma en caliente
-        _localizationService.OnLanguageChanged += UpdateText;
     }
 
-    private void OnDestroy()
+    private void OnDisable()
     {
-        if (_localizationService != null)
-        {
-            _localizationService.OnLanguageChanged -= UpdateText;
-        }
+        GameLocalization.Service.OnLanguageChanged -= UpdateText;
     }
 
     private void UpdateText()
     {
-        if (_uiText != null)
-        {
-            _uiText.text = _localizationService.GetLocalizedValue(_tableKey, _entryKey);
-        }
+        if (_uiText == null || string.IsNullOrEmpty(_entryKey)) return;
+        // Si la tabla todavia no cargo, se deja el texto que trae el prefab (nunca "[Clave]") //
+        _uiText.text = GameLocalization.Service.GetLocalizedValue(_tableKey, _entryKey, _uiText.text);
     }
 }

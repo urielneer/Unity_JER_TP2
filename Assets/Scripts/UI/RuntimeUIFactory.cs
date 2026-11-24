@@ -78,6 +78,19 @@ public static class RuntimeUIFactory
                 Ctm_Lbl_New.Txt = Ctm_Txt_New;
                 return Ctm_Lbl_New;
         }
+        public static Button CreateButton(Transform Tfm_Parent, string Str_Name, Vector2 Vec2_Size, Color Clr_Background, int Int_FontSize, out Label Ctm_Lbl_Text)
+        {
+            // Fondo clickeable //
+                Image Img_Back = CreateImage(Tfm_Parent, Str_Name, Clr_Background);
+                Img_Back.raycastTarget = true;
+                Img_Back.rectTransform.sizeDelta = Vec2_Size;
+                Button Btn_New = Img_Back.gameObject.AddComponent<Button>();
+                Btn_New.targetGraphic = Img_Back;
+            // Texto //
+                Ctm_Lbl_Text = CreateLabel(Img_Back.transform, "Text", Int_FontSize, true);
+                Stretch(Ctm_Lbl_Text.Rect);
+            return Btn_New;
+        }
     #endregion Builders
     #region    Layout
         public static void Stretch(RectTransform Rct_Input)
