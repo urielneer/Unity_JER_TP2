@@ -76,6 +76,7 @@ public class LiveOpsManager : BaseManager<CharacterManager>
             {
                 // Singleton Operations //
                     base.Awake();
+        OnStartUp();
             }
         #endregion Unity Methods
         #region    Override Methods
@@ -86,6 +87,18 @@ public class LiveOpsManager : BaseManager<CharacterManager>
                 // Resume Base //
                     base.OnStartUp();
                 // Variables //
+                    IO_Flt_MaxHealth = _maxHealth;
+                    IO_Flt_HealthRegen = _healthRegen;
+                    IO_Flt_Damage = _damage;
+                    IO_Flt_MaxWindhorn = _maxWindhorn;
+                    IO_Flt_WindhornRegen = _windhornRegen;
+                    IO_Flt_WindhornSpoil = _windhornSpoil;
+                    IO_Flt_WindhornDelay = _WindhornDelay;
+                    IO_FltA1_PowerUpSpeedLimits = _powerUpSpeedLimits;
+                    IO_FltA1_PowerUpLifeLimits = _powerUpLifeLimits;
+                    IO_FltA1_AnimationSpeed = _animationSpeed;
+                    IO_Flt_RelocationWait = _relocationWait;
+                    IO_Flt_ShootoutWait = _shootoutWait;
             }
             #pragma warning disable CS1998
             public async override void OnUpdate(float Flt_DT)
