@@ -297,8 +297,9 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                         #region    Should Proceed [?]
                             if 
                             (
-                                R_Bool_IsDamaged || // Stop If Already Damaged //
-                                R_Bool_IsHealing    // Stop If Healing         //
+                                R_Bool_IsDamaged     || // Stop If Already Damaged //
+                                R_Bool_IsWindhorning || // Stop If WindHorning     //
+                                R_Bool_IsHealing        // Stop If Healing         //
                             )
                             return;
                         #endregion Should Proceed [?] 
