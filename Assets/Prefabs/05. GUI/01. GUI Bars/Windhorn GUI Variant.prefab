@@ -272,8 +272,29 @@ PrefabInstance:
       propertyPath: m_Name
       value: Windhorn GUI Variant
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 266860619905424706, guid: f25150e921dc2f1429c90a712f6786cf, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 9042355820230060702, guid: f25150e921dc2f1429c90a712f6786cf, type: 3}
+      insertIndex: 1
+      addedObject: {fileID: 3030528320631431385}
   m_SourcePrefab: {fileID: 100100000, guid: f25150e921dc2f1429c90a712f6786cf, type: 3}
+--- !u!1 &3480446840924891538 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9042355820230060702, guid: f25150e921dc2f1429c90a712f6786cf, type: 3}
+  m_PrefabInstance: {fileID: 5562474696576516876}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3030528320631431385
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3480446840924891538}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6889846eeece98640a171e0d1aa90d10, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GUIBar_Windhorn

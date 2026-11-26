@@ -6,19 +6,19 @@ public class GUIBar : MonoBehaviour
     #endregion Variables
     #region    Methods
         #region    Unity Methods
-            protected void Awake()
+            protected virtual void Awake()
             {
             }
         #endregion Unity Methods
         #region    Override Methods
             #pragma warning disable CS1998
-            public async void OnStartUp()
+            public async virtual void OnStartUp()
             #pragma warning restore CS1998
             {
                 // Variables //
             }
             #pragma warning disable CS1998
-            public async void OnUpdate(float Flt_DT)
+            public async virtual void OnUpdate(float Flt_DT)
             #pragma warning restore CS1998
             {
                 // Variables //
@@ -26,11 +26,7 @@ public class GUIBar : MonoBehaviour
         #endregion Override Methods
         #region    Custom Methods
             #region    Animation
-                public void AnimOver()
-                {
-
-                }
-                public void WindhornEmptyOver()
+                public virtual void AnimOver()
                 {
 
                 }

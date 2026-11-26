@@ -224,7 +224,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 292497468854235578, guid: 0a77cd32147fad94dafd7b3fa667a8fb, type: 3}
       propertyPath: m_text
-      value: Roomba Shoota
+      value: Cowboy
       objectReference: {fileID: 0}
     - target: {fileID: 292497468854235578, guid: 0a77cd32147fad94dafd7b3fa667a8fb, type: 3}
       propertyPath: m_fontSize
@@ -344,7 +344,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2380510514744660451, guid: 0a77cd32147fad94dafd7b3fa667a8fb, type: 3}
       propertyPath: _titleName
-      value: Roomba Shoota
+      value: Cowboy
       objectReference: {fileID: 0}
     - target: {fileID: 2380510514744660451, guid: 0a77cd32147fad94dafd7b3fa667a8fb, type: 3}
       propertyPath: _elementList.Array.size
