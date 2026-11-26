@@ -13,10 +13,24 @@ using static CustomExtension.ArrayExtensions;
 public class CharacterManager : BaseManager<CharacterManager>
 {
     #region    Variables
-        [Header(" All Character Settings")]
-            [SerializeField] float _maxHealth;
+        [Header(" LiveOps")]
             float IO_Flt_MaxHealth;
             public float MaxHealth => IO_Flt_MaxHealth;
+            float IO_Flt_HealthRegen;
+            public float HealthRegen => IO_Flt_HealthRegen;
+            float IO_Flt_Damage;
+            public float Damage => IO_Flt_Damage;
+            float IO_Flt_MaxWindhorn;
+            public float MaxWindhorn => IO_Flt_MaxWindhorn;
+            float IO_Flt_WindhornRegen;
+            public float WindhornRegen => IO_Flt_WindhornRegen;
+            float IO_Flt_WindhornSpoil;
+            public float WindhornSpoil => IO_Flt_WindhornSpoil;
+            float IO_Flt_WindhornDelay;
+            public float WindhornDelay => IO_Flt_WindhornDelay;
+            float IO_Flt_AnimationSpeed;
+            public float AnimationSpeed => IO_Flt_AnimationSpeed;
+        [Space(10)]
         [Header(" Manager Settings")]
             [SerializeField] private float _shootCooldown;
             float IO_Flt_ShootCooldown;
@@ -43,7 +57,6 @@ public class CharacterManager : BaseManager<CharacterManager>
                 // Singleton Operations //
                     base.Awake();
                 // Variables //
-                    IO_Flt_MaxHealth = _maxHealth;
                     IO_Flt_ShootCooldown = _shootCooldown;
 
                     IO_Ctm_BP_OwnPlayer = _ownPlayer;
@@ -103,6 +116,19 @@ public class CharacterManager : BaseManager<CharacterManager>
             }
         #endregion Override Methods
         #region    Custom Methods
+            public void LiveOpsRequest(float Flt_MaxHealth, float Flt_HealthRegen, float Flt_Damage, float Flt_MaxWindhorn, float Flt_WindhornRegen, float Flt_WindhornSpoil, float Flt_WindhornDelay, float Flt_AnimationSpeed)
+            {
+                IO_Flt_MaxHealth = Flt_MaxHealth;
+                IO_Flt_HealthRegen = Flt_HealthRegen;
+                IO_Flt_Damage = Flt_Damage;
+                IO_Flt_MaxWindhorn = Flt_MaxWindhorn;
+                IO_Flt_WindhornRegen = Flt_WindhornRegen;
+                IO_Flt_WindhornSpoil = Flt_WindhornSpoil;
+                IO_Flt_WindhornDelay = Flt_WindhornDelay;
+                IO_Flt_AnimationSpeed = Flt_AnimationSpeed;
+
+                
+            }
             private MenuTypeHUD GetHUD()
             {
                 BaseMenuType Ctm_BMT_HUD = MasterManager.Instance.MenuManager.GetMenuReference("HUD");

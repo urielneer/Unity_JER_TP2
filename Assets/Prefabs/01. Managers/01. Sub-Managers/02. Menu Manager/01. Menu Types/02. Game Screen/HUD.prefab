@@ -501,9 +501,9 @@ RectTransform:
   m_Children:
   - {fileID: 3544789365363107318}
   - {fileID: 7644922866904036716}
-  - {fileID: 8416948088284454341}
   - {fileID: 2061935885177244243}
   - {fileID: 8785436896474511356}
+  - {fileID: 8416948088284454341}
   - {fileID: 6025623067384643606}
   - {fileID: 5024065027638673748}
   - {fileID: 1493212248629020256}
@@ -1007,6 +1007,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8280770165783614221, guid: 6eb3aa5afe6c0e14f9a2599fadffcb8a, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8280770165783614221, guid: 6eb3aa5afe6c0e14f9a2599fadffcb8a, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1220,7 +1228,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2850611353210203218, guid: 56d3ffcce93401d4f99e8928e5fc8685, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0
+      value: -20
       objectReference: {fileID: 0}
     - target: {fileID: 3272460991228840995, guid: 56d3ffcce93401d4f99e8928e5fc8685, type: 3}
       propertyPath: _backgroundColor.b
@@ -1596,6 +1604,14 @@ PrefabInstance:
     - target: {fileID: 5674035343496976440, guid: ae1957e35066725439a86af33720a297, type: 3}
       propertyPath: m_ConstrainProportionsScale
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6337513418142081157, guid: ae1957e35066725439a86af33720a297, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6337513418142081157, guid: ae1957e35066725439a86af33720a297, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7923921148553834526, guid: ae1957e35066725439a86af33720a297, type: 3}
       propertyPath: m_ConstrainProportionsScale

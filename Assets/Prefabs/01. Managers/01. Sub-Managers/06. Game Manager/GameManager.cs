@@ -14,6 +14,12 @@ using UnityEngine.UI;
 public class GameManager : BaseManager<GameManager>
 {
     #region    Variables
+        [Header(" LiveOps")]
+            float IO_Flt_RelocationWait;
+            public float RelocationWait => IO_Flt_RelocationWait;
+            float IO_Flt_ShootoutWait;
+            public float ShootoutWait => IO_Flt_ShootoutWait;
+        [Space(10)]
         [Header(" Manager Settings")]
             [SerializeField] private float _respawnCooldown;
             float IO_Flt_RespawnCooldown;
@@ -79,6 +85,11 @@ public class GameManager : BaseManager<GameManager>
             }
         #endregion Override Methods
         #region    Custom Methods
+            public void LiveOpsRequest(float Flt_RelocationWait, float Flt_ShootoutWait)
+            {
+                IO_Flt_RelocationWait = Flt_RelocationWait;
+                IO_Flt_ShootoutWait = Flt_ShootoutWait;
+            }
             #region    Dummy
                 #region    Regular
                     private void TimerUpdate()
@@ -264,8 +275,6 @@ public class GameManager : BaseManager<GameManager>
                     //Cursor.lockState = CursorLockMode.Locked;
                 }
             #endregion Networking
-            #region    PowerUp
-            #endregion PowerUp
         #endregion Custom Methods
     #endregion Methods
 }

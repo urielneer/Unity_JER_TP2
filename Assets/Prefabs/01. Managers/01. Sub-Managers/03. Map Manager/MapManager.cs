@@ -16,6 +16,13 @@ using static CustomExtension.ArrayExtensions;
 public class MapManager : BaseManager<MapManager> 
 {
     #region    Variables
+        [Header(" LiveOps")]
+            float IO_Flt_PowerUpSpeedLimits;
+            public float PowerUpSpeedLimits => IO_Flt_PowerUpSpeedLimits;
+            float IO_Flt_PowerUpLifeLimits;
+            public float PowerUpLifeLimits => IO_Flt_PowerUpLifeLimits;
+        [Space(10)]
+        [Header(" Misc")]
         #region    Tiles
             [SerializeField] private Transform _mapContainer;
             private Transform I_Trfm_MapContainer;
@@ -164,6 +171,11 @@ public class MapManager : BaseManager<MapManager>
         #endregion Override Methods
         #region    Custom Methods
             #region    Regular Methods
+                public void LiveOpsRequest(float Flt_PowerUpSpeedLimits, float Flt_PowerUpLifeLimits)
+                {
+                    IO_Flt_PowerUpSpeedLimits = Flt_PowerUpSpeedLimits;
+                    IO_Flt_PowerUpLifeLimits = Flt_PowerUpLifeLimits;
+                }
                 public void SetBounds(int Int_X, int Int_Y)
                 {
                     _mapLengthX = ( Int_X < 4 ) ? 4: Int_X;

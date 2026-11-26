@@ -76,7 +76,7 @@ public class LiveOpsManager : BaseManager<CharacterManager>
             {
                 // Singleton Operations //
                     base.Awake();
-        OnStartUp();
+                    OnStartUp();
             }
         #endregion Unity Methods
         #region    Override Methods
