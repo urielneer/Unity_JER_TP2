@@ -16,6 +16,7 @@ public class GUIBar_Windhorn : GUIBar
             public async override void OnStartUp()
             #pragma warning restore CS1998
             {
+                I_Flt_Max = MasterManager.Instance.CharacterManager.MaxHealth;
                 base.OnStartUp();
                 // Variables //
             }

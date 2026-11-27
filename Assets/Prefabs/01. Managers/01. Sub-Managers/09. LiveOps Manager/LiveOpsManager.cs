@@ -99,6 +99,8 @@ public class LiveOpsManager : BaseManager<CharacterManager>
                     IO_FltA1_AnimationSpeed = _animationSpeed;
                     IO_Flt_RelocationWait = _relocationWait;
                     IO_Flt_ShootoutWait = _shootoutWait;
+
+        MasterManager.Instance.CharacterManager.LiveOpsRequest(IO_Flt_MaxHealth, IO_Flt_HealthRegen, IO_Flt_Damage, IO_Flt_MaxWindhorn, IO_Flt_WindhornRegen, IO_Flt_WindhornSpoil, IO_Flt_WindhornDelay, IO_Flt_AnimationSpeed);
             }
             #pragma warning disable CS1998
             public async override void OnUpdate(float Flt_DT)
