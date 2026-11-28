@@ -25,10 +25,21 @@ public class GUIBar_Health : GUIBar
             #pragma warning restore CS1998
             {
                 base.OnUpdate(Flt_DT);
-                // Variables //
             }
         #endregion Override Methods
         #region    Custom Methods
+            #region    Bar
+                public override void Increase()
+                {
+                    base.Increase();
+                    R_Flt_Current += MasterManager.Instance.CharacterManager.HealthRegen;
+                }
+                public override void Reduce()
+                {
+                    base.Reduce();
+                    R_Flt_Current -= MasterManager.Instance.CharacterManager.Damage;
+                }
+            #endregion Bar
             #region    Animation
                 public override void AnimOver()
                 {

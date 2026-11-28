@@ -16,8 +16,16 @@ public class PlayerCharacter : BasePlayer, IPunObservable
     #region    Variables
         #region    Controls 
             [Header(" Character Settings")]
-                    [SerializeField] private Animator _animator;
-                    private Animator I_Anim_Character;
+                [SerializeField] private Animator _animator;
+                private Animator I_Anim_Character;
+            [Space(10)]
+            [Header(" GUI Settings")]
+                [SerializeField] private GUIBar_Health _healthBar;
+                private GUIBar_Health I_GBH_Health;
+                public GUIBar_Health HealthBar => I_GBH_Health;
+                [SerializeField] private GUIBar_Windhorn _windhornBar;
+                private GUIBar_Windhorn I_GBW_Windhorn;
+                public GUIBar_Windhorn WindhornBar => I_GBW_Windhorn;
             [Space(10)]
             [Header(" Movement Settings")]
                 // Input //
@@ -110,6 +118,9 @@ public class PlayerCharacter : BasePlayer, IPunObservable
             #pragma warning restore CS1998
             {
                 // Variables //
+                    I_GBH_Health = _healthBar;
+                    I_GBW_Windhorn = _windhornBar;
+
                     I_Int_BulletCount = _bulletCount;
                     I_SpriteA1_Bullets = _bullets;
                     I_Image_Cillinder = _cillinder;
@@ -504,11 +515,12 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                         #region    Should Proceed [?]
                             if
                             (
-                                R_Bool_IsHiding        || // Stop If Hiding //
-                                R_Bool_WasKilled       || // Stop If Dead //
-                                R_Bool_WasDamaged      || // Stop If Damaged //
-                                O_Bool_IsStunned       || // Stop If Afected By A Windhorn //
-                                R_Bool_IsReloading        // Stop If Reloading //
+                                I_GBW_Windhorn.Current != I_GBW_Windhorn.Max || // Stop I Windhornbar is empty //
+                                R_Bool_IsHiding                              || // Stop If Hiding //
+                                R_Bool_WasKilled                             || // Stop If Dead //
+                                R_Bool_WasDamaged                            || // Stop If Damaged //
+                                O_Bool_IsStunned                             || // Stop If Afected By A Windhorn //
+                                R_Bool_IsReloading                              // Stop If Reloading //
                             )
                             return;
                         #endregion Should Proceed [?]
@@ -519,6 +531,8 @@ public class PlayerCharacter : BasePlayer, IPunObservable
                             UpdateAnimator();
                         // Trigger Mirror Animation //
                             GetComponent<PhotonView>().RPC(nameof(RPC_NotifyWindhornStart),RpcTarget.Others, O_Int_LocationIndex);
+                        // Bar //  
+                            I_GBW_Windhorn.Reduce();
                 }
             #endregion Callee Methods
         #endregion Listener Methods

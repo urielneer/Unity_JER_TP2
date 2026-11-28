@@ -103,7 +103,7 @@ Debug.Log("PowerUpShot");
                         else
                         if (R_GObj_Target.transform.parent.gameObject.TryGetComponent<EnemyCharacter>(out EnemyCharacter EChar_Target))
                         {
-                            EChar_Target.Damage();
+/*?*/                       EChar_Target.Damage();
                         }
                     }
                     else

@@ -28,8 +28,8 @@ public class CharacterManager : BaseManager<CharacterManager>
             public float WindhornSpoil => IO_Flt_WindhornSpoil;
             float IO_Flt_WindhornDelay;
             public float WindhornDelay => IO_Flt_WindhornDelay;
-            float IO_Flt_AnimationSpeed;
-            public float AnimationSpeed => IO_Flt_AnimationSpeed;
+            float[] IO_FltA1_AnimationSpeed;
+            public float[] AnimationSpeed => IO_FltA1_AnimationSpeed;
         [Space(10)]
         [Header(" Manager Settings")]
             [SerializeField] private float _shootCooldown;
@@ -116,7 +116,7 @@ public class CharacterManager : BaseManager<CharacterManager>
             }
         #endregion Override Methods
         #region    Custom Methods
-            public void LiveOpsRequest(float Flt_MaxHealth, float Flt_HealthRegen, float Flt_Damage, float Flt_MaxWindhorn, float Flt_WindhornRegen, float Flt_WindhornSpoil, float Flt_WindhornDelay, float Flt_AnimationSpeed)
+            public void LiveOpsRequest(float Flt_MaxHealth, float Flt_HealthRegen, float Flt_Damage, float Flt_MaxWindhorn, float Flt_WindhornRegen, float Flt_WindhornSpoil, float Flt_WindhornDelay, float[] FltA1_AnimationSpeed)
             {
                 IO_Flt_MaxHealth = Flt_MaxHealth;
                 IO_Flt_HealthRegen = Flt_HealthRegen;
@@ -125,7 +125,7 @@ public class CharacterManager : BaseManager<CharacterManager>
                 IO_Flt_WindhornRegen = Flt_WindhornRegen;
                 IO_Flt_WindhornSpoil = Flt_WindhornSpoil;
                 IO_Flt_WindhornDelay = Flt_WindhornDelay;
-                IO_Flt_AnimationSpeed = Flt_AnimationSpeed;
+                IO_FltA1_AnimationSpeed = FltA1_AnimationSpeed;
 
                 
             }

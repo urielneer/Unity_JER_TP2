@@ -29,6 +29,18 @@ public class GUIBar_Windhorn : GUIBar
             }
         #endregion Override Methods
         #region    Custom Methods
+            #region    Bar
+                public override void Increase()
+                {
+                    base.Increase();
+                    R_Flt_Current += MasterManager.Instance.CharacterManager.WindhornRegen;
+                }
+                public override void Reduce()
+                {
+                    base.Reduce();
+                    R_Flt_Current -= I_Flt_Max;
+                }
+            #endregion Bar
             #region    Animation
                 public override void AnimOver()
                 {

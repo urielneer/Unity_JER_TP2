@@ -293,6 +293,7 @@ public class EnemyCharacter : BasePlayer, IPunObservable
                 }
                 public void Damage()
                 {
+/*?*/               ((PlayerCharacter) (MasterManager.Instance.CharacterManager.OwnPlayer)).HealthBar.Reduce();
                     // Valdidation //
                         #region    Should Proceed [?]
                             if 
