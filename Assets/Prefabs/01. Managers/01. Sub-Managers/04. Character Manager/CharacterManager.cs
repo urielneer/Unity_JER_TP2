@@ -95,6 +95,17 @@ public class CharacterManager : BaseManager<CharacterManager>
                         case 1: // Level //
                             ((EnemyCharacter) IO_Ctm_BP_EnemyPlayer).OnUpdate(Flt_DT);
                             ((PlayerCharacter) IO_Ctm_BP_OwnPlayer).OnUpdate(Flt_DT);
+                            LiveOpsRequest
+                            (
+                                MasterManager.Instance.LiveOpsManager.MaxHealth,
+                                MasterManager.Instance.LiveOpsManager.HealthRegen,
+                                MasterManager.Instance.LiveOpsManager.Damage,
+                                MasterManager.Instance.LiveOpsManager.MaxWindhorn,
+                                MasterManager.Instance.LiveOpsManager.WindhornRegen,
+                                MasterManager.Instance.LiveOpsManager.WindhornSpoil,
+                                MasterManager.Instance.LiveOpsManager.WindhornDelay,
+                                MasterManager.Instance.LiveOpsManager.AnimationSpeed
+                            );
                         break;
                     }
             }
